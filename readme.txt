@@ -2,7 +2,7 @@ waveware Homepage
 설치 방법
 ---bash----
 1. 설치
-npm ci
+npm ci or install
 
 2. 로컬 개발 서버 실행
 npm run dev
@@ -34,12 +34,11 @@ Tailwind CSS 3.4.17
 
 	[`max-width: 1440px` 컨테이너 기준
 	Figma 기준 `line-height: 1.4`, `letter-spacing: -0.025em`
-	기본 폰트: Pretendard (`font-pret` 또는 `font-sans`)
-	기본 스타일은 `src/index.css`에 적용되어 있음]
+	기본 폰트: Pretendard 
+	기본 스타일은 `src/styles/globals.css`에 적용되어 있음]
+		
 	
-	
-	
- Pretendard 폰트 적용
+ Pretendard 전역 폰트 적용중
 
 협업
  Git 브랜치 사용
