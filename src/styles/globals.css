@@ -1,0 +1,12 @@
+/* src/styles/globals.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: "Pretendard", sans-serif;
+  color: #191919;
+  background-color: #fff;
+  line-height: 1.4;
+  letter-spacing: -0.025em;
+}
