@@ -31,7 +31,7 @@ export default function Header() {
   }, [lastScrollY]);
 
   return (
-    <header className={`fixed top-0 left-0 right-0 flex justify-between items-center px-[100px] py-1 bg-white shadow-md transition-transform duration-300 ${showHeader ? 'translate-y-0' : '-translate-y-full'}`}>
+    <header className={`fixed top-0 left-0 right-0 flex justify-between items-center px-[100px] py-1 bg-white/90 backdrop-blur-sm shadow-md transition-transform duration-300 z-50 ${showHeader ? 'translate-y-0' : '-translate-y-full'}`}>
       {/* 로고 */}
       <Link href="/" className="text-primary text-[48px] font-bold font-pistara">
         waveware
@@ -40,11 +40,11 @@ export default function Header() {
       {/* 메뉴 */}
       <nav>
         <ul className="flex space-x-8 text-lg">
-          <li><a href="#company" className={isActive('#company')}>Company</a></li>
-          <li><a href="#technology" className={isActive('#technology')}>Technology</a></li>
-          <li><a href="#history" className={isActive('#history')}>History</a></li>
-          <li><a href="#career" className={isActive('#career')}>Career</a></li>
-          <li><a href="#contact" className={isActive('#contact')}>Contact</a></li>
+          <li><Link href="#company" className={isActive('#company')}>Company</Link></li>
+          <li><Link href="#technology" className={isActive('#technology')}>Technology</Link></li>
+          <li><Link href="#history" className={isActive('#history')}>History</Link></li>
+          <li><Link href="#career" className={isActive('#career')}>Career</Link></li>
+          <li><Link href="#contact" className={isActive('#contact')}>Contact</Link></li>
         </ul>
       </nav>
     </header>
