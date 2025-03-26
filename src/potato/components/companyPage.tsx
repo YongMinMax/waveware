@@ -12,10 +12,28 @@ const CompanyPage = () => {
 
   // 스크롤 마다 동작하는 이벤트 - 회전값 변경
   const handleScroll = (e: WheelEvent) => {
+    e.preventDefault();
+
     if (e.deltaY > 0) {
-      setRotationAngle((prev) => prev - 120);
+      setCurrentStep((prev) => {
+        if (prev - 1 > -10) {
+          return prev - 1;
+        } else {
+          setRotationAngle((prev) => prev + 120);
+          return 0;
+        }
+      });
+      // setRotationAngle((prev) => prev - 120);
     } else if (e.deltaY < 0) {
-      setRotationAngle((prev) => prev + 120);
+      setCurrentStep((prev) => {
+        if (prev + 1 < 10) {
+          return prev + 1;
+        } else {
+          setRotationAngle((prev) => prev - 120);
+          return 0;
+        }
+      });
+      // setRotationAngle((prev) => prev + 120);
     }
   };
 
@@ -42,7 +60,7 @@ const CompanyPage = () => {
 
   return (
     <div ref={containerRef}>
-      <div className={`container w-screen h-screen flex gap-5 justify-around items-center`}>
+      <div className={`container w-screen h-screen flex  justify-between items-center`}>
         <CompanyText selectedIndex={selectedIndex} />
         <CompanyCircle
           smallCirclePositions={smallCirclePositions}
@@ -62,7 +80,7 @@ const CompanyText = ({ selectedIndex }) => {
   const contents = [
     "우리는 다년간 쌓아온 언어, 문서, 재난, 의료과학\n분야에 전문화된 데이터 처리 기술을 통해\n미래의 새로운 가치를 발굴합니다.",
     "데이터는 우리가 살고 있는 세상을 다르게 볼 수 있는\n 정보를 제공하며, 데이터 분석을 통해 의미를 추출하고\n 더 나은 결정을 내릴 수 있도록 연구하고 개발합니다.",
-    "데이터 시각화를 통하여 모든 일련의 과정을 설명하며,\n 다양한 시각적 요소를 활용해 복잡한 데이터의 이해를 돕고\n 누구든지 쉽게 정보를 이해할 수 있도록 합니다.",
+    "데이터 시각화를 통하여 모든 일련의 과정을\n 설명하며, 다양한 시각적 요소를 활용해\n 누구든지 쉽게 정보를 이해할 수 있도록 합니다.",
   ];
   return (
     <motion.div
@@ -84,13 +102,19 @@ const CompanyText = ({ selectedIndex }) => {
 
 const CompanyCircle = ({ rotationAngle, smallCirclePositions, selectedIndex }) => {
   const c_color = "#9BBB59";
-  const img_link = selectedIndex === 0 ? "company_dataProcessing.png" : "";
+  const img_size = selectedIndex === 2 ? " w-[380px] h-[300px]" : " w-[350px] h-[350px] ";
+  const img_link =
+    selectedIndex === 0
+      ? "/img/company_dataProcessing.png"
+      : selectedIndex === 1
+      ? "/img/company_dataAnalysis.png"
+      : "/img/company_dataVisualizing.png";
   return (
-    <div className={`relative w-[600px] h-[600px]`}>
-      <FloatingImage img_link={img_link} />
+    <div className={`relative w-[750px] h-[750px] `}>
+      <FloatingImage img_link={img_link} img_size={img_size} />
 
       <motion.svg // 애니메이션 공간 확보
-        className="w-[600px] h-[600px] absolute "
+        className="w-[750px] h-[750px] absolute "
         viewBox="0 0 100 100"
         animate={{ rotate: rotationAngle }}
         transition={{ duration: 1.2 }}
@@ -176,20 +200,21 @@ const CompanyCircle = ({ rotationAngle, smallCirclePositions, selectedIndex }) =
     </div>
   );
 };
-const FloatingImage = ({ img_link }) => {
+const FloatingImage = ({ img_link, img_size }) => {
   return (
     <motion.img
       key={img_link}
       src={img_link} // 이미지 경로
       alt="Floating Image"
-      className={`h-[240px] w-[240px] absolute top-1/2 left-1/2 `}
-      // initial={{ y: 0 }}
+      className={` ${img_size} absolute top-1/2 left-1/2  drop-shadow-2xl `}
+      initial={{ x: "-50%", y: "-100%" }}
       animate={{
-        x: ["-50%"],
-        y: ["-50%", "-60%", "-50%"], // 위로 20px 이동 후 다시 원래 위치로
+        x: ["-50%", "-50%", "-50%"],
+        y: ["-50%", "-60%", "-50%"],
+        // 위로 20px 이동 후 다시 원래 위치로
       }}
       transition={{
-        delay: 1.5,
+        // delay: 0.5,
         duration: 3, // 애니메이션 지속 시간 (초)
         repeat: Infinity, // 무한 반복
         repeatType: "reverse", // 왕복 애니메이션
