@@ -1,5 +1,3 @@
-import HeroSection from "../kwon/main/HeroSection";
-import Career from "../kwon/main/career";
 import MenuHeader from "../kwon/components/menuheader";
 
 export default function Company() {
