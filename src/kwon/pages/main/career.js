@@ -37,7 +37,7 @@ export default function Career() {
                 <CareerCard color="#75DFFF" title="Challenge" description="달성 가능한 목표를 설정하고 달려가며 끊임없이 도전하는 사람"/>
             </div>
 
-            <a href="http://www.waveware.co.kr/" target="_blank" rel="noopener noreferrer">
+            <a href="https://www.saramin.co.kr/zf_user/company-info/view?csn=MlUxNjNTaERsZ0h1Qzg3NlZXUnpHdz09" target="_blank" rel="noopener noreferrer">
                 <button
                     className="flex items-center px-6 py-2 border border-white text-white rounded-br-2xl rounded-tl-2xl hover:bg-white hover:text-black transition-colors duration-300">
                     <span className="mr-4 font-light">채용 공고</span>
