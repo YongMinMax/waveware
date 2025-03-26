@@ -1,5 +1,5 @@
 import React from 'react';
-import CareerCard from '../../components/CareerCard';
+import CareerCard from './CareerCard';
 
 export default function Career() {
   return (
