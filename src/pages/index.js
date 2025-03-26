@@ -1,5 +1,5 @@
-import HeroSection from "../kwon/pages/main/HeroSection";
-import Career from "../kwon/pages/main/career";
+import HeroSection from "../kwon/main/HeroSection";
+import Career from "../kwon/main/career";
 
 export default function Home() {
   return (
