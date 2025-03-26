@@ -7,7 +7,14 @@ export default function Header() {
   const [showHeader, setShowHeader] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
 
-  const isActive = (href) => (router.asPath === href ? 'text-primary' : 'hover:text-gray-700');
+  const isActive = (href) => {
+    // '#' 문자가 포함된 링크의 경우 정확히 일치하는지 확인
+    if (href.startsWith('#')) {
+      return router.asPath === href ? 'text-primary' : 'hover:text-gray-700';
+    }
+    // 일반 페이지 링크의 경우 경로가 시작하는지 확인
+    return router.asPath.startsWith('/' + href) ? 'text-primary' : 'hover:text-gray-700';
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -40,7 +47,7 @@ export default function Header() {
       {/* 메뉴 */}
       <nav>
         <ul className="flex space-x-8 text-lg">
-          <li><Link href="company" className={isActive('#company')}>Company</Link></li>
+          <li><Link href="/company" className={isActive('company')}>Company</Link></li>
           <li><Link href="#technology" className={isActive('#technology')}>Technology</Link></li>
           <li><Link href="#history" className={isActive('#history')}>History</Link></li>
           <li><Link href="#career" className={isActive('#career')}>Career</Link></li>
