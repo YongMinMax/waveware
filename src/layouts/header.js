@@ -48,10 +48,10 @@ export default function Header() {
       <nav>
         <ul className="flex space-x-8 text-lg">
           <li><Link href="/company" className={isActive('company')}>Company</Link></li>
-          <li><Link href="#technology" className={isActive('#technology')}>Technology</Link></li>
-          <li><Link href="#history" className={isActive('#history')}>History</Link></li>
-          <li><Link href="#career" className={isActive('#career')}>Career</Link></li>
-          <li><Link href="#contact" className={isActive('#contact')}>Contact</Link></li>
+          <li><Link href="/technology" className={isActive('technology')}>Technology</Link></li>
+          <li><Link href="/history" className={isActive('history')}>History</Link></li>
+          <li><Link href="/career" className={isActive('career')}>Career</Link></li>
+          <li><Link href="/contact" className={isActive('contact')}>Contact</Link></li>
         </ul>
       </nav>
     </header>
