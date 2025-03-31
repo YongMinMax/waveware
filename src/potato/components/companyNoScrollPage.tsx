@@ -1,19 +1,42 @@
 import React, { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { GoArrowUpRight } from "react-icons/go";
-import { threshold } from "three/examples/jsm/nodes/Nodes.js";
 
-const CompanyPage2 = () => {
+const CompanyNoScrollPage = () => {
   const [rotationAngle, setRotationAngle] = useState(0); // 현재 회전 각도
+  const [currentStep, setCurrentStep] = useState(0); // 현재 단계 (1번, 2번 등)
   const containerRef = useRef<HTMLDivElement>(null);
-  const firstSensor = useRef<HTMLDivElement>(null);
-  const secondSensor = useRef<HTMLDivElement>(null);
-  const thirdSensor = useRef<HTMLDivElement>(null);
-
   const selectedIndex =
     rotationAngle > 0
       ? Math.floor((Math.abs(rotationAngle) / 120) % 3)
       : Math.floor((Math.abs(rotationAngle) / 60) % 3);
+
+  // 스크롤 마다 동작하는 이벤트 - 회전값 변경
+  const handleScroll = (e: WheelEvent) => {
+    e.preventDefault();
+
+    if (e.deltaY > 0) {
+      setCurrentStep((prev) => {
+        if (prev - 1 > -10) {
+          return prev - 1;
+        } else {
+          setRotationAngle((prev) => prev + 120);
+          return 0;
+        }
+      });
+      // setRotationAngle((prev) => prev - 120);
+    } else if (e.deltaY < 0) {
+      setCurrentStep((prev) => {
+        if (prev + 1 < 10) {
+          return prev + 1;
+        } else {
+          setRotationAngle((prev) => prev - 120);
+          return 0;
+        }
+      });
+      // setRotationAngle((prev) => prev + 120);
+    }
+  };
 
   // 작은 원들의 초기 위치
   const smallCirclePositions = [
@@ -22,61 +45,23 @@ const CompanyPage2 = () => {
     { x: 50 - 40 * Math.cos((4 * Math.PI) / 3), y: parseFloat((50 + 40 * Math.sin((4 * Math.PI) / 3)).toFixed(6)) },
   ];
 
-  console.log(rotationAngle);
+  // 스크롤 이벤트 등록
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            if (entry.target === firstSensor.current) {
-            } else if (entry.target === secondSensor.current) {
-              // console.log(`세번째 섹션 입장 ${rotationAngle}`);
-              setRotationAngle(120);
-            } else if (entry.target === thirdSensor.current) {
-              setRotationAngle(240);
-            }
-          }
-        });
-      },
-      { threshold: 0.5 }
-    );
-    const firstObserver = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            if (entry.target === firstSensor.current) {
-              setRotationAngle(0);
-            }
-          }
-        });
-      },
-      { rootMargin: "-250px 0px -250px 0px", threshold: 1.0 }
-    );
-    if (firstSensor.current) {
-      firstObserver.observe(firstSensor.current);
-    }
-    if (secondSensor.current) {
-      observer.observe(secondSensor.current);
-    }
-    if (thirdSensor.current) {
-      observer.observe(thirdSensor.current);
+    const container = containerRef.current;
+
+    if (container) {
+      container.addEventListener("wheel", handleScroll, { passive: false });
     }
     return () => {
-      if (firstSensor.current) {
-        firstObserver.unobserve(firstSensor.current);
-      }
-      if (secondSensor.current) {
-        observer.unobserve(secondSensor.current);
-      }
-      if (thirdSensor.current) {
-        observer.unobserve(thirdSensor.current);
+      if (container) {
+        container.removeEventListener("wheel", handleScroll);
       }
     };
   }, []);
 
   return (
     <div ref={containerRef}>
-      <div className={`container  h-screen flex   justify-between items-center sticky top-0 `}>
+      <div className={`container w-screen h-screen flex px-[40px] justify-between items-center`}>
         <CompanyText selectedIndex={selectedIndex} />
 
         <CompanyCircle
@@ -84,11 +69,6 @@ const CompanyPage2 = () => {
           rotationAngle={rotationAngle}
           selectedIndex={selectedIndex}
         />
-      </div>
-      <div className={`skill-area  h-[210vh] flex flex-col justify-around  `}>
-        <div ref={firstSensor} className={`second-section h-[10vh] flex flex-col-reverse  `}></div>
-        <div ref={secondSensor} className={`third-section h-[100vh]  `}></div>
-        <div ref={thirdSensor} className={`third-section h-[100vh]  `}></div>
       </div>
     </div>
   );
@@ -303,4 +283,4 @@ const AnimatedCircle = ({
     />
   );
 };
-export default CompanyPage2;
+export default CompanyNoScrollPage;

@@ -1,10 +1,14 @@
 import React, { useState, useRef, useEffect } from "react";
 import SkillPage from "../potato/components/skillPage";
-import CompanyPage from "../potato/components/companyPage";
-import CompanyPage2 from "../potato/components/companyPage2";
+import CompanyLongScrollPage from "../potato/components/companyLongScrollPage";
 
 const PotatoPage = () => {
-  return <CompanyPage2 />;
+  return (
+    <>
+      <CompanyLongScrollPage />
+      <SkillPage />
+    </>
+  );
 };
 
 export default PotatoPage;
