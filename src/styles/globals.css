@@ -51,3 +51,11 @@ body {
 .animate-grow {
   animation: grow 1.5s ease-out forwards;
 }
+
+.addr_item dt {
+  color: #6e6e6e;
+}
+
+.addr_item dd {
+  font-size: 1.2rem;
+}
