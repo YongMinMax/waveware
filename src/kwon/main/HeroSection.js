@@ -28,7 +28,9 @@ export default function HeroSection() {
           </div>
 
           {/* 구분선 */}
-          <div className="w-[400px] h-[10px] bg-white font-medium"></div>
+          <div className="w-[400px]">
+           <div className="w-[400px] h-[10px] bg-white font-medium animate-grow"></div>
+          </div>
 
           {/* 설명 텍스트 */}
           <div className="text-[30px] pt-20 animate-slide-up">

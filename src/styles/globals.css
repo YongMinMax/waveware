@@ -36,5 +36,18 @@ body {
 }
 
 .animate-slide-up {
-  animation: slideUp 1s ease-out forwards;
+  animation: slideUp 1.5s ease-out forwards;
+}
+
+@keyframes grow {
+  from {
+    width: 0;
+  }
+  to {
+    width: 400px;
+  }
+}
+
+.animate-grow {
+  animation: grow 1.5s ease-out forwards;
 }
