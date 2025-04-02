@@ -11,7 +11,8 @@ const CompanyLongScrollPage = () => {
   const secondSensor = useRef<HTMLDivElement>(null);
   const thirdSensor = useRef<HTMLDivElement>(null);
 
-  const SECTION_HEIGHT = { first: 150, second: 150, third: 150 };
+  const SECTION_HEIGHT = { first: 90, second: 90, third: 90 };
+  const DEFAULT_SCROLL_THRESHOLD = 0.6;
   const MIN_WIDTH = 1440;
   const selectedIndex = Math.floor((Math.abs(rotationAngle) / 120) % 3);
 
@@ -54,7 +55,7 @@ const CompanyLongScrollPage = () => {
       );
     };
 
-    let observer = createObserver(0.35); // 초기 threshold 값
+    let observer = createObserver(DEFAULT_SCROLL_THRESHOLD); // 초기 threshold 값
 
     const observeSensors = () => {
       if (firstSensor.current) observer.observe(firstSensor.current);
@@ -72,10 +73,10 @@ const CompanyLongScrollPage = () => {
 
     const handleResize = () => {
       unobserveSensors(); // 기존 observer 해제
-      // const newThreshold = window.innerWidth < 768 ? 0.2 : 0.35; // 화면 크기에 따라 threshold 변경
-      const newThreshold = window.innerWidth > MIN_WIDTH ? 0.35 : (window.innerWidth * 0.6) / MIN_WIDTH;
-      console.log(`현재 뷰포트 크기 ${window.innerWidth} * ${window.innerHeight} = ${newThreshold}`);
+      const newThreshold =
+        window.innerWidth > MIN_WIDTH ? DEFAULT_SCROLL_THRESHOLD : (window.innerWidth * 0.6) / MIN_WIDTH;
       observer = createObserver(newThreshold); // 새로운 observer 생성
+      console.log(`${newThreshold}`);
       observeSensors(); // 새로운 observer로 감시 시작
     };
 
@@ -90,15 +91,15 @@ const CompanyLongScrollPage = () => {
   return (
     <div
       ref={containerRef}
-      className={`relative w-full`}
+      className={`relative w-full  max-w-[100%] min-w-[100%] `}
       style={{
         height: `${SECTION_HEIGHT.first + SECTION_HEIGHT.second + SECTION_HEIGHT.third}vh`,
-        minWidth: `${MIN_WIDTH}px`,
+        // minWidth: `${MIN_WIDTH}px`,
       }}
     >
       <div
         ref={firstSensor}
-        className={`first-section w-[100%]  absolute  `}
+        className={`first-section w-[100%]  absolute   `}
         style={{
           height: `${SECTION_HEIGHT.first}vh`,
           minWidth: `${MIN_WIDTH}px`,
@@ -115,7 +116,7 @@ const CompanyLongScrollPage = () => {
       ></div>
       <div
         ref={thirdSensor}
-        className={`third-section   w-[100%]  absolute  `}
+        className={`third-section   w-[100%]  absolute   `}
         style={{
           height: `${SECTION_HEIGHT.third}vh`,
           top: `${SECTION_HEIGHT.first + SECTION_HEIGHT.second}vh`,
@@ -123,7 +124,7 @@ const CompanyLongScrollPage = () => {
         }}
       ></div>
       <div
-        className={`container h-screen flex justify-end items-center sticky top-0`}
+        className={`container h-screen flex justify-end items-center sticky top-0 overflow-hidden `}
         style={{ minWidth: `${MIN_WIDTH}px` }} // px 단위를 명시적으로 추가
       >
         <CompanyText selectedIndex={selectedIndex} isScrollDown={isScrollDown} firstRender={firstRender} />
@@ -171,13 +172,10 @@ const CompanyText = ({ selectedIndex, isScrollDown, firstRender }) => {
   const handleButtonClick = () => {
     if (selectedIndex === 0) {
       // 데이터프로세싱
-      console.log("데이터 프로세싱");
     } else if (selectedIndex === 1) {
       // 데이터 분석
-      console.log("데이터 분석");
     } else if (selectedIndex === 2) {
       // 데이터 시각화
-      console.log("데이터 시각화");
     }
   };
   return (
