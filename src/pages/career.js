@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import MenuHeader from "../kwon/components/menuheader";
 import ProcessComponent from "../kwon/career/process_component";
 import Requirements from "../kwon/career/Requirements";
+import SectionTitle from "../kwon/components/section_title";
 
 export default function Career() {
     // 현재 활성화된 프로세스 ID를 저장하는 상태
@@ -93,9 +94,9 @@ export default function Career() {
 
             <MenuHeader title={"Career"} description={"사람의 성장이 회사의 성장이라고 믿습니다."}/>
 
-            <span className="w-[1400px] pt-32 pb-4 text-5xl font-bold text-left">Recruitment Process</span>
+            <SectionTitle text={"Recruitment Process"}/>
 
-            <div className="w-[1300px] h-[500px] flex relative my-20">
+            <div className="w-[1300px] h-[500px] flex relative mt-20">
                 <div className="absolute left-0">
                     <ProcessComponent 
                         data={processes[1]} 
@@ -133,7 +134,7 @@ export default function Career() {
                 </div>
             </div>
 
-            <span className="w-[1400px] pb-4 text-5xl font-bold text-left">Who We Wants</span>
+            <SectionTitle text={"Who We Want"}/>
             <section className="w-full h-[700px] bg-gray-100 flex justify-center">
                 <div className="w-[1400px] h-full flex justify-between items-center">
                     <Requirements requirements={requirements[1]}/>

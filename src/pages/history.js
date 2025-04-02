@@ -1,6 +1,9 @@
 import MenuHeader from "../kwon/components/menuheader";
 
 export default function History() {
+
+
+
     return (
         <main className="min-h-screen flex flex-col items-center justify-center">
 
