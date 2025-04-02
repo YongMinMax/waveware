@@ -4,7 +4,7 @@ import CareerCard from './CareerCard';
 export default function Career() {
   return (
     <section
-      className="relative w-full h-[900px] bg-cover bg-center"
+      className="relative w-full h-screen min-h-[700px] bg-cover bg-center"
       style={{ backgroundImage: "url('/img/career_bg.jpg')" }}
     >
       <div className="absolute inset-0 bg-black opacity-60"></div>
