@@ -2,12 +2,13 @@ import { useRef, useEffect } from "react";
 import HeroSection from "../kwon/main/HeroSection";
 import Career from "../kwon/main/career";
 import CompanyLongScrollPage from "../potato/components/companyLongScrollPage";
-import SkillPage from "../potato/components/skillPage";
+import SkillPage, { SkillIntroPage } from "../potato/components/skillPage";
 
 export default function Home() {
   const heroRef = useRef(null);
   const longScrollRef = useRef(null);
   const skillRef = useRef(null);
+  const skillIntroRef = useRef(null);
   const careerRef = useRef(null);
 
   useEffect(() => {
@@ -16,7 +17,7 @@ export default function Home() {
     const handleScroll = (e) => {
       if (isThrottled) return;
       isThrottled = true;
-      setTimeout(() => (isThrottled = false), 1000);
+      setTimeout(() => (isThrottled = false), 500);
 
       const delta = e.deltaY;
       const currentScroll = window.scrollY;
@@ -26,6 +27,8 @@ export default function Home() {
       const longScrollTop = longScrollRef.current?.offsetTop ?? 0;
       const longScrollHeight = longScrollRef.current?.offsetHeight ?? 0;
       const skillTop = skillRef.current?.offsetTop ?? 0;
+      const skillIntroTop = skillIntroRef.current?.offsetTop ?? 0;
+      const skillIntroHeight = skillIntroRef.current?.offsetHeight ?? 0;
       const careerTop = careerRef.current?.offsetTop ?? 0;
 
       // Hero → Company (아래)
@@ -33,39 +36,33 @@ export default function Home() {
         longScrollRef.current?.scrollIntoView({ behavior: "smooth" });
       }
 
-      // Company → Skill (아래)
-      if (
-        currentScroll >= longScrollTop + longScrollHeight - vh &&
-        currentScroll < skillTop &&
-        delta > 0
-      ) {
+      // Company → SkillIntro (아래)
+      if (currentScroll >= longScrollTop + longScrollHeight - vh * 1.5 && currentScroll < skillIntroTop && delta > 0) {
+        skillIntroRef.current?.scrollIntoView({ behavior: "smooth" });
+      }
+      // SkillIntro → Skill (아래)
+      if (currentScroll >= skillIntroTop + skillIntroHeight - vh * 1.5 && currentScroll < skillTop && delta > 0) {
         skillRef.current?.scrollIntoView({ behavior: "smooth" });
       }
 
       // Skill → Career (아래)
-      if (currentScroll >= skillTop + 0.5 * vh && delta > 0) {
+      if (currentScroll >= skillTop && currentScroll < skillTop + vh && delta > 0) {
         careerRef.current?.scrollIntoView({ behavior: "smooth" });
       }
 
       // Career → Skill (위로)
-      if (
-        currentScroll >= careerTop &&
-        delta < 0 &&
-        currentScroll < careerTop + vh
-      ) {
-        skillRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+      if (currentScroll >= careerTop && delta < 0 && currentScroll < careerTop + vh) {
+        skillRef.current?.scrollIntoView({ behavior: "smooth" });
       }
 
-      // Skill → Company (위로)
-      if (
-        currentScroll >= skillTop &&
-        delta < 0 &&
-        currentScroll < skillTop + 10
-      ) {
-        longScrollRef.current?.scrollIntoView({
-          behavior: "smooth",
-          block: "end",
-        });
+      // Skill → SkillIntro (위로)
+      if (currentScroll >= skillTop && delta < 0 && currentScroll < skillTop + 10) {
+        skillIntroRef.current?.scrollIntoView({ behavior: "smooth" });
+      }
+
+      // SkillIntro → Company (위로)
+      if (currentScroll >= skillIntroTop && delta < 0 && currentScroll < skillIntroTop + 10) {
+        longScrollRef.current?.scrollIntoView({ behavior: "smooth" });
       }
 
       // Company → Hero (위로)
@@ -89,6 +86,10 @@ export default function Home() {
 
       <div ref={longScrollRef} className="w-full min-h-screen">
         <CompanyLongScrollPage />
+      </div>
+
+      <div ref={skillIntroRef} className="w-full min-h-screen">
+        <SkillIntroPage />
       </div>
 
       <div ref={skillRef} className="w-full min-h-screen">
