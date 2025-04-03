@@ -1,5 +1,6 @@
 import React, { ReactNode, useRef } from "react";
 import { useEffect, useState } from "react";
+import ReactDOM from "react-dom";
 import {
   motion,
   AnimatePresence,
@@ -9,12 +10,17 @@ import {
   useMotionValueEvent,
   useSpring,
 } from "framer-motion";
+export const SkillIntroPage = () => {
+  return (
+    <div className={`relative    mb-[200px]  min-w-full max-w-full`}>
+      <IntroObj className={`min-w-[1440px]`} />
+    </div>
+  );
+};
 const SkillPage = () => {
   return (
-    <div className={`relative    mb-[300px]  min-w-full max-w-full`}>
-      <IntroObj className={`min-w-[1440px]`} />
-      {/* <IntroText className={`min-w-[1440px]`} /> */}
-      <SkillContainer className={`min-w-[1440px] mt-[390px]`} />
+    <div className={`relative    min-w-full max-w-full`}>
+      <SkillContainer className={`min-w-[1440px] mt-[100px]`} />
     </div>
   );
 };
@@ -111,7 +117,7 @@ const SkillBox = ({ idx, skillInfo, isHovered, handleMouseEnter }) => {
   });
 
   return (
-    <div ref={scrollSensor} className={`relative overflow-hidden rounded-[20px]`}>
+    <div ref={scrollSensor} className={`relative overflow-hidden rounded-[10px]`}>
       <AnimatePresence initial={false}>
         {!isAnimated && (
           <motion.div
@@ -125,7 +131,7 @@ const SkillBox = ({ idx, skillInfo, isHovered, handleMouseEnter }) => {
       </AnimatePresence>
       <motion.div animate={isAnimated ? { y: 0 } : { y: "100%" }} transition={{ ease: "easeOut", duration: 0.8 }}>
         <motion.div
-          className={`rounded-[20px] cursor-pointer overflow-hidden`} // overflow 설정
+          className={`rounded-[10px]  cursor-pointer overflow-hidden`} // overflow 설정
           style={{
             backgroundImage: `${background_CSS},url(${img_src})`,
             backgroundPosition: `center top`,
@@ -172,67 +178,6 @@ const SkillBox = ({ idx, skillInfo, isHovered, handleMouseEnter }) => {
           </div>
         </motion.div>
       </motion.div>
-    </div>
-  );
-};
-
-const IntroText = ({ className }) => {
-  const introText1 = `데이터 처리 기술을 통해 미래의 잠재력을 미리 예측하고 혁신을 위한 새로운 가치를 발굴합니다.\n`;
-  const introText2 = `다년간 R&D 사업의 노하우를 통해 데이터 분석으로 의미를 추출합니다.`;
-
-  const progressSensor = useRef<HTMLDivElement>(null);
-  const [scrollLock, setScrollLock] = useState(false);
-  const scrollLockRef = useRef<HTMLDivElement>(null);
-  const [progressBar, setProgressBar] = useState(0);
-  const { scrollYProgress: progressScroll } = useScroll({ target: progressSensor, offset: ["start end", "end start"] });
-  const progressGreenBarY = useSpring(useTransform(progressScroll, [0.2, 0.33], [-150, 0]), {
-    stiffness: 1000,
-    damping: 100,
-  });
-  const progressGrayBarY = useSpring(useTransform(progressScroll, [0.0, 0.1], [-150, 0]), {
-    stiffness: 1000,
-    damping: 100,
-  });
-  const GREEN = "#3A9100";
-  const GRAY = "#D9D9D9";
-  const centerRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress: allDataScroll } = useScroll({ target: centerRef, offset: ["start center", "end center"] });
-
-  return (
-    <div className={`container text-center flex flex-col   items-center pt-[40px]   ${className}  `}>
-      {/* <span ref={centerRef} className={` font-bold text-[60px]`}>
-        모든 <span style={{ color: `${GREEN}` }}>데이터</span>에서
-      </span>
-
-      <div
-        ref={progressSensor}
-        className={`relative  w-[5px] h-[150px] overflow-hidden mt-[37px] mb-[37px]  `}
-        style={{ background: `white` }}
-      >
-        <motion.div
-          className={` absolute top-0 left-0 w-full h-full    `}
-          style={{ background: `${GRAY}`, y: progressGrayBarY }}
-        ></motion.div>
-        <motion.div
-          className={` absolute top-0 left-0 w-full h-full    `}
-          style={{ background: `${GREEN}`, y: progressGreenBarY }}
-        ></motion.div>
-      </div> */}
-
-      <div className={` whitespace-pre-line  snap-start`}>
-        <MoveScrollText entryTiming={0.15}>
-          <div className={`font-semibold text-xl mb-[11px]`}>
-            <span style={{ color: `${GREEN}` }}>WAVEWARE</span>
-            <span>는</span>
-          </div>
-        </MoveScrollText>
-        <MoveScrollText entryTiming={0.15} entryDuration={0.5}>
-          <span className={`font-medium text-[30px]`}>{introText1}</span>
-        </MoveScrollText>
-        <MoveScrollText entryTiming={0.15} entryDuration={0.5}>
-          <span className={`font-medium text-[30px]`}>{introText2}</span>
-        </MoveScrollText>
-      </div>
     </div>
   );
 };
@@ -386,6 +331,21 @@ const MoveScrollText = ({
       </motion.div>
     </div>
   );
+};
+
+const Modal = ({ isOpen, onClose, className, children }) => {
+  // 모달이 열리지 않은 경우 렌더링하지 않음
+  if (!isOpen) return null;
+
+  // 모달이 열릴 때 스크롤을 막음
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, []);
+
+  return <div className={`fixed top-0 left-0 w-full h-full bg-black/50 ${className}`}></div>;
 };
 
 export default SkillPage;
