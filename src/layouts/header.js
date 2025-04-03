@@ -6,39 +6,76 @@ export default function Header() {
   const router = useRouter();
   const [showHeader, setShowHeader] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
+  const [menuColor, setMenuColor] = useState('text-white');
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    // 초기 로드 시 헤더를 숨겨둡니다
+    const timer = setTimeout(() => {
+      setIsVisible(true);
+    }, 1500); // 5분할 애니메이션 이후에 나타나도록 설정
+
+    return () => clearTimeout(timer);
+  }, []);
 
   const isActive = (href) => {
-    // '#' 문자가 포함된 링크의 경우 정확히 일치하는지 확인
     if (href.startsWith('#')) {
-      return router.asPath === href ? 'text-primary' : 'hover:text-gray-700';
+      return router.asPath === href ? `${menuColor}` : `${menuColor} hover:opacity-80`;
     }
-    // 일반 페이지 링크의 경우 경로가 시작하는지 확인
-    return router.asPath.startsWith('/' + href) ? 'text-primary' : 'hover:text-gray-700';
+    return router.asPath.startsWith('/' + href) ? `${menuColor}` : `${menuColor} hover:opacity-80`;
   };
 
   useEffect(() => {
     const handleScroll = () => {
       if (typeof window !== 'undefined') {
+        // 헤더 표시/숨김 로직
         if (window.scrollY > lastScrollY) {
-          // 스크롤을 내릴 때
           setShowHeader(false);
         } else {
-          // 스크롤을 올릴 때
           setShowHeader(true);
         }
         setLastScrollY(window.scrollY);
+
+        // 현재 스크롤 위치 (화면 중앙 기준)
+        const viewportHeight = window.innerHeight;
+        const currentScrollMiddle = window.scrollY + (viewportHeight / 2);
+
+        // 각 섹션의 위치 가져오기
+        const sections = document.querySelectorAll('.w-full.min-h-screen');
+        let isInDarkSection = false;
+
+        sections.forEach((section, index) => {
+          const sectionTop = section.offsetTop;
+          const sectionBottom = sectionTop + section.offsetHeight;
+
+          // CompanyLongScrollPage, SkillIntroPage, SkillPage에 해당하는 섹션인지 확인
+          if (index >= 1 && index <= 3) { // 2,3,4번째 섹션
+            if (currentScrollMiddle >= sectionTop && currentScrollMiddle <= sectionBottom) {
+              isInDarkSection = true;
+            }
+          }
+        });
+
+        // 메뉴 색상 설정
+        setMenuColor(isInDarkSection ? 'text-black' : 'text-white');
+
+        console.log('Current scroll middle:', currentScrollMiddle);
+        console.log('Menu color:', isInDarkSection ? 'black' : 'white');
       }
     };
 
+    // 초기 실행
+    handleScroll();
+    
+    // 스크롤 이벤트 리스너 등록
     window.addEventListener('scroll', handleScroll);
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
+    return () => window.removeEventListener('scroll', handleScroll);
   }, [lastScrollY]);
 
   return (
-    <header className={`fixed top-0 left-0 right-0 flex justify-between items-center px-[100px] py-1 bg-white/90 backdrop-blur-sm shadow-md transition-transform duration-300 z-50 ${showHeader ? 'translate-y-0' : '-translate-y-full'}`}>
+    <header className={`fixed top-0 left-0 right-0 flex justify-between items-center px-[100px] py-1 transition-all duration-500 z-10
+      ${showHeader ? 'translate-y-0' : '-translate-y-full'}
+      ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
       {/* 로고 */}
       <Link href="/" className="text-primary text-[48px] font-bold font-pistara">
         waveware
@@ -47,11 +84,11 @@ export default function Header() {
       {/* 메뉴 */}
       <nav>
         <ul className="flex space-x-8 text-lg">
-          <li><Link href="/company" className={isActive('company')}>Company</Link></li>
+          <li><Link href="/company" className={`transition-colors duration-300 ${isActive('company')}`}>Company</Link></li>
           {/*<li><Link href="/technology" className={isActive('technology')}>Technology</Link></li>*/}
-          <li><Link href="/history" className={isActive('history')}>History</Link></li>
-          <li><Link href="/career" className={isActive('career')}>Career</Link></li>
-          <li><Link href="/contact" className={isActive('contact')}>Contact</Link></li>
+          <li><Link href="/history" className={`transition-colors duration-300 ${isActive('history')}`}>History</Link></li>
+          <li><Link href="/career" className={`transition-colors duration-300 ${isActive('career')}`}>Career</Link></li>
+          <li><Link href="/contact" className={`transition-colors duration-300 ${isActive('contact')}`}>Contact</Link></li>
         </ul>
       </nav>
     </header>
