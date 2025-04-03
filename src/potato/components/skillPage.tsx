@@ -1,19 +1,27 @@
-import React, { useRef } from "react";
+import React, { ReactNode, useRef } from "react";
 import { useEffect, useState } from "react";
-import { motion, AnimatePresence, Variants, useScroll, useTransform } from "framer-motion";
-import { style } from "framer-motion/client";
+import {
+  motion,
+  AnimatePresence,
+  Variants,
+  useScroll,
+  useTransform,
+  useMotionValueEvent,
+  useSpring,
+} from "framer-motion";
 const SkillPage = () => {
   return (
-    <div className={`relative  mt-[150px]  mb-[110px]  min-w-full max-w-full`}>
-      <IntroText className={`min-w-[1440px]`} />
-      <SkillContainer className={`min-w-[1440px]`} />
+    <div className={`relative    mb-[300px]  min-w-full max-w-full`}>
+      <IntroObj className={`min-w-[1440px]`} />
+      {/* <IntroText className={`min-w-[1440px]`} /> */}
+      <SkillContainer className={`min-w-[1440px] mt-[390px]`} />
     </div>
   );
 };
 
 const SkillContainer = ({ className }) => {
-  // 처음엔 가장 왼쪽의 메타데이터가 열려 있는 상태로
-  const [seletedIndex, setSelectedIndex] = useState(0);
+  const [seletedIndex, setSelectedIndex] = useState(1);
+
   const handleMouseEnter = (idx: number) => {
     setSelectedIndex(idx);
   };
@@ -49,8 +57,11 @@ const SkillContainer = ({ className }) => {
   ];
   return (
     <div className={` container flex flex-col items-end px-0 ${className}`}>
-      <span className={`mt-[390px] text-[#F1EFEE] text-[128px] font-bold leading-[0.9]`}>WAVEWARE</span>
-      <div className={` w-[1440px] h-[640px] flex gap-[4px] `}>
+      <MoveScrollText entryDuration={0.8} entryTiming={0.1} axis="x" className={``}>
+        <span className={` text-[#F1EFEE] text-[128px] font-bold leading-[0.9]`}>WAVEWARE</span>
+      </MoveScrollText>
+
+      <div className={` w-[1440px] h-[640px] flex gap-[4px] overflow-hidden`}>
         {skills.map((skill, index) => {
           return (
             <SkillBox
@@ -87,84 +98,292 @@ const SkillBox = ({ idx, skillInfo, isHovered, handleMouseEnter }) => {
       transition: { duration: 0.5, ease: "easeInOut" },
     },
   };
+  const skeleton_CSS = isHovered ? `w-[987px] h-[630px]` : `w-[147px] h-[630px]`;
+
+  const scrollSensor = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({ target: scrollSensor, offset: ["start end", "end start"] });
+  const [isAnimated, setIsAnimated] = useState(false);
+
+  useMotionValueEvent(scrollYProgress, "change", (latest) => {
+    if (latest >= 0.1) {
+      setIsAnimated(true);
+    }
+  });
 
   return (
-    <motion.div
-      className={`rounded-[20px] cursor-pointer overflow-hidden`} // overflow 설정
-      style={{
-        backgroundImage: `${background_CSS},url(${img_src})`,
-        backgroundPosition: `center top`,
-        backgroundSize: `auto,${img_size}`,
-        backgroundRepeat: "no-repeat",
-        padding: isHovered ? "352px 0px 100px 100px " : "90px 0px 0px 0px",
-      }}
-      variants={variants}
-      initial="small"
-      animate={isHovered ? "large" : "small"}
-      onMouseEnter={() => handleMouseEnter(idx)}
-    >
-      <div className="relative w-full h-full">
-        {isHovered ? (
-          <div className={`flex flex-col `}>
-            <span className={`text-[#FFFFFF] font-bold text-[60px] whitespace-nowrap`}>{title}</span>
-            <span className={`text-[#FFFFFF] font-medium text-[24px] whitespace-nowrap`}>{content}</span>
-            <div className={`mt-[37px] flex gap-[14px] `}>
-              {keywords.map((keyword: string) => (
-                <span
-                  key={keyword}
-                  className={`text-[#FFFFFF] rounded-[5px] border border-[#FFFFF] text-[16px] font-normal py-[3px] px-[15px] flex-shrink-0 `}
-                >
-                  {keyword}
-                </span>
-              ))}
-            </div>
-          </div>
-        ) : (
-          <div className={`text-[#B2C5CB] font-extrabold text-[32px] text-center`}>
-            <motion.div
-              className="rotate-90 origin-center"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1, transition: { duration: 0.5, ease: "easeInOut" } }}
-            >
-              {title}
-            </motion.div>
-          </div>
+    <div ref={scrollSensor} className={`relative overflow-hidden rounded-[20px]`}>
+      <AnimatePresence initial={false}>
+        {!isAnimated && (
+          <motion.div
+            key={`${idx}-skeleton`}
+            className={`${skeleton_CSS} absolute -z-10`}
+            style={{ backgroundColor: `#F1EFEE` }}
+            exit={{ opacity: 1, y: "-100%" }}
+            transition={{ duration: 1.5, ease: "easeOut" }}
+          ></motion.div>
         )}
-      </div>
-    </motion.div>
+      </AnimatePresence>
+      <motion.div animate={isAnimated ? { y: 0 } : { y: "100%" }} transition={{ ease: "easeOut", duration: 0.8 }}>
+        <motion.div
+          className={`rounded-[20px] cursor-pointer overflow-hidden`} // overflow 설정
+          style={{
+            backgroundImage: `${background_CSS},url(${img_src})`,
+            backgroundPosition: `center top`,
+            backgroundSize: `auto,${img_size}`,
+            backgroundRepeat: "no-repeat",
+            padding: isHovered ? "352px 0px 100px 100px " : "90px 0px 0px 0px",
+          }}
+          variants={variants}
+          initial="small"
+          animate={isHovered ? "large" : "small"}
+          onMouseEnter={() => handleMouseEnter(idx)}
+        >
+          <div className="relative w-full h-full">
+            {isHovered ? (
+              <div className={`flex flex-col `}>
+                <span className={`text-[#FFFFFF] font-bold text-[60px] whitespace-nowrap`}>{title}</span>
+                <MoveEnterText>
+                  <span className={`text-[#FFFFFF] font-medium text-[24px] whitespace-nowrap`}>{content}</span>
+                </MoveEnterText>
+                <MoveEnterText>
+                  <div className={`mt-[37px] flex gap-[14px] `}>
+                    {keywords.map((keyword: string) => (
+                      <span
+                        key={keyword}
+                        className={`text-[#FFFFFF] rounded-[5px] border border-[#FFFFF] text-[16px] font-normal py-[3px] px-[15px] flex-shrink-0 `}
+                      >
+                        {keyword}
+                      </span>
+                    ))}
+                  </div>
+                </MoveEnterText>
+              </div>
+            ) : (
+              <div className={`text-[#B2C5CB] font-extrabold text-[32px] text-center`}>
+                <motion.div
+                  className="rotate-90 origin-center"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1, transition: { duration: 0.5, ease: "easeInOut" } }}
+                >
+                  {title}
+                </motion.div>
+              </div>
+            )}
+          </div>
+        </motion.div>
+      </motion.div>
+    </div>
   );
 };
 
 const IntroText = ({ className }) => {
-  const introText = `데이터 처리 기술을 통해 미래의 잠재력을 미리 예측하고 혁신을 위한 새로운 가치를 발굴합니다.\n다년간 R&D 사업의 노하우를 통해 데이터 분석으로 의미를 추출합니다.`;
-  const [isProgressed, setIsProgressed] = useState(false);
+  const introText1 = `데이터 처리 기술을 통해 미래의 잠재력을 미리 예측하고 혁신을 위한 새로운 가치를 발굴합니다.\n`;
+  const introText2 = `다년간 R&D 사업의 노하우를 통해 데이터 분석으로 의미를 추출합니다.`;
+
   const progressSensor = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ target: progressSensor, offset: ["end end", "start start"] });
-  const progressBarY = useTransform(scrollYProgress, [0.3, 0.8], [-150, 0]);
+  const [scrollLock, setScrollLock] = useState(false);
+  const scrollLockRef = useRef<HTMLDivElement>(null);
+  const [progressBar, setProgressBar] = useState(0);
+  const { scrollYProgress: progressScroll } = useScroll({ target: progressSensor, offset: ["start end", "end start"] });
+  const progressGreenBarY = useSpring(useTransform(progressScroll, [0.2, 0.33], [-150, 0]), {
+    stiffness: 1000,
+    damping: 100,
+  });
+  const progressGrayBarY = useSpring(useTransform(progressScroll, [0.0, 0.1], [-150, 0]), {
+    stiffness: 1000,
+    damping: 100,
+  });
   const GREEN = "#3A9100";
   const GRAY = "#D9D9D9";
+  const centerRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress: allDataScroll } = useScroll({ target: centerRef, offset: ["start center", "end center"] });
+
   return (
-    <div className={`container text-center flex flex-col  items-center pt-[40px] ${className} `}>
-      <span className={` font-bold text-[60px]`}>
+    <div className={`container text-center flex flex-col   items-center pt-[40px]   ${className}  `}>
+      {/* <span ref={centerRef} className={` font-bold text-[60px]`}>
         모든 <span style={{ color: `${GREEN}` }}>데이터</span>에서
       </span>
+
       <div
         ref={progressSensor}
-        className={`relative  w-[5px] h-[150px] overflow-hidden mt-[37px]   `}
-        style={{ background: `${GRAY}` }}
+        className={`relative  w-[5px] h-[150px] overflow-hidden mt-[37px] mb-[37px]  `}
+        style={{ background: `white` }}
       >
         <motion.div
           className={` absolute top-0 left-0 w-full h-full    `}
-          style={{ background: `${GREEN}`, y: progressBarY }}
+          style={{ background: `${GRAY}`, y: progressGrayBarY }}
         ></motion.div>
+        <motion.div
+          className={` absolute top-0 left-0 w-full h-full    `}
+          style={{ background: `${GREEN}`, y: progressGreenBarY }}
+        ></motion.div>
+      </div> */}
+
+      <div className={` whitespace-pre-line  snap-start`}>
+        <MoveScrollText entryTiming={0.15}>
+          <div className={`font-semibold text-xl mb-[11px]`}>
+            <span style={{ color: `${GREEN}` }}>WAVEWARE</span>
+            <span>는</span>
+          </div>
+        </MoveScrollText>
+        <MoveScrollText entryTiming={0.15} entryDuration={0.5}>
+          <span className={`font-medium text-[30px]`}>{introText1}</span>
+        </MoveScrollText>
+        <MoveScrollText entryTiming={0.15} entryDuration={0.5}>
+          <span className={`font-medium text-[30px]`}>{introText2}</span>
+        </MoveScrollText>
       </div>
-      <div className={` whitespace-pre-line mt-[37px]`}>
-        <div className={`font-semibold text-xl mb-[11px]`}>
-          <span style={{ color: `${GREEN}` }}>WAVEWARE</span>
-          <span>는</span>
+    </div>
+  );
+};
+
+const IntroObj = ({ className }) => {
+  const introText1 = `데이터 처리 기술을 통해 미래의 잠재력을 미리 예측하고 혁신을 위한 새로운 가치를 발굴합니다.\n`;
+  const introText2 = `다년간 R&D 사업의 노하우를 통해 데이터 분석으로 의미를 추출합니다.`;
+  const centerRef = useRef<HTMLDivElement>(null);
+  const GREEN = "#3A9100";
+  const GRAY = "#D9D9D9";
+  const scrollSensor = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({ target: scrollSensor, offset: ["start end", "end start"] });
+  const [isAnimated, setIsAnimated] = useState(false);
+  const [introAnimated, setIntroAnimated] = useState(false);
+  const progressSensor = useRef<HTMLDivElement>(null);
+  useMotionValueEvent(scrollYProgress, "change", (latest) => {
+    if (latest >= 0.005) {
+      setIsAnimated(true);
+    } else {
+      setIsAnimated(false);
+    }
+  });
+
+  const { scrollYProgress: progressScroll } = useScroll({ target: progressSensor, offset: ["start end", "end start"] });
+  useMotionValueEvent(progressScroll, "change", (latest) => {
+    if (latest >= 0.55) {
+      setIntroAnimated(true);
+    } else {
+      setIntroAnimated(false);
+    }
+  });
+  const progressGreenBarY = useSpring(useTransform(progressScroll, [0.3, 0.45], [-150, 0]), {
+    stiffness: 1000,
+    damping: 100,
+  });
+  const progressGrayBarY = useSpring(useTransform(progressScroll, [0.1, 0.2], [-150, 0]), {
+    stiffness: 1000,
+    damping: 100,
+  });
+  return (
+    <div ref={progressSensor} className={` w-full h-[250vh]  relative  ${className} `}>
+      <div className={`w-full h-fit sticky  justify-end text-center items-center top-[10%]   `}>
+        <div className={`flex flex-col items-center pt-[150px]`}>
+          <div ref={scrollSensor} className={`relative overflow-hidden`}>
+            <motion.div animate={isAnimated ? { y: 0 } : { y: "100%" }} transition={{ ease: "easeOut", duration: 0.5 }}>
+              <span ref={centerRef} className={` font-bold text-[60px]`}>
+                모든 <span style={{ color: `${GREEN}` }}>데이터</span>에서
+              </span>
+            </motion.div>
+          </div>
+          <div
+            className={`relative  w-[5px] h-[150px] overflow-hidden mt-[37px] mb-[37px]  `}
+            style={{ background: `white` }}
+          >
+            <motion.div
+              className={` absolute top-0 left-0 w-full h-full    `}
+              style={{ background: `${GRAY}`, y: progressGrayBarY }}
+            ></motion.div>
+            <motion.div
+              className={` absolute top-0 left-0 w-full h-full    `}
+              style={{ background: `${GREEN}`, y: progressGreenBarY }}
+            ></motion.div>
+          </div>
+          <div className={`relative overflow-hidden`}>
+            <motion.div
+              animate={introAnimated ? { y: 0 } : { y: "140%" }}
+              transition={{ ease: "easeOut", duration: 0.5 }}
+            >
+              <div className={`font-semibold text-xl mb-[11px]`}>
+                <span style={{ color: `${GREEN}` }}>WAVEWARE</span>
+                <span>는</span>
+              </div>
+            </motion.div>
+          </div>
+          <div className={`relative overflow-hidden`}>
+            <motion.div
+              animate={introAnimated ? { y: 0 } : { y: "100%" }}
+              transition={{ ease: "easeOut", duration: 0.5 }}
+            >
+              <span className={`font-medium text-[30px]`}>{introText1}</span>
+            </motion.div>
+          </div>
+
+          <div className={`relative overflow-hidden`}>
+            <motion.div
+              animate={introAnimated ? { y: 0 } : { y: "100%" }}
+              transition={{ ease: "easeOut", duration: 0.5 }}
+            >
+              <span className={`font-medium text-[30px]`}>{introText2}</span>
+            </motion.div>
+          </div>
         </div>
-        <span className={`font-medium text-[30px]`}>{introText}</span>
       </div>
+    </div>
+  );
+};
+
+const MoveEnterText = ({ children, duration = 0.5, delay = 0.2 }) => {
+  return (
+    <div className={`relative overflow-hidden `}>
+      <motion.div
+        initial={{ y: "110%" }}
+        animate={{ y: 0 }}
+        transition={{ ease: "easeOut", duration: duration, delay: delay }}
+      >
+        {children}
+      </motion.div>
+    </div>
+  );
+};
+
+const MoveScrollText = ({
+  children,
+  entryTiming = 0.01,
+  entryDuration = 0.8,
+  axis = "y",
+  className = "",
+  enterFunction = () => {},
+  exitFunction = () => {},
+}: {
+  children: ReactNode;
+  entryTiming?: number;
+  entryDuration?: number;
+  axis?: "x" | "y";
+  className?: string;
+  enterFunction?: () => void;
+  exitFunction?: () => void;
+  sensor?: HTMLDivElement | null;
+}) => {
+  const scrollSensor = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({ target: scrollSensor, offset: ["end end", "end start"] });
+  const [isAnimated, setIsAnimated] = useState(false);
+  const onAnimate = axis === "y" ? { y: 0 } : { x: 0 };
+  const notAnimate = axis === "y" ? { y: 100 } : { x: "100%" };
+  useMotionValueEvent(scrollYProgress, "change", (latest) => {
+    if (latest >= entryTiming) {
+      setIsAnimated(true);
+      enterFunction();
+    } else {
+      setIsAnimated(false);
+      exitFunction();
+    }
+  });
+  return (
+    <div ref={scrollSensor} className={`relative overflow-hidden ${className}`}>
+      <motion.div
+        animate={isAnimated ? onAnimate : notAnimate}
+        transition={{ ease: "easeOut", duration: entryDuration }}
+      >
+        {children}
+      </motion.div>
     </div>
   );
 };

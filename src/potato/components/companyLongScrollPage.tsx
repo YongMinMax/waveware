@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence, Variants } from "framer-motion";
 import { GoArrowUpRight } from "react-icons/go";
-
+import Link from "next/link";
 const CompanyLongScrollPage = () => {
   const [rotationAngle, setRotationAngle] = useState(0);
   const [isScrollDown, setIsScrollDown] = useState(true);
@@ -76,7 +76,6 @@ const CompanyLongScrollPage = () => {
       const newThreshold =
         window.innerWidth > MIN_WIDTH ? DEFAULT_SCROLL_THRESHOLD : (window.innerWidth * 0.6) / MIN_WIDTH;
       observer = createObserver(newThreshold); // 새로운 observer 생성
-      console.log(`${newThreshold}`);
       observeSensors(); // 새로운 observer로 감시 시작
     };
 
