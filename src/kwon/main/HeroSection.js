@@ -1,11 +1,15 @@
-import React from 'react';
+import React from "react";
 
 export default function HeroSection() {
   return (
     <section
       id="hero"
       className="relative w-full"
-      style={{ height: 'calc(100vh)', borderBottomRightRadius: '140px', overflow: 'hidden' }}
+      style={{
+        height: "calc(100vh)",
+        borderBottomRightRadius: "140px",
+        overflow: "hidden",
+      }}
     >
       {/* 배경 비디오 */}
       <video
@@ -29,7 +33,7 @@ export default function HeroSection() {
 
           {/* 구분선 */}
           <div className="w-[400px]">
-           <div className="w-[400px] h-[10px] bg-white font-medium animate-grow"></div>
+            <div className="w-[400px] h-[10px] bg-white font-medium animate-grow"></div>
           </div>
 
           {/* 설명 텍스트 */}
@@ -42,4 +46,4 @@ export default function HeroSection() {
       </div>
     </section>
   );
-} 
+}

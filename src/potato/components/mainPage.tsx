@@ -5,10 +5,10 @@ const Home = () => {
   const [currentSection, setCurrentSection] = useState(0);
 
   const handleScroll = (deltaY: number) => {
-    if (deltaY > 0 && currentSection < 2) {
-      setCurrentSection((prev) => prev + 1);
-    } else if (deltaY < 0 && currentSection > 0) {
-      setCurrentSection((prev) => prev - 1);
+    if (deltaY > 0 && currentSection === 0) {
+      setCurrentSection(1);
+    } else if (deltaY < 0 && currentSection === 1) {
+      setCurrentSection(0);
     }
   };
 
