@@ -57,7 +57,7 @@ export default function Home() {
 
       // Skill → SkillIntro (위로)
       if (currentScroll >= skillTop && delta < 0 && currentScroll < skillTop + 10) {
-        skillIntroRef.current?.scrollIntoView({ behavior: "smooth" });
+        skillIntroRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
       }
 
       // SkillIntro → Company (위로)
