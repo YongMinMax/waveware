@@ -11,12 +11,12 @@ export default function Home() {
   const careerRef = useRef(null);
 
   useEffect(() => {
-    let lastScrollTime = 0;
+    let isThrottled = false;
 
     const handleScroll = (e) => {
-      const now = Date.now();
-      if (now - lastScrollTime < 800) return;
-      lastScrollTime = now;
+      if (isThrottled) return;
+      isThrottled = true;
+      setTimeout(() => (isThrottled = false), 1000);
 
       const delta = e.deltaY;
       const currentScroll = window.scrollY;
@@ -28,12 +28,12 @@ export default function Home() {
       const skillTop = skillRef.current?.offsetTop ?? 0;
       const careerTop = careerRef.current?.offsetTop ?? 0;
 
-      // Hero → Company
+      // Hero → Company (아래)
       if (currentScroll < vh * 0.5 && delta > 0) {
         longScrollRef.current?.scrollIntoView({ behavior: "smooth" });
       }
 
-      // Company → Skill
+      // Company → Skill (아래)
       if (
         currentScroll >= longScrollTop + longScrollHeight - vh &&
         currentScroll < skillTop &&
@@ -42,25 +42,25 @@ export default function Home() {
         skillRef.current?.scrollIntoView({ behavior: "smooth" });
       }
 
-      // Skill → Career
+      // Skill → Career (아래)
       if (currentScroll >= skillTop + 0.5 * vh && delta > 0) {
         careerRef.current?.scrollIntoView({ behavior: "smooth" });
       }
 
-      // Career → Skill
+      // Career → Skill (위로)
       if (
         currentScroll >= careerTop &&
         delta < 0 &&
-        currentScroll <= careerTop + vh
+        currentScroll < careerTop + vh
       ) {
         skillRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
       }
 
-      // Skill → Company
+      // Skill → Company (위로)
       if (
         currentScroll >= skillTop &&
         delta < 0 &&
-        currentScroll <= skillTop + 100
+        currentScroll < skillTop + 10
       ) {
         longScrollRef.current?.scrollIntoView({
           behavior: "smooth",
@@ -68,14 +68,17 @@ export default function Home() {
         });
       }
 
-      // Company → Hero
-      if (currentScroll <= vh + 100 && delta < 0) {
+      // Company → Hero (위로)
+      if (currentScroll <= vh + 10 && delta < 0) {
         heroRef.current?.scrollIntoView({ behavior: "smooth" });
       }
     };
 
     window.addEventListener("wheel", handleScroll, { passive: false });
-    return () => window.removeEventListener("wheel", handleScroll);
+
+    return () => {
+      window.removeEventListener("wheel", handleScroll);
+    };
   }, []);
 
   return (
