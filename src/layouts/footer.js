@@ -1,6 +1,14 @@
 import React from "react";
 
 export default function Footer() {
+    // 스크롤을 맨 위로 이동시키는 함수
+    const scrollToTop = () => {
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth" // 부드럽게 스크롤
+        });
+    };
+
     return (
         <footer className="flex justify-center items-center py-14 text-black">
             <div className="w-[1400px] flex justify-between items-center">
@@ -14,7 +22,12 @@ export default function Footer() {
                         © 2025 waveware
                     </p>
                 </div>
-                <img src="/icon/btn_top.png" alt="botton to top" className="w-16 h-16"/>
+                <img 
+                    src="/icon/btn_top.png" 
+                    alt="button to top" 
+                    className="w-16 h-16 hover:bg-gray-200 rounded-full" // 호버 스타일 추가
+                    onClick={scrollToTop} // 클릭 시 scrollToTop 함수 호출
+                />
             </div>
         </footer>
     );
