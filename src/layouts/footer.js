@@ -5,7 +5,7 @@ export default function Footer() {
     const scrollToTop = () => {
         window.scrollTo({
             top: 0,
-            behavior: "smooth" // 부드럽게 스크롤
+            behavior: "smooth"
         });
     };
 
@@ -25,8 +25,8 @@ export default function Footer() {
                 <img 
                     src="/icon/btn_top.png" 
                     alt="button to top" 
-                    className="w-16 h-16 hover:bg-gray-200 rounded-full" // 호버 스타일 추가
-                    onClick={scrollToTop} // 클릭 시 scrollToTop 함수 호출
+                    className="w-16 h-16 hover:bg-gray-200 rounded-full"
+                    onClick={scrollToTop}
                 />
             </div>
         </footer>
