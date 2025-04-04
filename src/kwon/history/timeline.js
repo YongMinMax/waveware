@@ -1,7 +1,7 @@
 import {useRef, useState, useEffect} from "react";
 
 export default function TimeLine () {
-    const [selectedYear, setSelectedYear] = useState("2014");
+    const [selectedYear, setSelectedYear] = useState("2025");
     const yearRefs = useRef({});
 
     useEffect(() => {
@@ -38,7 +38,7 @@ export default function TimeLine () {
             <div className="w-full sticky top-0 bg-white">
                 {/*<SectionTitle text={"Timeline"}/>*/}
                 <div className={"container mx-auto flex justify-center items-start py-24"}>
-                    {Object.keys(historyData).map((year) => (
+                    {Object.keys(historyData).sort((a, b) => b - a).map((year) => (
                         <div className={"flex flex-col items-center"} key={year}>
                             <button
                                 className={`px-6 py-2 ${selectedYear === year ? 'font-bold text-black' : 'text-gray-500'}`}
@@ -57,7 +57,7 @@ export default function TimeLine () {
             <div className={"flex "}>
                 <img className={"sticky top-[25vh] w-[400px] h-[250px] object-cover"} src={historyData[selectedYear].image}/>
                 <div className={"flex flex-col mx-12 border-t-2 border-black"}>
-                    {Object.entries(historyData).map(([year, data]) => (
+                    {Object.entries(historyData).sort(([a], [b]) => b - a).map(([year, data]) => (
                         <div key={year} ref={(el) => (yearRefs.current[year] = el)} data-year={year} style={{ scrollMarginTop: '25vh' }} className={"flex justify-start border-b-[1px] px-12 py-12"}>
                             <h2 className={"text-[50px] font-semibold px-10"}>{year}</h2>
                             <ul>
@@ -77,24 +77,24 @@ export default function TimeLine () {
 const historyData = {
     "2025": {
         events: [
-            "글로벌 원부자재 공급망 문제 사전감지를 위한 종합 상황판 프레임워크 개발",
-            "사회문제 R&D 현황 분석을 위한 메타데이터 구축 및 도구 개발",
+            "오윤 100일",
+            "임직원 롯데마트 방문",
         ],
-        image: "/img/history/2023.jpg"
+        image: "/img/history/2025.png"
     },
     "2024": {
         events: [
-            "글로벌 원부자재 공급망 문제 사전감지를 위한 종합 상황판 프레임워크 개발",
-            "사회문제 R&D 현황 분석을 위한 메타데이터 구축 및 도구 개발",
+            "글로벌 공급망 문제 사전감지와 대응을 위한 지능형 GVC 분석시스템 개발",
+            "사회문제 R&D 분석 현황판 및 데이터 분석도구 개발",
         ],
-        image: "/img/history/2023.jpg"
+        image: "/img/history/2024.png"
     },
     "2023": {
         events: [
             "글로벌 원부자재 공급망 문제 사전감지를 위한 종합 상황판 프레임워크 개발",
             "사회문제 R&D 현황 분석을 위한 메타데이터 구축 및 도구 개발",
         ],
-        image: "/img/history/2023.jpg"
+        image: "/img/history/2023.png"
     },
     "2022": {
         events: [
@@ -103,7 +103,7 @@ const historyData = {
             "NTIS 콘텐츠 소비패턴 기반 이용자 행태분석 강화",
             "주요 원부자재 공급망 문제 이상징후 감지를 위한 테스트베드 개발",
         ],
-        image: "/img/history/2022.jpg"
+        image: "/img/history/2022.png"
     },
     "2021": {
         events: [
