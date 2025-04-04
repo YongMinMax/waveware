@@ -73,7 +73,7 @@ export default function HeroSection() {
               WE ARE
             </span>
             <h1
-              className="text-[72px] font-semibold opacity-0 animate-text-up "
+              className="text-[72px] font-semibold opacity-0 animate-text-up"
               style={{ animationDelay: "1.4s" }}
             >
               WAVEWARE
@@ -116,6 +116,14 @@ export default function HeroSection() {
             </p>
           </div>
         </div>
+      </div>
+
+      {/* 스크롤 유도 UI */}
+      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex flex-col items-center gap-2 opacity-0 animate-fade-in" style={{ animationDelay: "2s" }}>
+        <div className="w-6 h-10 border-2 border-white rounded-full flex justify-center p-1">
+          <div className="w-1 h-2 bg-white rounded-full animate-scroll-down"></div>
+        </div>
+        <span className="text-white text-sm">Scroll Down</span>
       </div>
     </section>
   );
