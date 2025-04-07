@@ -128,7 +128,7 @@ const SkillBox = ({ idx, skillInfo, isHovered, handleMouseEnter, handleClick }) 
   });
 
   return (
-    <div ref={scrollSensor} className={`relative overflow-hidden rounded-[10px]`} onClick={handleClick}>
+    <div ref={scrollSensor} className={`relative overflow-hidden rounded-[5px]`} onClick={handleClick}>
       <AnimatePresence initial={false}>
         {!isAnimated && (
           <motion.div
@@ -136,13 +136,13 @@ const SkillBox = ({ idx, skillInfo, isHovered, handleMouseEnter, handleClick }) 
             className={`${skeleton_CSS} absolute -z-10`}
             style={{ backgroundColor: `#F1EFEE` }}
             exit={{ opacity: 1, y: "-100%" }}
-            transition={{ duration: 1.5, ease: "easeOut" }}
+            transition={{ duration: 10.5, ease: "easeOut" }}
           ></motion.div>
         )}
       </AnimatePresence>
       <motion.div animate={isAnimated ? { y: 0 } : { y: "100%" }} transition={{ ease: "easeOut", duration: 0.8 }}>
         <motion.div
-          className={`rounded-[10px]  cursor-pointer overflow-hidden`} // overflow 설정
+          className={`rounded-[5px]  cursor-pointer overflow-hidden`} // overflow 설정
           style={{
             backgroundImage: `${background_CSS},url(${img_src})`,
             backgroundPosition: `center top`,

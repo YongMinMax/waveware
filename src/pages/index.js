@@ -5,100 +5,115 @@ import CompanyLongScrollPage from "../potato/components/companyLongScrollPage";
 import SkillPage, { SkillIntroPage } from "../potato/components/skillPage";
 
 export default function Home() {
-  const heroRef = useRef(null);
-  const longScrollRef = useRef(null);
-  const skillRef = useRef(null);
-  const skillIntroRef = useRef(null);
-  const careerRef = useRef(null);
+  // 섹션 참조
+  const refs = {
+    hero: useRef(null),
+    company: useRef(null),
+    skillIntro: useRef(null),
+    skill: useRef(null),
+    career: useRef(null),
+  };
 
   useEffect(() => {
     let isThrottled = false;
+    const THROTTLE_TIME = 500;
+    const THRESHOLD = 10; // 섹션 감지를 위한 픽셀 임계값
+
+    // 위치 계산 헬퍼
+    const getPos = () => ({
+      vh: window.innerHeight,
+      scroll: window.scrollY,
+      hero: { top: refs.hero.current?.offsetTop ?? 0 },
+      company: {
+        top: refs.company.current?.offsetTop ?? 0,
+        height: refs.company.current?.offsetHeight ?? 0,
+      },
+      skillIntro: {
+        top: refs.skillIntro.current?.offsetTop ?? 0,
+        height: refs.skillIntro.current?.offsetHeight ?? 0,
+      },
+      skill: { top: refs.skill.current?.offsetTop ?? 0 },
+      career: { top: refs.career.current?.offsetTop ?? 0 },
+    });
+
+    // 섹션으로 스크롤 이동
+    const scrollTo = (ref) =>
+      ref.current?.scrollIntoView({ behavior: "smooth" });
 
     const handleScroll = (e) => {
+      // 스크롤 이벤트 쓰로틀링
       if (isThrottled) return;
       isThrottled = true;
-      setTimeout(() => (isThrottled = false), 500);
+      setTimeout(() => (isThrottled = false), THROTTLE_TIME);
 
-      const delta = e.deltaY;
-      const currentScroll = window.scrollY;
-      const vh = window.innerHeight;
+      const isDown = e.deltaY > 0;
+      const p = getPos();
 
-      const heroTop = heroRef.current?.offsetTop ?? 0;
-      const longScrollTop = longScrollRef.current?.offsetTop ?? 0;
-      const longScrollHeight = longScrollRef.current?.offsetHeight ?? 0;
-      const skillTop = skillRef.current?.offsetTop ?? 0;
-      const skillIntroTop = skillIntroRef.current?.offsetTop ?? 0;
-      const skillIntroHeight = skillIntroRef.current?.offsetHeight ?? 0;
-      const careerTop = careerRef.current?.offsetTop ?? 0;
-
-      // Hero → Company (아래)
-      if (currentScroll < vh * 0.5 && delta > 0) {
-        longScrollRef.current?.scrollIntoView({ behavior: "smooth" });
-      }
-
-      // Company → SkillIntro (아래)
-      if (currentScroll >= longScrollTop + longScrollHeight - vh * 1.5 && currentScroll < skillIntroTop && delta > 0) {
-        skillIntroRef.current?.scrollIntoView({ behavior: "smooth" });
-      }
-      // SkillIntro → Skill (아래)
-      if (currentScroll >= skillIntroTop + skillIntroHeight - vh * 1.5 && currentScroll < skillTop && delta > 0) {
-        skillRef.current?.scrollIntoView({ behavior: "smooth" });
-      }
-
-      // Skill → Career (아래)
-      if (currentScroll >= skillTop && currentScroll < skillTop + vh && delta > 0) {
-        careerRef.current?.scrollIntoView({ behavior: "smooth" });
-      }
-
-      // Career → Skill (위로)
-      if (currentScroll >= careerTop && delta < 0 && currentScroll < careerTop + vh) {
-        skillRef.current?.scrollIntoView({ behavior: "smooth" });
-      }
-
-      // Skill → SkillIntro (위로)
-      if (currentScroll >= skillTop && delta < 0 && currentScroll < skillTop + 10) {
-        skillIntroRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
-      }
-
-      // SkillIntro → Company (위로)
-      if (currentScroll >= skillIntroTop && delta < 0 && currentScroll < skillIntroTop + 10) {
-        longScrollRef.current?.scrollIntoView({ behavior: "smooth" });
-      }
-
-      // Company → Hero (위로)
-      if (currentScroll <= vh + 10 && delta < 0) {
-        heroRef.current?.scrollIntoView({ behavior: "smooth" });
+      if (isDown) {
+        // 아래로 스크롤
+        if (p.scroll < p.vh * 0.5) {
+          // Hero → Company
+          scrollTo(refs.company);
+        } else if (
+          p.scroll >= p.company.top + p.company.height - p.vh * 1.5 &&
+          p.scroll < p.skillIntro.top
+        ) {
+          // Company → SkillIntro
+          scrollTo(refs.skillIntro);
+        } else if (
+          p.scroll >= p.skillIntro.top + p.skillIntro.height - p.vh * 1.5 &&
+          p.scroll < p.skill.top
+        ) {
+          // SkillIntro → Skill
+          scrollTo(refs.skill);
+        } else if (p.scroll >= p.skill.top && p.scroll < p.skill.top + p.vh) {
+          // Skill → Career
+          scrollTo(refs.career);
+        }
+      } else {
+        // 위로 스크롤
+        if (p.scroll >= p.career.top && p.scroll < p.career.top + p.vh) {
+          // Career → Skill
+          scrollTo(refs.skill);
+        } else if (
+          p.scroll >= p.skill.top &&
+          p.scroll < p.skill.top + THRESHOLD
+        ) {
+          // Skill → SkillIntro
+          scrollTo(refs.skillIntro);
+        } else if (
+          p.scroll >= p.skillIntro.top &&
+          p.scroll < p.skillIntro.top + THRESHOLD
+        ) {
+          // SkillIntro → Company
+          scrollTo(refs.company);
+        } else if (p.scroll <= p.vh + THRESHOLD) {
+          // Company → Hero
+          scrollTo(refs.hero);
+        }
       }
     };
 
     window.addEventListener("wheel", handleScroll, { passive: false });
-
-    return () => {
-      window.removeEventListener("wheel", handleScroll);
-    };
+    return () => window.removeEventListener("wheel", handleScroll);
   }, []);
+
+  // 섹션 구성
+  const sections = [
+    { ref: refs.hero, component: <HeroSection /> },
+    { ref: refs.company, component: <CompanyLongScrollPage /> },
+    { ref: refs.skillIntro, component: <SkillIntroPage /> },
+    { ref: refs.skill, component: <SkillPage /> },
+    { ref: refs.career, component: <Career /> },
+  ];
 
   return (
     <main className="min-h-screen flex flex-col items-center justify-center">
-      <div ref={heroRef} className="w-full min-h-screen">
-        <HeroSection />
-      </div>
-
-      <div ref={longScrollRef} className="w-full min-h-screen">
-        <CompanyLongScrollPage />
-      </div>
-
-      <div ref={skillIntroRef} className="w-full min-h-screen">
-        <SkillIntroPage />
-      </div>
-
-      <div ref={skillRef} className="w-full min-h-screen">
-        <SkillPage />
-      </div>
-
-      <div ref={careerRef} className="w-full min-h-screen">
-        <Career />
-      </div>
+      {sections.map((section, index) => (
+        <div key={index} ref={section.ref} className="w-full min-h-screen">
+          {section.component}
+        </div>
+      ))}
     </main>
   );
 }

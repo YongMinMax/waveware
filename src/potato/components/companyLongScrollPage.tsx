@@ -193,10 +193,10 @@ const CompanyText = ({ selectedIndex, isScrollDown, firstRender }) => {
         key={selectedIndex}
         // key={`${selectedIndex}-${isScrollDown}`} // key에 isScrollDown 포함
       >
-        <div className={`text-[48px] font-bold`}>{titles[selectedIndex]}</div>
-        <div className={`text-[22px] font-medium`}>{contents[selectedIndex]}</div>
+        <div className={`text-[48px] font-semibold`}>{titles[selectedIndex]}</div>
+        <div className={`text-[18px] font-light`}>{contents[selectedIndex]}</div>
         <button
-          className={`border-2 border-black rounded-full text-lg font-semibold px-[30px] py-[15px] self-start flex gap-[15px] items-center mt-[35px]
+          className={`border border-black rounded-full text-lg font-semibold px-[30px] py-[15px] self-start flex gap-[15px] items-center mt-[35px]
             hover:bg-black hover:text-white`}
           onClick={handleButtonClick}
         >

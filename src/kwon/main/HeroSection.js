@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 export default function HeroSection() {
   const videoRef = useRef(null);
   const [isVideoReady, setIsVideoReady] = useState(false);
-  
+
   useEffect(() => {
     // 모든 애니메이션이 끝난 후 비디오 재생 시작
     const timer = setTimeout(() => {
@@ -29,7 +29,7 @@ export default function HeroSection() {
         <video
           ref={videoRef}
           className={`absolute top-0 left-0 w-full h-full object-cover transition-all duration-800
-            ${isVideoReady ? 'scale-100 blur-0' : 'scale-110 blur-sm'}`}
+            ${isVideoReady ? "scale-100 blur-0" : "scale-110 blur-sm"}`}
           autoPlay={false}
           loop
           muted
@@ -66,23 +66,65 @@ export default function HeroSection() {
         <div className="flex gap-x-28 items-center">
           {/* 텍스트 그룹 */}
           <div className="flex flex-col items-start pb-10">
-            <span className="text-[32px] opacity-0 animate-text-up" style={{animationDelay: '1.3s'}}>WE ARE</span>
-            <h1 className="text-[72px] font-semibold opacity-0 animate-text-up " style={{animationDelay: '1.4s'}}>WAVEWARE</h1>
+            <span
+              className="text-[32px] opacity-0 animate-text-up"
+              style={{ animationDelay: "1.3s" }}
+            >
+              WE ARE
+            </span>
+            <h1
+              className="text-[72px] font-semibold opacity-0 animate-text-up"
+              style={{ animationDelay: "1.4s" }}
+            >
+              WAVEWARE
+            </h1>
           </div>
 
           {/* 구분선 */}
           <div className="w-[400px] overflow-hidden">
-            <div className="w-[400px] h-[10px] bg-white font-medium animate-line-grow" style={{animationDelay: '1.3s'}}></div>
+            <div
+              className="w-[400px] h-[8px] bg-white font-medium animate-line-grow"
+              style={{ animationDelay: "1.3s" }}
+            ></div>
           </div>
 
           {/* 설명 텍스트 */}
           <div className="text-[30px] pt-20 whitespace-nowrap">
-            <p className="opacity-0 animate-text-up" style={{animationDelay: '1.5s'}}>메타데이터를 처리하고</p>
-            <p className="opacity-0 animate-text-up" style={{animationDelay: '1.6s'}}>과학적 발전을 지원하며</p>
-            <p className="opacity-0 animate-text-up" style={{animationDelay: '1.7s'}}>2D/3D 데이터 시각화를 수행합니다.</p>
+            <p
+              className="opacity-0 animate-text-up"
+              style={{ animationDelay: "1.5s" }}
+            >
+              메타 데이터를 통해
+            </p>
+            <p
+              className="opacity-0 animate-text-up"
+              style={{ animationDelay: "1.6s" }}
+            >
+              과학적 발전을 지원하며
+            </p>
+            <p
+              className="opacity-0 animate-text-up"
+              style={{ animationDelay: "1.7s" }}
+            >
+              2D/3D 데이터 시각화를
+            </p>
+            <p
+              className="opacity-0 animate-text-up"
+              style={{ animationDelay: "1.8s" }}
+            >
+              수행합니다.
+            </p>
           </div>
         </div>
       </div>
+
+      {/* 스크롤 유도 UI */}
+      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex flex-col items-center gap-2 opacity-0 animate-fade-in" style={{ animationDelay: "2s" }}>
+        <div className="w-6 h-10 border-2 border-white rounded-full flex justify-center p-1">
+          <div className="w-1 h-2 bg-white rounded-full animate-scroll-down"></div>
+        </div>
+        <span className="text-white text-sm">Scroll Down</span>
+      </div>
     </section>
   );
-} 
+}
