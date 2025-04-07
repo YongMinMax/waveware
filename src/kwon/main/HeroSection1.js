@@ -83,7 +83,7 @@ export default function HeroSection() {
               className="block opacity-0 animate-text-up"
               style={{ animationDelay: "1.7s" }}
             >
-              세상의 가능성을 여는 곳
+              세상의 가능성을 여는 곳,
             </span>
             <span
               className="block opacity-0 animate-text-up"

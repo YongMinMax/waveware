@@ -5,6 +5,7 @@ import HeroSection1 from "../kwon/main/HeroSection1";
 import Career from "../kwon/main/career";
 import CompanyLongScrollPage from "../potato/components/companyLongScrollPage";
 import SkillPage, { SkillIntroPage } from "../potato/components/skillPage";
+import { IndustrySection } from "../potato/components/skillPage copy";
 
 export default function Home() {
   // 섹션 참조
@@ -102,12 +103,13 @@ export default function Home() {
 
   // 섹션 구성
   const sections = [
-    { ref: refs.hero, component: <HeroSection /> },
-    // { ref: refs.hero, component: <HeroSection1 /> },
+    // { ref: refs.hero, component: <HeroSection /> },
+    { ref: refs.hero, component: <HeroSection1 /> },
     { ref: refs.company, component: <CompanyLongScrollPage /> },
     { ref: refs.skillIntro, component: <SkillIntroPage /> },
     { ref: refs.skill, component: <SkillPage /> },
     { ref: refs.career, component: <Career /> },
+    { ref: refs.industry, component: <IndustrySection /> },
   ];
 
   return (
