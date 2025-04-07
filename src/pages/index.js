@@ -1,5 +1,7 @@
 import { useRef, useEffect } from "react";
 import HeroSection from "../kwon/main/HeroSection";
+import HeroSection1 from "../kwon/main/HeroSection1";
+
 import Career from "../kwon/main/career";
 import CompanyLongScrollPage from "../potato/components/companyLongScrollPage";
 import SkillPage, { SkillIntroPage } from "../potato/components/skillPage";
@@ -37,8 +39,8 @@ export default function Home() {
     });
 
     // 섹션으로 스크롤 이동
-    const scrollTo = (ref) =>
-      ref.current?.scrollIntoView({ behavior: "smooth" });
+    const scrollTo = (ref, block = "start") =>
+      ref.current?.scrollIntoView({ behavior: "smooth", block });
 
     const handleScroll = (e) => {
       // 스크롤 이벤트 쓰로틀링
@@ -50,46 +52,46 @@ export default function Home() {
       const p = getPos();
 
       if (isDown) {
-        // 아래로 스크롤
+        // 아래로 스크롤 - 다음 섹션의 시작점으로
         if (p.scroll < p.vh * 0.5) {
           // Hero → Company
-          scrollTo(refs.company);
+          scrollTo(refs.company, "start");
         } else if (
           p.scroll >= p.company.top + p.company.height - p.vh * 1.5 &&
           p.scroll < p.skillIntro.top
         ) {
           // Company → SkillIntro
-          scrollTo(refs.skillIntro);
+          scrollTo(refs.skillIntro, "start");
         } else if (
           p.scroll >= p.skillIntro.top + p.skillIntro.height - p.vh * 1.5 &&
           p.scroll < p.skill.top
         ) {
           // SkillIntro → Skill
-          scrollTo(refs.skill);
+          scrollTo(refs.skill, "start");
         } else if (p.scroll >= p.skill.top && p.scroll < p.skill.top + p.vh) {
           // Skill → Career
-          scrollTo(refs.career);
+          scrollTo(refs.career, "start");
         }
       } else {
-        // 위로 스크롤
+        // 위로 스크롤 - 이전 섹션의 끝점으로
         if (p.scroll >= p.career.top && p.scroll < p.career.top + p.vh) {
           // Career → Skill
-          scrollTo(refs.skill);
+          scrollTo(refs.skill, "end");
         } else if (
           p.scroll >= p.skill.top &&
           p.scroll < p.skill.top + THRESHOLD
         ) {
           // Skill → SkillIntro
-          scrollTo(refs.skillIntro);
+          scrollTo(refs.skillIntro, "end");
         } else if (
           p.scroll >= p.skillIntro.top &&
           p.scroll < p.skillIntro.top + THRESHOLD
         ) {
           // SkillIntro → Company
-          scrollTo(refs.company);
+          scrollTo(refs.company, "end");
         } else if (p.scroll <= p.vh + THRESHOLD) {
           // Company → Hero
-          scrollTo(refs.hero);
+          scrollTo(refs.hero, "end");
         }
       }
     };
@@ -101,6 +103,7 @@ export default function Home() {
   // 섹션 구성
   const sections = [
     { ref: refs.hero, component: <HeroSection /> },
+    // { ref: refs.hero, component: <HeroSection1 /> },
     { ref: refs.company, component: <CompanyLongScrollPage /> },
     { ref: refs.skillIntro, component: <SkillIntroPage /> },
     { ref: refs.skill, component: <SkillPage /> },
