@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 export default function ProcessComponent({ data, isActive, onHover }) {
-    // isHighlighted는 props로 받은 isActive 값이나 data의 isHighlighted 값을 사용
+
     const isHighlighted = isActive || data.isHighlighted;
     
     return (
