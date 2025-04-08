@@ -1,17 +1,19 @@
 import React, { useEffect, useRef, useState } from "react";
-import { motion, AnimatePresence, Variants } from "framer-motion";
+import { motion, AnimatePresence, Variants, useMotionValueEvent, useScroll } from "framer-motion";
 import { GoArrowUpRight } from "react-icons/go";
-import Link from "next/link";
+import { useRouter } from "next/router";
 const CompanyLongScrollPage = () => {
   const [rotationAngle, setRotationAngle] = useState(0);
   const [isScrollDown, setIsScrollDown] = useState(true);
   const [firstRender, setFirstRender] = useState(true);
+
   const containerRef = useRef<HTMLDivElement>(null);
   const firstSensor = useRef<HTMLDivElement>(null);
   const secondSensor = useRef<HTMLDivElement>(null);
   const thirdSensor = useRef<HTMLDivElement>(null);
 
-  const SECTION_HEIGHT = { first: 90, second: 90, third: 90 };
+  const SECTION_HEIGHT = { first: 70, second: 70, third: 70 };
+  const SCROLL_THRESHOLD = { firstToSecond: 0.4, secondToThird: 0.57 };
   const DEFAULT_SCROLL_THRESHOLD = 0.6;
   const MIN_WIDTH = 1440;
   const selectedIndex = Math.floor((Math.abs(rotationAngle) / 120) % 3);
@@ -22,70 +24,99 @@ const CompanyLongScrollPage = () => {
     { x: 50 - 40 * Math.cos((4 * Math.PI) / 3), y: parseFloat((50 + 40 * Math.sin((4 * Math.PI) / 3)).toFixed(6)) },
   ];
 
-  useEffect(() => {
-    const createObserver = (threshold: number) => {
-      return new IntersectionObserver(
-        (entries) => {
-          if (firstRender) {
-            setFirstRender(false);
-          }
+  const { scrollYProgress: scrollProgress } = useScroll({ target: containerRef, offset: ["start end", "end start"] });
+  const contextRef = useRef<"start" | "middle" | "end" | null>("start");
 
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              if (entry.target === firstSensor.current) {
-                setRotationAngle(0);
-                setIsScrollDown(false);
-              } else if (entry.target === secondSensor.current) {
-                let flag = false;
-                setRotationAngle((prev) => {
-                  if (prev === 0) {
-                    flag = true;
-                  }
-                  setIsScrollDown(flag);
-                  return 120;
-                });
-              } else if (entry.target === thirdSensor.current) {
-                setRotationAngle(240);
-                setIsScrollDown(true);
-              }
-            }
-          });
-        },
-        { threshold }
-      );
-    };
+  useMotionValueEvent(scrollProgress, "change", (scroll) => {
+    if (scroll <= SCROLL_THRESHOLD.firstToSecond) {
+      if (contextRef.current !== "start") {
+        contextRef.current = "start";
+        setIsScrollDown(false);
+        setRotationAngle(0);
+      }
+    } else if (scroll > SCROLL_THRESHOLD.firstToSecond && scroll <= SCROLL_THRESHOLD.secondToThird) {
+      if (contextRef.current !== "middle") {
+        setRotationAngle((prev) => {
+          setIsScrollDown(contextRef.current === "start");
+          console.log(`${contextRef.current}에서 지금 바꿉니다!`);
+          return 120;
+        });
+        contextRef.current = "middle";
+      }
+    } else if (scroll > SCROLL_THRESHOLD.secondToThird) {
+      if (contextRef.current !== "end") {
+        contextRef.current = "end";
+        setRotationAngle(240);
+        setIsScrollDown(true);
+      }
+    }
+  });
 
-    let observer = createObserver(DEFAULT_SCROLL_THRESHOLD); // 초기 threshold 값
+  // intersectionObserver 쓰는 방식
+  // useEffect(() => {
+  //   const createObserver = (threshold: number) => {
+  //     return new IntersectionObserver(
+  //       (entries) => {
+  //         if (firstRender) {
+  //           setFirstRender(false);
+  //         }
 
-    const observeSensors = () => {
-      if (firstSensor.current) observer.observe(firstSensor.current);
-      if (secondSensor.current) observer.observe(secondSensor.current);
-      if (thirdSensor.current) observer.observe(thirdSensor.current);
-    };
+  //         entries.forEach((entry) => {
+  //           if (entry.isIntersecting) {
+  //             if (entry.target === firstSensor.current) {
+  //               setRotationAngle(0);
+  //               setIsScrollDown(false);
+  //             } else if (entry.target === secondSensor.current) {
+  //               let flag = false;
+  //               setRotationAngle((prev) => {
+  //                 if (prev === 0) {
+  //                   flag = true;
+  //                 }
+  //                 setIsScrollDown(flag);
+  //                 return 120;
+  //               });
+  //             } else if (entry.target === thirdSensor.current) {
+  //               setRotationAngle(240);
+  //               setIsScrollDown(true);
+  //             }
+  //           }
+  //         });
+  //       },
+  //       { threshold }
+  //     );
+  //   };
 
-    const unobserveSensors = () => {
-      if (firstSensor.current) observer.unobserve(firstSensor.current);
-      if (secondSensor.current) observer.unobserve(secondSensor.current);
-      if (thirdSensor.current) observer.unobserve(thirdSensor.current);
-    };
+  //   let observer = createObserver(DEFAULT_SCROLL_THRESHOLD); // 초기 threshold 값
 
-    observeSensors();
+  //   const observeSensors = () => {
+  //     if (firstSensor.current) observer.observe(firstSensor.current);
+  //     if (secondSensor.current) observer.observe(secondSensor.current);
+  //     if (thirdSensor.current) observer.observe(thirdSensor.current);
+  //   };
 
-    const handleResize = () => {
-      unobserveSensors(); // 기존 observer 해제
-      const newThreshold =
-        window.innerWidth > MIN_WIDTH ? DEFAULT_SCROLL_THRESHOLD : (window.innerWidth * 0.6) / MIN_WIDTH;
-      observer = createObserver(newThreshold); // 새로운 observer 생성
-      observeSensors(); // 새로운 observer로 감시 시작
-    };
+  //   const unobserveSensors = () => {
+  //     if (firstSensor.current) observer.unobserve(firstSensor.current);
+  //     if (secondSensor.current) observer.unobserve(secondSensor.current);
+  //     if (thirdSensor.current) observer.unobserve(thirdSensor.current);
+  //   };
 
-    window.addEventListener("resize", handleResize);
+  //   observeSensors();
 
-    return () => {
-      unobserveSensors(); // 컴포넌트 언마운트 시 observer 해제
-      window.removeEventListener("resize", handleResize);
-    };
-  }, [firstRender]);
+  //   const handleResize = () => {
+  //     unobserveSensors(); // 기존 observer 해제
+  //     const newThreshold =
+  //       window.innerWidth > MIN_WIDTH ? DEFAULT_SCROLL_THRESHOLD : (window.innerWidth * 0.6) / MIN_WIDTH;
+  //     observer = createObserver(newThreshold); // 새로운 observer 생성
+  //     observeSensors(); // 새로운 observer로 감시 시작
+  //   };
+
+  //   window.addEventListener("resize", handleResize);
+
+  //   return () => {
+  //     unobserveSensors(); // 컴포넌트 언마운트 시 observer 해제
+  //     window.removeEventListener("resize", handleResize);
+  //   };
+  // }, [firstRender]);
 
   return (
     <div
@@ -93,12 +124,11 @@ const CompanyLongScrollPage = () => {
       className={`relative w-full  max-w-[100%] min-w-[100%] `}
       style={{
         height: `${SECTION_HEIGHT.first + SECTION_HEIGHT.second + SECTION_HEIGHT.third}vh`,
-        // minWidth: `${MIN_WIDTH}px`,
       }}
     >
       <div
         ref={firstSensor}
-        className={`first-section w-[100%]  absolute   `}
+        className={`first-section w-[100%]  absolute    `}
         style={{
           height: `${SECTION_HEIGHT.first}vh`,
           minWidth: `${MIN_WIDTH}px`,
@@ -106,7 +136,7 @@ const CompanyLongScrollPage = () => {
       ></div>
       <div
         ref={secondSensor}
-        className={`second-section  w-[100%]   absolute  `}
+        className={`second-section  w-[100%]   absolute   `}
         style={{
           height: `${SECTION_HEIGHT.second}vh`,
           top: `${SECTION_HEIGHT.first}vh`,
@@ -115,7 +145,7 @@ const CompanyLongScrollPage = () => {
       ></div>
       <div
         ref={thirdSensor}
-        className={`third-section   w-[100%]  absolute   `}
+        className={`third-section   w-[100%]  absolute  `}
         style={{
           height: `${SECTION_HEIGHT.third}vh`,
           top: `${SECTION_HEIGHT.first + SECTION_HEIGHT.second}vh`,
@@ -150,9 +180,11 @@ const CompanyText = ({ selectedIndex, isScrollDown, firstRender }) => {
     "데이터 시각화를 통하여 모든 일련의 과정을 설명하며, 다양한 시각적\n요소를 활용해 누구든지 쉽게 정보를 이해할 수 있도록 합니다.",
   ];
   const text_movement = {
-    enter: ({ isScrollDown, firstRender }: { isScrollDown: boolean; firstRender: boolean }) => ({
-      x: firstRender ? "0%" : "20%",
-      y: firstRender ? "0%" : isScrollDown ? "200%" : "-200%",
+    enter: ({ isScrollDown }: { isScrollDown: boolean }) => ({
+      // x: firstRender ? "0%" : "20%",
+      // y: firstRender ? "0%" : isScrollDown ? "200%" : "-200%",
+      x: "20%",
+      y: isScrollDown ? "200%" : "-200%",
       opacity: 1,
       scale: firstRender ? 1 : 1.5,
     }),
@@ -162,26 +194,21 @@ const CompanyText = ({ selectedIndex, isScrollDown, firstRender }) => {
       opacity: 1,
       scale: 1,
     },
-    exit: ({ isScrollDown, firstRender }: { isScrollDown: boolean; firstRender: boolean }) => ({
+    exit: ({ isScrollDown }: { isScrollDown: boolean }) => ({
       x: "20%",
       y: isScrollDown ? "-200%" : "200%",
       opacity: 1,
     }),
   };
+  const router = useRouter();
   const handleButtonClick = () => {
-    if (selectedIndex === 0) {
-      // 데이터프로세싱
-    } else if (selectedIndex === 1) {
-      // 데이터 분석
-    } else if (selectedIndex === 2) {
-      // 데이터 시각화
-    }
+    router.push("/company");
   };
   return (
-    <AnimatePresence custom={{ isScrollDown, firstRender }}>
+    <AnimatePresence custom={{ isScrollDown }}>
       <motion.div
         className={`flex-col flex whitespace-pre-line gap-[35px] absolute left-4 `}
-        custom={{ isScrollDown, firstRender }} // 최신 상태값 전달
+        custom={{ isScrollDown }} // 최신 상태값 전달
         variants={text_movement}
         initial="enter"
         animate="center"
@@ -191,7 +218,6 @@ const CompanyText = ({ selectedIndex, isScrollDown, firstRender }) => {
           ease: "easeOut",
         }}
         key={selectedIndex}
-        // key={`${selectedIndex}-${isScrollDown}`} // key에 isScrollDown 포함
       >
         <div className={`text-[48px] font-semibold`}>{titles[selectedIndex]}</div>
         <div className={`text-[18px] font-light`}>{contents[selectedIndex]}</div>

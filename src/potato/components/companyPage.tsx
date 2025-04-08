@@ -58,8 +58,8 @@ const IntroSection = () => {
           style={{
             textShadow: " -1px 0px black, 0px 1px black, 1px 0px black, 0px -1px black",
             opacity: 0.1,
-            // x: useTransform(introProgress, [0.18, 0.4], [-500, 0]),
-            y: useTransform(introProgress, [0.0, 0.4], [420, 0]),
+            x: useTransform(introProgress, [0.0, 0.4], [-500, 0]),
+            // y: useTransform(introProgress, [0.0, 0.4], [420, 0]),
           }}
         >
           waveware
@@ -71,8 +71,8 @@ const IntroSection = () => {
           style={{
             textShadow: " -1px 0px black, 0px 1px black, 1px 0px black, 0px -1px black",
             opacity: 0.1,
-            // x: useTransform(introProgress, [0.3, 0.5], [500, 0]),
-            y: useTransform(introProgress, [0.3, 0.6], [420, 0]),
+            x: useTransform(introProgress, [0.3, 0.5], [500, 0]),
+            // y: useTransform(introProgress, [0.3, 0.6], [420, 0]),
           }}
         >
           waveware
@@ -84,7 +84,8 @@ const IntroSection = () => {
           style={{
             textShadow: " -1px 0px black, 0px 1px black, 1px 0px black, 0px -1px black",
             opacity: 0.1,
-            y: useTransform(introProgress, [0.1, 0.65], [420, 0]),
+            x: useTransform(introProgress, [0.4, 0.7], [-500, 0]),
+            // y: useTransform(introProgress, [0.1, 0.65], [420, 0]),
           }}
         >
           waveware
@@ -96,7 +97,7 @@ const IntroSection = () => {
         treshold={0.3}
         className={`absolute text-center text-[48px]   bottom-[475px] left-1/2 transform -translate-x-1/2 text-nowrap font-medium`}
       >
-        <div className={``}>
+        <div className={`text-center text-[48px]   text-nowrap font-medium`}>
           과학데이터 연산 및 데이터 시각화 기술 중심의
           <br />
           인공지능 분야 <span className={`text-[#C4000F]`}>핵심 코어 기술 전문 회사</span>
@@ -109,7 +110,7 @@ const IntroSection = () => {
           "font-normal text-[24px]  absolute text-center bottom-[285px] left-1/2 transform -translate-x-1/2 text-nowrap pt-[10px]"
         }
       >
-        <div className={` `}>
+        <div className={`font-normal text-[24px]   text-center  text-nowrap pt-[10px]`}>
           <div className={`mb-[40px]`}>
             waveware는 미래 가치 분석을 위한 데이터 프로세싱을 통해 더 나은 선택을 위한 데이터 분석을 주도하며 데이터
           </div>

@@ -4,7 +4,7 @@ import HeroSection1 from "../kwon/main/HeroSection1";
 
 import Career from "../kwon/main/career";
 import CompanyLongScrollPage from "../potato/components/companyLongScrollPage";
-import SkillPage, { SkillIntroPage } from "../potato/components/skillPage";
+import SkillPage, { SkillIntroPage, SkillTogglePage } from "../potato/components/skillPage";
 import { IndustrySection } from "../potato/components/skillPage copy";
 
 export default function Home() {
@@ -35,7 +35,7 @@ export default function Home() {
         top: refs.skillIntro.current?.offsetTop ?? 0,
         height: refs.skillIntro.current?.offsetHeight ?? 0,
       },
-      skill: { top: refs.skill.current?.offsetTop ?? 0 },
+      skill: { top: refs.skill.current?.offsetTop ?? 0, height: refs.skill.current?.offsetHeight ?? 0 },
       career: { top: refs.career.current?.offsetTop ?? 0 },
     });
 
@@ -56,13 +56,10 @@ export default function Home() {
         if (p.scroll < p.vh * 0.5) {
           // Hero → Company
           scrollTo(refs.company, "start");
-        } else if (p.scroll >= p.company.top + p.company.height - p.vh * 1.5 && p.scroll < p.skillIntro.top) {
-          // Company → SkillIntro
-          scrollTo(refs.skillIntro, "start");
-        } else if (p.scroll >= p.skillIntro.top + p.skillIntro.height - p.vh * 1.5 && p.scroll < p.skill.top) {
-          // SkillIntro → Skill
+        } else if (p.scroll >= p.company.top + p.company.height - p.vh * 1.3 && p.scroll < p.skill.top) {
+          // Company → Skill
           scrollTo(refs.skill, "start");
-        } else if (p.scroll >= p.skill.top && p.scroll < p.skill.top + p.vh) {
+        } else if (p.scroll >= p.skill.top + p.skill.height - p.vh * 1.5 && p.scroll < p.career.top) {
           // Skill → Career
           scrollTo(refs.career, "start");
         }
@@ -72,12 +69,9 @@ export default function Home() {
           // Career → Skill
           scrollTo(refs.skill, "end");
         } else if (p.scroll >= p.skill.top && p.scroll < p.skill.top + THRESHOLD) {
-          // Skill → SkillIntro
-          scrollTo(refs.skillIntro, "end");
-        } else if (p.scroll >= p.skillIntro.top && p.scroll < p.skillIntro.top + THRESHOLD) {
-          // SkillIntro → Company
+          // Skill → Company
           scrollTo(refs.company, "end");
-        } else if (p.scroll <= p.vh + THRESHOLD) {
+        } else if (p.scroll <= p.vh + THRESHOLD * 3) {
           // Company → Hero
           scrollTo(refs.hero, "end");
         }
@@ -93,10 +87,10 @@ export default function Home() {
     { ref: refs.hero, component: <HeroSection /> },
     // { ref: refs.hero, component: <HeroSection1 /> },
     { ref: refs.company, component: <CompanyLongScrollPage /> },
-    { ref: refs.skillIntro, component: <SkillIntroPage /> },
-    { ref: refs.skill, component: <SkillPage /> },
+    // { ref: refs.skillIntro, component: <SkillIntroPage /> },
+    { ref: refs.skill, component: <SkillTogglePage /> },
     { ref: refs.career, component: <Career /> },
-    { ref: refs.industry, component: <IndustrySection /> },
+    // { ref: refs.industry, component: <IndustrySection /> },
   ];
 
   return (
