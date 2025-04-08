@@ -4,7 +4,7 @@ import ProcessComponent from "../kwon/career/process_component";
 import Requirements from "../kwon/career/Requirements";
 import SectionTitle from "../kwon/components/section_title";
 import RecruitmentProcess from "../kwon/career/recruitment_process";
-import WhoWeWant from "../kwon/career/who_we_want";
+import WhoWeWant from "../potato/components/who_we_want_copy";
 import Apply from "../kwon/career/Apply";
 
 export default function Career() {
