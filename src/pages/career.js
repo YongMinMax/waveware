@@ -6,10 +6,11 @@ import SectionTitle from "../kwon/components/section_title";
 import RecruitmentProcess from "../kwon/career/recruitment_process";
 import WhoWeWant from "../potato/components/who_we_want_copy";
 import Apply from "../kwon/career/Apply";
+import Layout from "../layouts/Layout";
 
 export default function Career() {
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center">
+    <Layout title={"채용안내 | waveware"}>
       <MenuHeader title={"Career"} description={"사람의 성장이 회사의 성장이라고 믿습니다."} />
 
       <SectionTitle text={"Recruitment Process"} />
@@ -21,6 +22,6 @@ export default function Career() {
       <WhoWeWant />
 
       <Apply />
-    </main>
+    </Layout>
   );
 }
