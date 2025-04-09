@@ -3,11 +3,11 @@ import React from "react";
 
 export default function Requirements({ requirements, animate, delay = 0 }) {
   return (
-    <div className="w-[400px] h-[600px] flex flex-col mt-12 px-4">
+    <div className="w-[400px] h-[600px] flex flex-col mt-12 px-4 pt-1">
       <MoveCompo animate={animate} delay={delay} className={`text-primary text-xl`}>
         <p className="">{requirements.eng}</p>
       </MoveCompo>
-      <MoveCompo animate={animate} delay={delay}>
+      <MoveCompo animate={animate} delay={delay} className={`pt-1`}>
         <p className="text-3xl font-semibold pb-10">{requirements.kor}</p>
       </MoveCompo>
 

@@ -38,7 +38,6 @@ const CompanyLongScrollPage = () => {
       if (contextRef.current !== "middle") {
         setRotationAngle((prev) => {
           setIsScrollDown(contextRef.current === "start");
-          console.log(`${contextRef.current}에서 지금 바꿉니다!`);
           return 120;
         });
         contextRef.current = "middle";
@@ -51,72 +50,6 @@ const CompanyLongScrollPage = () => {
       }
     }
   });
-
-  // intersectionObserver 쓰는 방식
-  // useEffect(() => {
-  //   const createObserver = (threshold: number) => {
-  //     return new IntersectionObserver(
-  //       (entries) => {
-  //         if (firstRender) {
-  //           setFirstRender(false);
-  //         }
-
-  //         entries.forEach((entry) => {
-  //           if (entry.isIntersecting) {
-  //             if (entry.target === firstSensor.current) {
-  //               setRotationAngle(0);
-  //               setIsScrollDown(false);
-  //             } else if (entry.target === secondSensor.current) {
-  //               let flag = false;
-  //               setRotationAngle((prev) => {
-  //                 if (prev === 0) {
-  //                   flag = true;
-  //                 }
-  //                 setIsScrollDown(flag);
-  //                 return 120;
-  //               });
-  //             } else if (entry.target === thirdSensor.current) {
-  //               setRotationAngle(240);
-  //               setIsScrollDown(true);
-  //             }
-  //           }
-  //         });
-  //       },
-  //       { threshold }
-  //     );
-  //   };
-
-  //   let observer = createObserver(DEFAULT_SCROLL_THRESHOLD); // 초기 threshold 값
-
-  //   const observeSensors = () => {
-  //     if (firstSensor.current) observer.observe(firstSensor.current);
-  //     if (secondSensor.current) observer.observe(secondSensor.current);
-  //     if (thirdSensor.current) observer.observe(thirdSensor.current);
-  //   };
-
-  //   const unobserveSensors = () => {
-  //     if (firstSensor.current) observer.unobserve(firstSensor.current);
-  //     if (secondSensor.current) observer.unobserve(secondSensor.current);
-  //     if (thirdSensor.current) observer.unobserve(thirdSensor.current);
-  //   };
-
-  //   observeSensors();
-
-  //   const handleResize = () => {
-  //     unobserveSensors(); // 기존 observer 해제
-  //     const newThreshold =
-  //       window.innerWidth > MIN_WIDTH ? DEFAULT_SCROLL_THRESHOLD : (window.innerWidth * 0.6) / MIN_WIDTH;
-  //     observer = createObserver(newThreshold); // 새로운 observer 생성
-  //     observeSensors(); // 새로운 observer로 감시 시작
-  //   };
-
-  //   window.addEventListener("resize", handleResize);
-
-  //   return () => {
-  //     unobserveSensors(); // 컴포넌트 언마운트 시 observer 해제
-  //     window.removeEventListener("resize", handleResize);
-  //   };
-  // }, [firstRender]);
 
   return (
     <div
@@ -181,8 +114,6 @@ const CompanyText = ({ selectedIndex, isScrollDown, firstRender }) => {
   ];
   const text_movement = {
     enter: ({ isScrollDown }: { isScrollDown: boolean }) => ({
-      // x: firstRender ? "0%" : "20%",
-      // y: firstRender ? "0%" : isScrollDown ? "200%" : "-200%",
       x: "20%",
       y: isScrollDown ? "200%" : "-200%",
       opacity: 1,

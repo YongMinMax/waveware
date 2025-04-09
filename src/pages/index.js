@@ -52,28 +52,53 @@ export default function Home() {
       const isDown = e.deltaY > 0;
       const p = getPos();
 
+      // if (isDown) {
+      //   // 아래로 스크롤 - 다음 섹션의 시작점으로
+      //   if (p.scroll < p.vh * 0.5) {
+      //     // Hero → Company
+      //     scrollTo(refs.company, "start");
+      //   } else if (p.scroll >= p.company.top + p.company.height - p.vh * 1.3 && p.scroll < p.skill.top) {
+      //     // Company → Skill
+      //     scrollTo(refs.skill, "start");
+      //   } else if (p.scroll >= p.skill.top + p.skill.height - p.vh * 1.5 && p.scroll < p.career.top) {
+      //     // Skill → Career
+      //     scrollTo(refs.career, "start");
+      //   }
+      // } else {
+      //   // 위로 스크롤 - 이전 섹션의 끝점으로
+      //   if (p.scroll >= p.career.top && p.scroll < p.career.top + p.vh) {
+      //     // Career → Skill
+      //     scrollTo(refs.skill, "end");
+      //   } else if (p.scroll >= p.skill.top && p.scroll < p.skill.top + THRESHOLD) {
+      //     // Skill → Company
+      //     scrollTo(refs.company, "end");
+      //   } else if (p.scroll <= p.vh + THRESHOLD * 3) {
+      //     // Company → Hero
+      //     scrollTo(refs.hero, "end");
+      //   }
+      // }
       if (isDown) {
         // 아래로 스크롤 - 다음 섹션의 시작점으로
         if (p.scroll < p.vh * 0.5) {
-          // Hero → Company
-          scrollTo(refs.company, "start");
-        } else if (p.scroll >= p.company.top + p.company.height - p.vh * 1.3 && p.scroll < p.skill.top) {
-          // Company → Skill
+          // Hero → Skill
           scrollTo(refs.skill, "start");
-        } else if (p.scroll >= p.skill.top + p.skill.height - p.vh * 1.5 && p.scroll < p.career.top) {
-          // Skill → Career
+        } else if (p.scroll >= p.skill.top + p.skill.height - p.vh * 1.3 && p.scroll < p.company.top) {
+          // Skill → Company
+          scrollTo(refs.company, "start");
+        } else if (p.scroll >= p.company.top + p.company.height - p.vh * 1.3 && p.scroll < p.career.top) {
+          // Company → Career
           scrollTo(refs.career, "start");
         }
       } else {
         // 위로 스크롤 - 이전 섹션의 끝점으로
         if (p.scroll >= p.career.top && p.scroll < p.career.top + p.vh) {
-          // Career → Skill
-          scrollTo(refs.skill, "end");
-        } else if (p.scroll >= p.skill.top && p.scroll < p.skill.top + THRESHOLD) {
-          // Skill → Company
+          // Career → Company
           scrollTo(refs.company, "end");
-        } else if (p.scroll <= p.vh + THRESHOLD * 3) {
-          // Company → Hero
+        } else if (p.scroll >= p.company.top - THRESHOLD * 10 && p.scroll < p.company.top + THRESHOLD * 30) {
+          // Company → Skill
+          scrollTo(refs.skill, "end");
+        } else if (p.scroll <= p.vh + THRESHOLD * 30) {
+          // Skill → Hero
           scrollTo(refs.hero, "end");
         }
       }
@@ -87,9 +112,8 @@ export default function Home() {
   const sections = [
     { ref: refs.hero, component: <HeroSection /> },
     // { ref: refs.hero, component: <HeroSection1 /> },
-    { ref: refs.company, component: <CompanyLongScrollPage /> },
-    // { ref: refs.skillIntro, component: <SkillIntroPage /> },
     { ref: refs.skill, component: <SkillTogglePage /> },
+    { ref: refs.company, component: <CompanyLongScrollPage /> },
     { ref: refs.career, component: <Career /> },
     // { ref: refs.industry, component: <IndustrySection /> },
   ];

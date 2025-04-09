@@ -20,12 +20,21 @@ export default function CompanyPage() {
     </main>
   );
 }
-const WaveSection = () => {
+const WaveSection = ({ isLong = 2 }) => {
   const waveRef = useRef(null);
   const { scrollYProgress: waveProgress } = useScroll({ target: waveRef, offset: ["end end", "start start"] });
-  const waveY = useSpring(useTransform(waveProgress, [0.0, 1.0], [-300, -500]), { stiffness: 500, damping: 100 });
+  const waveY = useSpring(
+    useTransform(
+      waveProgress,
+      // [0.0, 1.0], [-300, -500]),
+      [0.0, 1.0],
+      isLong === 1 ? [-300, -750] : [-300, -500]
+    ),
+    { stiffness: 500, damping: 100 }
+  );
   return (
-    <section ref={waveRef} className="relative w-[1440px] h-[410px] overflow-hidden">
+    // <section ref={waveRef} className="relative w-[1440px] h-[410px] overflow-hidden">
+    <section ref={waveRef} className={`relative ${isLong === 1 ? "w-full" : "w-[1440px]"} h-[410px] overflow-hidden`}>
       <motion.img src={`/img/beach.jpg`} className={`  absolute `} style={{ y: waveY }} />
       <div className="absolute inset-0 bg-black opacity-65"></div>
       <div className="relative container mx-auto w-[1400px] h-full flex flex-col justify-between text-white py-12">
@@ -59,7 +68,6 @@ const IntroSection = () => {
             textShadow: " -1px 0px black, 0px 1px black, 1px 0px black, 0px -1px black",
             opacity: 0.1,
             x: useTransform(introProgress, [0.0, 0.4], [-500, 0]),
-            // y: useTransform(introProgress, [0.0, 0.4], [420, 0]),
           }}
         >
           waveware
@@ -72,7 +80,6 @@ const IntroSection = () => {
             textShadow: " -1px 0px black, 0px 1px black, 1px 0px black, 0px -1px black",
             opacity: 0.1,
             x: useTransform(introProgress, [0.3, 0.5], [500, 0]),
-            // y: useTransform(introProgress, [0.3, 0.6], [420, 0]),
           }}
         >
           waveware
@@ -85,7 +92,6 @@ const IntroSection = () => {
             textShadow: " -1px 0px black, 0px 1px black, 1px 0px black, 0px -1px black",
             opacity: 0.1,
             x: useTransform(introProgress, [0.4, 0.7], [-500, 0]),
-            // y: useTransform(introProgress, [0.1, 0.65], [420, 0]),
           }}
         >
           waveware
@@ -94,7 +100,7 @@ const IntroSection = () => {
 
       <MoveText
         scrollY={introProgress}
-        treshold={0.3}
+        treshold={0.1}
         className={`absolute text-center text-[48px]   bottom-[475px] left-1/2 transform -translate-x-1/2 text-nowrap font-medium`}
       >
         <div className={`text-center text-[48px]   text-nowrap font-medium`}>
@@ -105,7 +111,7 @@ const IntroSection = () => {
       </MoveText>
       <MoveText
         scrollY={introProgress}
-        treshold={0.3}
+        treshold={0.1}
         className={
           "font-normal text-[24px]  absolute text-center bottom-[285px] left-1/2 transform -translate-x-1/2 text-nowrap pt-[10px]"
         }
@@ -121,7 +127,7 @@ const IntroSection = () => {
   );
 };
 
-const MoveText = ({ children, scrollY, treshold, className = ``, delay = 0 }) => {
+const MoveText = ({ children, scrollY, treshold, className = ``, delay = 0, duration = 0.8 }) => {
   const [isVisible, setVisible] = useState(false);
   useMotionValueEvent(scrollY, "change", (latest) => {
     if (Number(latest) >= treshold) {
@@ -135,7 +141,7 @@ const MoveText = ({ children, scrollY, treshold, className = ``, delay = 0 }) =>
       <div className={` ${className}  overflow-hidden`}>
         <motion.div
           animate={isVisible ? { y: 0 } : { y: "100%" }}
-          transition={{ ease: [0.68, -0.55, 0.265, 1.55], duration: 0.8, delay: delay }}
+          transition={{ ease: [0.68, -0.55, 0.265, 1.55], duration: duration, delay: isVisible ? delay : 0 }}
         >
           {children}
         </motion.div>
@@ -153,48 +159,62 @@ const BannerSection = ({ img_num = 2 }) => {
     `/img/${img_num}-3 visual.png`,
   ];
   const img_css = ` w-[260px] h-[260px] pb-[25px]`;
-  const title_timing = 0.15;
-  const description_timing = 0.15;
+  const title_timing = 0.05;
+  const description_timing = 0.05;
+  const img_timing = 0.05;
+  const duration = 0.6;
   return (
     <section ref={bannerRef} className={`relative w-full h-[730px] bg-[#F3F3F3] `}>
       <div className="justify-center flex">
         <div className=" flex  py-[103px] justify-between  w-[1400px] ">
           <div className={` flex-col flex items-center w-[330px]  `}>
-            <MoveText scrollY={bannerProgress} treshold={title_timing} className="self-start ">
+            <MoveText scrollY={bannerProgress} treshold={title_timing} className="self-start " duration={duration}>
               <div className="font-bold text-[27px] pb-[12px] ">Data Processing</div>
             </MoveText>
-            <MoveText scrollY={bannerProgress} treshold={description_timing}>
+            <MoveText scrollY={bannerProgress} treshold={description_timing} duration={duration}>
               <div className="font-normal text-[21px]">
                 전문화된 데이터 처리 기술을 통해 혁신을 위한 가치를 발굴합니다.
               </div>
             </MoveText>
-            <MoveText scrollY={bannerProgress} treshold={0.15}>
+            <MoveText scrollY={bannerProgress} treshold={img_timing} duration={duration}>
               <img src={img_src[0]} className={` mt-[50px] w-[330px] h-[330px]  ${img_css}`} />
             </MoveText>
           </div>
           <div className={` flex-col flex items-center w-[330px]  `}>
-            <MoveText scrollY={bannerProgress} treshold={title_timing} className="self-start " delay={0.15}>
+            <MoveText
+              scrollY={bannerProgress}
+              treshold={title_timing}
+              className="self-start "
+              delay={0.15}
+              duration={duration}
+            >
               <div className="font-bold text-[27px] pb-[12px]   ">Data Analysis</div>
             </MoveText>
-            <MoveText scrollY={bannerProgress} treshold={description_timing} delay={0.15}>
+            <MoveText scrollY={bannerProgress} treshold={description_timing} delay={0.15} duration={duration}>
               <div className="font-normal text-[21px]">
                 데이터 분석을 통해 더 나은 결정을 내릴 수 있도록 연구하고 개발합니다.
               </div>
             </MoveText>
-            <MoveText scrollY={bannerProgress} treshold={0.15} delay={0.15}>
+            <MoveText scrollY={bannerProgress} treshold={img_timing} delay={0.15} duration={duration}>
               <img src={img_src[1]} className={` mt-[50px] w-[330px] h-[330px]  ${img_css}`} />
             </MoveText>
           </div>
           <div className={` flex-col flex items-center w-[330px]  `}>
-            <MoveText scrollY={bannerProgress} treshold={title_timing} className="self-start " delay={0.3}>
+            <MoveText
+              scrollY={bannerProgress}
+              treshold={title_timing}
+              className="self-start "
+              delay={0.3}
+              duration={duration}
+            >
               <div className="font-bold text-[27px] pb-[12px]  ">Data Visualization</div>
             </MoveText>
-            <MoveText scrollY={bannerProgress} treshold={description_timing} delay={0.3}>
+            <MoveText scrollY={bannerProgress} treshold={description_timing} delay={0.3} duration={duration}>
               <div className="font-normal text-[21px]">
                 다양한 시각적 요소를 활용해 누구든지 쉽게 정보를 이해할 수 있도록 합니다.
               </div>
             </MoveText>
-            <MoveText scrollY={bannerProgress} treshold={0.15} delay={0.3}>
+            <MoveText scrollY={bannerProgress} treshold={img_timing} delay={0.3} duration={duration}>
               <img src={img_src[2]} className={` mt-[50px] w-[330px] h-[330px]  ${img_css}`} />
             </MoveText>
           </div>
