@@ -68,7 +68,6 @@ const IntroSection = () => {
             textShadow: " -1px 0px black, 0px 1px black, 1px 0px black, 0px -1px black",
             opacity: 0.1,
             x: useTransform(introProgress, [0.0, 0.4], [-500, 0]),
-            // y: useTransform(introProgress, [0.0, 0.4], [420, 0]),
           }}
         >
           waveware
@@ -81,7 +80,6 @@ const IntroSection = () => {
             textShadow: " -1px 0px black, 0px 1px black, 1px 0px black, 0px -1px black",
             opacity: 0.1,
             x: useTransform(introProgress, [0.3, 0.5], [500, 0]),
-            // y: useTransform(introProgress, [0.3, 0.6], [420, 0]),
           }}
         >
           waveware
@@ -94,7 +92,6 @@ const IntroSection = () => {
             textShadow: " -1px 0px black, 0px 1px black, 1px 0px black, 0px -1px black",
             opacity: 0.1,
             x: useTransform(introProgress, [0.4, 0.7], [-500, 0]),
-            // y: useTransform(introProgress, [0.1, 0.65], [420, 0]),
           }}
         >
           waveware

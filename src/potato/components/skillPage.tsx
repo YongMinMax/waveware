@@ -33,12 +33,7 @@ const SkillPage = () => {
 
 export const SkillTogglePage = ({}) => {
   useEffect(() => {
-    const imageUrls = [
-      "/img/metadata.jpg",
-      "/img/visulation_.jpg",
-      "/img/sns.jpg",
-      "/img/NLP.jpg",
-    ];
+    const imageUrls = ["/img/metadata.jpg", "/img/visulation_.jpg", "/img/sns.jpg", "/img/NLP.jpg"];
     preloadImages(imageUrls); // 이미지 미리 로드
   }, []);
   const [firstRender, setFirstRender] = useState(false);
@@ -64,7 +59,7 @@ export const SkillTogglePage = ({}) => {
       setIsIntroAnimated(true);
       if (!firstRender) {
         setFirstRender(true);
-        blockScrollTemporarily(2000);
+        blockScrollTemporarily(1500);
       }
     } else if (scroll < 0.1) {
       setIsIntroAnimated(false);
@@ -73,13 +68,13 @@ export const SkillTogglePage = ({}) => {
   return (
     <section ref={scrollRef} className={`relative   h-[180vh]     min-w-full max-w-full `}>
       <div className={`sticky top-0 w-full h-screen  `}>
-        <AnimatePresence initial={true} mode="wait">
+        <AnimatePresence initial={true}>
           {isToggled ? (
             <motion.div
               key={`skillContainer`}
-              initial={{ opacity: 0, scale: 1.0 }} // 초기 상태
-              animate={{ opacity: 1, scale: 1 }} // 나타날 때 상태
-              exit={{ opacity: 0, scale: 0.8 }}
+              initial={{ opacity: 0, scale: 0.7 }} // 초기 상태
+              animate={{ opacity: 1, scale: 1, transition: { ease: "easeOut", duration: 0.4, delay: 0.05 } }} // 나타날 때 상태
+              exit={{ opacity: 0, scale: 0.7 }}
               transition={{ ease: "easeOut", duration: 0.15 }}
             >
               <SkillContainer className={`min-w-[1440px] h-screen pt-[100px] `} />
@@ -88,7 +83,7 @@ export const SkillTogglePage = ({}) => {
             <motion.div
               key={`SkillIntro`}
               animate={{ opacity: 1, scale: 1 }} // 나타날 때 상태
-              exit={{ opacity: 0, scale: 1.0 }} // 사라질 때 상태
+              exit={{ opacity: 0, scale: 0.8 }} // 사라질 때 상태
               transition={{ ease: "easeOut", duration: 0.15 }}
             >
               <IntroObj
@@ -119,9 +114,15 @@ const SkillContainer = ({ className }) => {
 
   return (
     <div className={` container flex flex-col items-end px-0 ${className}`}>
-      <MoveScrollText entryDuration={0.8} entryTiming={0.1} axis="x" className={``}>
-        <span className={` text-[#F1EFEE] text-[128px] font-bold leading-[0.9]`}>WAVEWARE</span>
-      </MoveScrollText>
+      <div className={`overflow-hidden relative`}>
+        <motion.div
+          initial={{ x: "100%" }}
+          animate={{ x: 0 }}
+          transition={{ ease: "easeOut", duration: 0.5, delay: 0.4 }}
+        >
+          <span className={` text-[#F1EFEE] text-[128px] font-bold leading-[0.9]`}>WAVEWARE</span>
+        </motion.div>
+      </div>
 
       <Modal isOpen={isModalOpen} onClose={closeModal} selectedIndex={seletedIndex}></Modal>
       <div className={` w-[1440px] h-[640px] flex gap-[4px] overflow-hidden`}>
@@ -440,6 +441,7 @@ const MoveScrollText = ({
   return (
     <div ref={scrollSensor} className={`relative overflow-hidden ${className}`}>
       <motion.div
+        initial={false}
         animate={isAnimated ? onAnimate : notAnimate}
         transition={{ ease: "easeOut", duration: entryDuration }}
       >
