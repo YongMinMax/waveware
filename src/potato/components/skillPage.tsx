@@ -43,6 +43,8 @@ export const SkillTogglePage = ({}) => {
   const [isIntroAnimated, setIsIntroAnimated] = useState(false);
   const { scrollYProgress } = useScroll({ target: scrollRef, offset: ["start end", "end start"] });
 
+  const firstSensor = useRef<HTMLDivElement>(null);
+  const secondSensor = useRef<HTMLDivElement>(null);
   useMotionValueEvent(scrollYProgress, "change", (scroll) => {
     if (scroll >= 0.5) {
       if (stateRef.current !== "content") {
@@ -65,8 +67,65 @@ export const SkillTogglePage = ({}) => {
       setIsIntroAnimated(false);
     }
   });
+
+  useEffect(() => {
+    let isThrottled = false;
+    const THROTTLE_TIME = 500;
+    const THRESHOLD = 10; // 섹션 감지를 위한 픽셀 임계값
+    const getPos = () => {
+      const firstRect = firstSensor.current?.getBoundingClientRect();
+      const secondRect = secondSensor.current?.getBoundingClientRect();
+
+      return {
+        vh: window.innerHeight,
+        scroll: window.scrollY,
+        first: {
+          top: firstRect ? firstRect.top + window.scrollY : 0, // 뷰포트 기준 위치를 문서 기준으로 변환
+          height: firstSensor.current?.offsetHeight ?? 0,
+        },
+        second: {
+          top: secondRect ? secondRect.top + window.scrollY : 0,
+          height: secondSensor.current?.offsetHeight ?? 0,
+        },
+      };
+    };
+    const scrollTo = (ref: React.RefObject<HTMLElement>, block: ScrollLogicalPosition = "start"): void => {
+      ref.current?.scrollIntoView({ behavior: "smooth", block });
+    };
+    const handleScroll = (e: WheelEvent) => {
+      e.preventDefault();
+      if (isThrottled) return;
+      isThrottled = true;
+      setTimeout(() => (isThrottled = false), THROTTLE_TIME);
+      const isDown = e.deltaY > 0;
+      const p = getPos();
+      if (isDown) {
+        // 아래로 스크롤
+        if (firstRender && p.scroll >= p.first.top && p.scroll < p.second.top) {
+          // first -> sceond
+          scrollTo(secondSensor, "start");
+        }
+      } else {
+        // 위로 스크롤
+        if (p.scroll >= p.second.top && p.scroll < p.second.top + p.second.height) {
+          // second -> first
+          scrollTo(firstSensor, "start");
+        }
+      }
+    };
+    window.addEventListener("wheel", handleScroll, { passive: false });
+    return () => window.removeEventListener("wheel", handleScroll);
+  }, []);
+
   return (
-    <section ref={scrollRef} className={`relative   h-[180vh]     min-w-full max-w-full `}>
+    <section ref={scrollRef} className={`relative   h-[200vh]     min-w-full max-w-full `}>
+      <div ref={firstSensor} className={`firstSection w-full h-[100vh] absolute bg-blue-300`}>
+        {" "}
+      </div>
+      <div ref={secondSensor} className={`secondSection top-[100vh] w-full h-[100vh] absolute bg-green-300`}>
+        {" "}
+      </div>
+
       <div className={`sticky top-0 w-full h-screen  `}>
         <AnimatePresence initial={true}>
           {isToggled ? (

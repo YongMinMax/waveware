@@ -96,6 +96,7 @@ export default function Home() {
           scrollTo(refs.company, "end");
         } else if (p.scroll >= p.company.top - THRESHOLD * 10 && p.scroll < p.company.top + THRESHOLD * 30) {
           // Company → Skill
+          console.log(`skill 의 끝으로 보내는 중`);
           scrollTo(refs.skill, "end");
         } else if (p.scroll <= p.vh + THRESHOLD * 30) {
           // Skill → Hero
@@ -119,12 +120,12 @@ export default function Home() {
   ];
 
   return (
-      <Layout title={"Home | waveware"}>
-        {sections.map((section, index) => (
-          <div key={index} ref={section.ref} className="w-full min-h-screen">
-            {section.component}
-          </div>
-        ))}
-      </Layout>
+    <Layout title={"Home | waveware"}>
+      {sections.map((section, index) => (
+        <div key={index} ref={section.ref} className="w-full min-h-screen">
+          {section.component}
+        </div>
+      ))}
+    </Layout>
   );
 }
