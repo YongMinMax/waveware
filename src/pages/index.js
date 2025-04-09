@@ -6,6 +6,7 @@ import Career from "../kwon/main/career";
 import CompanyLongScrollPage from "../potato/components/companyLongScrollPage";
 import SkillPage, { SkillIntroPage, SkillTogglePage } from "../potato/components/skillPage";
 import { IndustrySection } from "../potato/components/skillPage copy";
+import Layout from "../layouts/Layout";
 
 export default function Home() {
   // 섹션 참조
@@ -94,12 +95,14 @@ export default function Home() {
   ];
 
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center">
-      {sections.map((section, index) => (
-        <div key={index} ref={section.ref} className="w-full min-h-screen">
-          {section.component}
+      <Layout title={"Home | waveware"}>
+        <div className="min-h-screen flex flex-col items-center justify-center">
+          {sections.map((section, index) => (
+            <div key={index} ref={section.ref} className="w-full min-h-screen">
+              {section.component}
+            </div>
+          ))}
         </div>
-      ))}
-    </main>
+      </Layout>
   );
 }
