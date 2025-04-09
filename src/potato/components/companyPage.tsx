@@ -4,7 +4,7 @@ import MenuHeader from "../../kwon/components/menuheader";
 import SectionTitle from "../../kwon/components/section_title";
 export default function CompanyPage() {
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center  ">
+    <>
       <MenuHeader
         title={"Company"}
         description={"데이터의 힘을 통해 미래를 예측하고/혁신을 이끄는 기술을 연구합니다."}
@@ -17,7 +17,7 @@ export default function CompanyPage() {
 
       <SectionTitle text={"What We Do"} />
       <BannerSection />
-    </main>
+    </>
   );
 }
 const WaveSection = ({ isLong = 2 }) => {
