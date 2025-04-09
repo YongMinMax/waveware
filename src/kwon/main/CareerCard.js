@@ -2,7 +2,7 @@ import React from "react";
 
 function CareerCard({ title, description, color }) {
   return (
-    <div className="relative flex-1 overflow-hidden transform transition-transform duration-300 ease-out hover:scale-105">
+    <div className="mt-10 relative flex-1 overflow-hidden transform transition-transform duration-300 ease-out hover:scale-105">
       {/* 카드 배경 */}
       <div className="absolute inset-0 bg-white opacity-20 transition-colors duration-300"></div>
 

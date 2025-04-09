@@ -1,8 +1,8 @@
 import {useRef, useState, useEffect} from "react";
 
 export default function TimeLine () {
-    const [selectedYear, setSelectedYear] = useState(2024);
-    const [prevSelectedYear, setPrevSelectedYear] = useState(2024);
+    const [selectedYear, setSelectedYear] = useState("2024");
+    const [prevSelectedYear, setPrevSelectedYear] = useState("2024");
     const yearRefs = useRef({});
 
     useEffect(() => {
@@ -113,7 +113,7 @@ const historyData = {
             "글로벌 공급망 문제 사전감지와 대응을 위한 지능형 GVC 분석시스템 개발",
             "사회문제 R&D 분석 현황판 및 데이터 분석도구 개발",
         ],
-        image: "/img/history/2024.png"
+        image: "/img/history/2025.png"
     },
     2023: {
         events: [
