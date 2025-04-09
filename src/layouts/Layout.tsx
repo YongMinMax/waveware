@@ -7,7 +7,9 @@ export default function Layout({ title, children }: { title: string; children: R
                 <link rel="icon" type="image/png" href="/favicon_v2.png"/>
                 <title>{title}</title>
             </Head>
-            <main>{children}</main>
+            <main className={"min-h-screen flex flex-col items-center justify-center"}>
+                {children}
+            </main>
         </>
     )
 }
