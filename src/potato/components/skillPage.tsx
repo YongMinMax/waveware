@@ -59,7 +59,7 @@ export const SkillTogglePage = ({}) => {
       setIsIntroAnimated(true);
       if (!firstRender) {
         setFirstRender(true);
-        blockScrollTemporarily(1500);
+        blockScrollTemporarily(1200);
       }
     } else if (scroll < 0.1) {
       setIsIntroAnimated(false);
