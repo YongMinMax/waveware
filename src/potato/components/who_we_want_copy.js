@@ -7,21 +7,20 @@ export default function WhoWeWant() {
   const [animate, setAnimate] = useState(false);
   const { scrollYProgress } = useScroll({ target: scrollSensor, offset: ["start end", "end start"] });
   useMotionValueEvent(scrollYProgress, "change", (scroll) => {
-    if (scroll > 0.2) {
+    if (scroll > 0.01) {
       setAnimate(true);
     } else {
       setAnimate(false);
     }
   });
-  console.log(`${scrollYProgress} , ${animate}`, scrollYProgress);
   return (
     <section ref={scrollSensor} className="w-full h-[700px] bg-gray-100 flex justify-center">
       <div className="w-[1400px] h-full flex justify-between items-center">
         <Requirements animate={animate} requirements={requirements[1]} />
         <div className="w-[1.5px] h-[80%] bg-gray-300"></div>
-        <Requirements animate={animate} delay={0.2} requirements={requirements[2]} />
+        <Requirements animate={animate} delay={animate ? 0.2 : 0} requirements={requirements[2]} />
         <div className="w-[1.5px] h-[80%] bg-gray-300"></div>
-        <Requirements animate={animate} delay={0.4} requirements={requirements[3]} />
+        <Requirements animate={animate} delay={animate ? 0.4 : 0} requirements={requirements[3]} />
       </div>
     </section>
   );

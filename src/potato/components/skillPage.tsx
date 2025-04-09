@@ -12,6 +12,8 @@ import {
   useMotionValueEvent,
   useSpring,
 } from "framer-motion";
+
+// 소개 글귀 최상단 컴포넌트
 export const SkillIntroPage = () => {
   return (
     <div className={`relative       min-w-full max-w-full`}>
@@ -19,6 +21,8 @@ export const SkillIntroPage = () => {
     </div>
   );
 };
+
+// 기술 카드 최상단 컴포넌트
 const SkillPage = () => {
   return (
     <div className={`relative    min-w-full max-w-full `}>
@@ -41,8 +45,9 @@ export const SkillTogglePage = ({}) => {
   const stateRef = useRef<"intro" | "content" | null>("intro");
   const scrollRef = useRef(null);
   const [isToggled, setIsToggled] = useState(false);
+  const [isIntroAnimated, setIsIntroAnimated] = useState(false);
   const { scrollYProgress } = useScroll({ target: scrollRef, offset: ["start end", "end start"] });
-  console.log(stateRef.current);
+
   useMotionValueEvent(scrollYProgress, "change", (scroll) => {
     if (scroll >= 0.5) {
       if (stateRef.current !== "content") {
@@ -55,18 +60,27 @@ export const SkillTogglePage = ({}) => {
         setIsToggled(false);
       }
     }
+    if (scroll > 0.1 && scroll <= 0.4) {
+      setIsIntroAnimated(true);
+      if (!firstRender) {
+        setFirstRender(true);
+        blockScrollTemporarily(2000);
+      }
+    } else if (scroll < 0.1) {
+      setIsIntroAnimated(false);
+    }
   });
   return (
     <section ref={scrollRef} className={`relative   h-[180vh]     min-w-full max-w-full `}>
       <div className={`sticky top-0 w-full h-screen  `}>
-        <AnimatePresence initial={false} mode="wait">
+        <AnimatePresence initial={true} mode="wait">
           {isToggled ? (
             <motion.div
               key={`skillContainer`}
               initial={{ opacity: 0, scale: 1.0 }} // 초기 상태
               animate={{ opacity: 1, scale: 1 }} // 나타날 때 상태
               exit={{ opacity: 0, scale: 0.8 }}
-              transition={{ ease: "easeOut", duration: 0.3 }}
+              transition={{ ease: "easeOut", duration: 0.15 }}
             >
               <SkillContainer className={`min-w-[1440px] h-screen pt-[100px] `} />
             </motion.div>
@@ -75,9 +89,14 @@ export const SkillTogglePage = ({}) => {
               key={`SkillIntro`}
               animate={{ opacity: 1, scale: 1 }} // 나타날 때 상태
               exit={{ opacity: 0, scale: 1.0 }} // 사라질 때 상태
-              transition={{ ease: "easeOut", duration: 0.3 }}
+              transition={{ ease: "easeOut", duration: 0.15 }}
             >
-              <IntroObj className={`min-w-[1440px]  `} firstRender={firstRender} setFirstRender={setFirstRender} />
+              <IntroObj
+                className={`min-w-[1440px]  `}
+                firstRender={firstRender}
+                setFirstRender={setFirstRender}
+                isAnimated={isIntroAnimated}
+              />
             </motion.div>
           )}
         </AnimatePresence>
@@ -151,25 +170,8 @@ const SkillBox = ({ idx, skillInfo, isHovered, handleMouseEnter, handleClick }) 
   const { scrollYProgress } = useScroll({ target: scrollSensor, offset: ["start end", "end start"] });
   const [isAnimated, setIsAnimated] = useState(true);
 
-  // useMotionValueEvent(scrollYProgress, "change", (latest) => {
-  //   if (latest >= 0.1) {
-  //     setIsAnimated(true);
-  //   }
-  // });
-
   return (
     <div ref={scrollSensor} className={`relative overflow-hidden rounded-[5px]`} onClick={handleClick}>
-      {/* <AnimatePresence initial={false}>
-        {!isAnimated && (
-          <motion.div
-            key={`${idx}-skeleton`}
-            className={`${skeleton_CSS} absolute -z-10`}
-            style={{ backgroundColor: `#F1EFEE` }}
-            exit={{ opacity: 1, y: "-100%" }}
-            transition={{ duration: 10.5, ease: "easeOut" }}
-          ></motion.div>
-        )}
-      </AnimatePresence> */}
       <motion.div transition={{ ease: "easeOut", duration: 0.8 }}>
         <motion.div
           className={`rounded-[5px]  cursor-pointer overflow-hidden`} // overflow 설정
@@ -241,36 +243,34 @@ const blockScrollTemporarily = (duration = 2000) => {
     window.removeEventListener("keydown", preventKey);
   }, duration);
 };
-const IntroObj = ({ className, firstRender = false, setFirstRender = (e) => {} }) => {
+const IntroObj = ({ className, firstRender = false, setFirstRender = (e) => {}, isAnimated = false }) => {
   const introText1 = `데이터 처리 기술을 통해 미래의 잠재력을 미리 예측하고 혁신을 위한 새로운 가치를 발굴합니다.\n`;
   const introText2 = `다년간 R&D 사업의 노하우를 통해 데이터 분석으로 의미를 추출합니다.`;
   const GREEN = "#3A9100";
   const GRAY = "#D9D9D9";
   const scrollSensor = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: scrollSensor, offset: ["start end", "end start"] });
-  const [isAnimated, setIsAnimated] = useState(false);
-  useMotionValueEvent(scrollYProgress, "change", (latest) => {
-    if (latest >= 0.5) {
-      setIsAnimated(true);
-      if (!firstRender) {
-        setFirstRender(true);
-        blockScrollTemporarily(2000);
-        // document.body.style.overflow = "hidden";
 
-        // // 2. 2초 후에 다시 스크롤 허용
-        // setTimeout(() => {
-        //   document.body.style.overflow = "auto";
-        // }, 2000);
-      }
-    }
-  });
-
+  // 스크롤 관측
+  // const [isAnimated, setIsAnimated] = useState(firstRender);
+  // useMotionValueEvent(scrollYProgress, "change", (latest) => {
+  //   if (latest >= 0.1 && latest < 0.7) {
+  //     setIsAnimated(true);
+  //     if (!firstRender) {
+  //       setFirstRender(true);
+  //       blockScrollTemporarily(2000);
+  //     }
+  //   } else {
+  //     setIsAnimated(false);
+  //   }
+  // });
   const IntroAnimationDelay = {
     "모든 데이터에서": { duration: 0.6, delay: 0.0 },
     회색바: { duration: 0.25, delay: 0.32 },
     녹색바: { duration: 0.25, delay: 0.1 },
-    설명: { duration: 0.25, delay: -0.0 },
+    설명: { duration: 0.25, delay: -0.24 },
   };
+  // 등장 애니메이션의 duration과 delay기반으로 idx의 delay값 리턴
   const getCurrentDelay = (idx: string) => {
     let resultDelay = 0;
 
@@ -298,13 +298,14 @@ const IntroObj = ({ className, firstRender = false, setFirstRender = (e) => {} }
     <div className={` w-full h-[100vh]  relative  ${className} `}>
       <div className={`w-full h-fit  justify-end text-center items-center top-[10%]   `}>
         <div className={`flex flex-col items-center pt-[260px]`}>
-          <div ref={scrollSensor} className={`relative overflow-hidden`}>
+          <div ref={scrollSensor} className={`relative overflow-hidden  `}>
             <motion.div
+              initial={{ y: "100%" }}
               animate={isAnimated ? { y: 0 } : { y: "100%" }}
               transition={{
                 ease: [0.68, -0.55, 0.265, 1.55],
                 duration: IntroAnimationDelay["모든 데이터에서"].duration,
-                delay: getCurrentDelay("모든 데이터에서"),
+                delay: isAnimated ? getCurrentDelay("모든 데이터에서") : 0,
               }}
             >
               <span className={` font-bold text-[60px]`}>
@@ -320,14 +321,16 @@ const IntroObj = ({ className, firstRender = false, setFirstRender = (e) => {} }
               className={` absolute top-0 left-0 w-full h-full    `}
               // style={{ background: `${GRAY}`, y: progressGrayBarY }}
               style={{ background: `${GRAY}` }}
+              initial={{ y: "-100%" }}
               animate={isAnimated ? { y: 0 } : { y: "-100%" }}
               transition={{
                 ease: "easeOut",
                 duration: IntroAnimationDelay["회색바"].duration,
-                delay: getCurrentDelay("회색바"),
+                delay: isAnimated ? getCurrentDelay("회색바") : 0,
               }}
             ></motion.div>
             <motion.div
+              initial={{ y: "-100%" }}
               className={` absolute top-0 left-0 w-full h-full    `}
               // style={{ background: `${GREEN}`, y: progressGreenBarY }}
               style={{ background: `${GREEN}` }}
@@ -335,17 +338,18 @@ const IntroObj = ({ className, firstRender = false, setFirstRender = (e) => {} }
               transition={{
                 ease: "easeOut",
                 duration: IntroAnimationDelay["녹색바"].duration,
-                delay: getCurrentDelay("녹색바"),
+                delay: isAnimated ? getCurrentDelay("녹색바") : 0,
               }}
             ></motion.div>
           </div>
           <div className={`relative overflow-hidden`}>
             <motion.div
+              initial={{ y: "140%" }}
               animate={isAnimated ? { y: 0 } : { y: "140%" }}
               transition={{
                 ease: [0.68, -0.55, 0.265, 1.55],
                 duration: IntroAnimationDelay["설명"].duration,
-                delay: getCurrentDelay("설명"),
+                delay: isAnimated ? getCurrentDelay("설명") : 0,
               }}
             >
               <div className={`font-semibold text-xl mb-[11px]`}>
@@ -356,11 +360,12 @@ const IntroObj = ({ className, firstRender = false, setFirstRender = (e) => {} }
           </div>
           <div className={`relative overflow-hidden`}>
             <motion.div
+              initial={{ y: "100%" }}
               animate={isAnimated ? { y: 0 } : { y: "100%" }}
               transition={{
                 ease: [0.68, -0.55, 0.265, 1.55],
                 duration: IntroAnimationDelay["설명"].duration,
-                delay: getCurrentDelay("설명"),
+                delay: isAnimated ? getCurrentDelay("설명") : 0,
               }}
             >
               <span className={`font-medium text-[30px]`}>{introText1}</span>
@@ -369,11 +374,12 @@ const IntroObj = ({ className, firstRender = false, setFirstRender = (e) => {} }
 
           <div className={`relative overflow-hidden`}>
             <motion.div
+              initial={{ y: "100%" }}
               animate={isAnimated ? { y: 0 } : { y: "100%" }}
               transition={{
                 ease: [0.68, -0.55, 0.265, 1.55],
                 duration: IntroAnimationDelay["설명"].duration,
-                delay: getCurrentDelay("설명"),
+                delay: isAnimated ? getCurrentDelay("설명") : 0,
               }}
             >
               <span className={`font-medium text-[30px]`}>{introText2}</span>

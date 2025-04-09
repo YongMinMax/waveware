@@ -38,7 +38,6 @@ const CompanyLongScrollPage = () => {
       if (contextRef.current !== "middle") {
         setRotationAngle((prev) => {
           setIsScrollDown(contextRef.current === "start");
-          console.log(`${contextRef.current}에서 지금 바꿉니다!`);
           return 120;
         });
         contextRef.current = "middle";
