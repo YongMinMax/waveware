@@ -144,7 +144,7 @@ const MoveText = ({ children, scrollY, treshold, className = ``, delay = 0, dura
       <div className={` ${className}  overflow-hidden`}>
         <motion.div
           animate={isVisible ? { y: 0 } : { y: "100%" }}
-          transition={{ ease: [0.68, -0.55, 0.265, 1.55], duration: duration, delay: delay }}
+          transition={{ ease: [0.68, -0.55, 0.265, 1.55], duration: duration, delay: isVisible ? delay : 0 }}
         >
           {children}
         </motion.div>
