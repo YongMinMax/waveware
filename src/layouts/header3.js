@@ -12,7 +12,6 @@ export default function Header() {
   // 네비게이션 아이템 정의
   const NAV_ITEMS = [
     { href: "/company", label: "Company" },
-    // { href: "/technology", label: "Technology" }, // 원본에서 주석 처리됨
     { href: "/history", label: "History" },
     { href: "/career", label: "Career" },
     { href: "/contact", label: "Contact" },
@@ -67,7 +66,7 @@ export default function Header() {
       const isInWhiteTextSection = Array.from(sections).some(
         (section, index) => {
           // 첫 번째와 다섯 번째 섹션만 확인 (HeroSection과 Career)
-          if (index !== 0 && index !== 4) return false;
+          if (index !== 0 && index !== 1) return false;
 
           const sectionTop = section.offsetTop;
           const sectionBottom = sectionTop + section.offsetHeight;

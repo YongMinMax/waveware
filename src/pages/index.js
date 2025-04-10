@@ -1,4 +1,4 @@
-import { useRef, useEffect } from "react";
+import {useRef, useEffect, useState} from "react";
 import HeroSection from "../kwon/main/HeroSection";
 import HeroSection1 from "../kwon/main/HeroSection1";
 
@@ -7,6 +7,7 @@ import CompanyLongScrollPage from "../potato/components/companyLongScrollPage";
 import SkillPage, { SkillIntroPage, SkillTogglePage } from "../potato/components/skillPage";
 import { IndustrySection } from "../potato/components/skillPage copy";
 import Layout from "../layouts/Layout";
+import {useInView} from "framer-motion";
 
 export default function Home() {
   // 섹션 참조
@@ -118,8 +119,31 @@ export default function Home() {
     // { ref: refs.industry, component: <IndustrySection /> },
   ];
 
+  const [isDark, setIsDark] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const heroTop = refs.hero.current?.getBoundingClientRect().top;
+      const heroBottom = refs.hero.current?.getBoundingClientRect().bottom;
+      const careerTop = refs.career.current?.getBoundingClientRect().top;
+      const careerBottom = refs.career.current?.getBoundingClientRect().bottom;
+
+      const isHeroTouchingTop = heroTop <= 0 && heroBottom >= 0.1;
+      const isCareerTouchingTop = careerTop <= -0.1 && careerBottom >= 0;
+
+      setIsDark(isHeroTouchingTop || isCareerTouchingTop);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    handleScroll(); // 초기 상태 체크
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
   return (
-      <Layout title={"Home | waveware"}>
+      <Layout title={"Home | waveware"} isDark={isDark}>
         {sections.map((section, index) => (
           <div key={index} ref={section.ref} className="w-full min-h-screen">
             {section.component}
