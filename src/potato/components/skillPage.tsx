@@ -136,7 +136,7 @@ export const SkillTogglePage = ({ handleScrollLock }) => {
       </div>
 
       <div className={`sticky top-0 w-full h-screen  `}>
-        <AnimatePresence initial={true}>
+        <AnimatePresence initial={true} mode="popLayout">
           {isToggled ? (
             <motion.div
               key={`skillContainer`}
@@ -154,12 +154,7 @@ export const SkillTogglePage = ({ handleScrollLock }) => {
               exit={{ opacity: 0, scale: 0.8 }} // 사라질 때 상태
               transition={{ ease: "easeOut", duration: 0.15 }}
             >
-              <IntroObj
-                className={`min-w-[1440px]  `}
-                firstRender={firstRender}
-                setFirstRender={setFirstRender}
-                isAnimated={isIntroAnimated}
-              />
+              <IntroObj className={`min-w-[1440px]  `} isAnimated={isIntroAnimated} />
             </motion.div>
           )}
         </AnimatePresence>
@@ -240,72 +235,63 @@ const SkillBox = ({ idx, skillInfo, isHovered, handleMouseEnter, handleClick }) 
   };
   const skeleton_CSS = isHovered ? `w-[987px] h-[630px]` : `w-[147px] h-[630px]`;
 
-  const scrollSensor = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ target: scrollSensor, offset: ["start end", "end start"] });
-  const [isAnimated, setIsAnimated] = useState(true);
-
   return (
-    <div ref={scrollSensor} className={`relative overflow-hidden rounded-[5px]`} onClick={handleClick}>
-      <motion.div transition={{ ease: "easeOut", duration: 0.8 }}>
-        <motion.div
-          className={`rounded-[5px]  cursor-pointer overflow-hidden`} // overflow 설정
-          style={{
-            backgroundImage: `${background_CSS},url(${img_src})`,
-            backgroundPosition: `center top`,
-            backgroundSize: `auto,${img_size}`,
-            backgroundRepeat: "no-repeat",
-            padding: isHovered ? "352px 0px 100px 100px " : "90px 0px 0px 0px",
-          }}
-          initial={false}
-          variants={variants}
-          animate={isHovered ? "large" : "small"}
-          onMouseEnter={() => handleMouseEnter(idx)}
-        >
-          <div className="relative w-full h-full">
-            {isHovered ? (
-              <div className={`flex flex-col `}>
-                <span className={`text-[#FFFFFF] font-bold text-[60px] whitespace-nowrap`}>{title}</span>
-                <MoveEnterText>
-                  <span className={`text-[#FFFFFF] font-medium text-[24px] whitespace-nowrap`}>{content}</span>
-                </MoveEnterText>
-                <MoveEnterText>
-                  <div className={`mt-[37px] flex gap-[14px] `}>
-                    {keywords.map((keyword: string) => (
-                      <span
-                        key={keyword}
-                        className={`text-[#FFFFFF] rounded-[5px] border border-[#FFFFF] text-[16px] font-normal py-[3px] px-[15px] flex-shrink-0 `}
-                      >
-                        {keyword}
-                      </span>
-                    ))}
-                  </div>
-                </MoveEnterText>
-              </div>
-            ) : (
-              <div className={`text-[#B2C5CB] font-extrabold text-[32px] text-center`}>
-                <motion.div
-                  className="rotate-90 origin-center"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1, transition: { duration: 0.5, ease: "easeInOut" } }}
-                >
-                  {title}
-                </motion.div>
-              </div>
-            )}
-          </div>
-        </motion.div>
+    <div className={`relative overflow-hidden rounded-[5px]`} onClick={handleClick}>
+      <motion.div
+        className={`rounded-[5px]  cursor-pointer overflow-hidden`} // overflow 설정
+        style={{
+          backgroundImage: `${background_CSS},url(${img_src})`,
+          backgroundPosition: `center top`,
+          backgroundSize: `auto,${img_size}`,
+          backgroundRepeat: "no-repeat",
+          padding: isHovered ? "352px 0px 100px 100px " : "90px 0px 0px 0px",
+        }}
+        initial={false}
+        variants={variants}
+        animate={isHovered ? "large" : "small"}
+        onMouseEnter={() => handleMouseEnter(idx)}
+      >
+        <div className="relative w-full h-full">
+          {isHovered ? (
+            <div className={`flex flex-col `}>
+              <span className={`text-[#FFFFFF] font-bold text-[60px] whitespace-nowrap`}>{title}</span>
+              <MoveEnterText>
+                <span className={`text-[#FFFFFF] font-medium text-[24px] whitespace-nowrap`}>{content}</span>
+              </MoveEnterText>
+              <MoveEnterText>
+                <div className={`mt-[37px] flex gap-[14px] `}>
+                  {keywords.map((keyword: string) => (
+                    <span
+                      key={keyword}
+                      className={`text-[#FFFFFF] rounded-[5px] border border-[#FFFFF] text-[16px] font-normal py-[3px] px-[15px] flex-shrink-0 `}
+                    >
+                      {keyword}
+                    </span>
+                  ))}
+                </div>
+              </MoveEnterText>
+            </div>
+          ) : (
+            <div className={`text-[#B2C5CB] font-extrabold text-[32px] text-center`}>
+              <motion.div
+                className="rotate-90 origin-center"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1, transition: { duration: 0.5, ease: "easeInOut" } }}
+              >
+                {title}
+              </motion.div>
+            </div>
+          )}
+        </div>
       </motion.div>
     </div>
   );
 };
-const IntroObj = ({ className, firstRender = false, setFirstRender = (e) => {}, isAnimated = false }) => {
+const IntroObj = ({ className, isAnimated = false }) => {
   const introText1 = `데이터 처리 기술을 통해 미래의 잠재력을 미리 예측하고 혁신을 위한 새로운 가치를 발굴합니다.\n`;
   const introText2 = `다년간 R&D 사업의 노하우를 통해 데이터 분석으로 의미를 추출합니다.`;
   const GREEN = "#3A9100";
   const GRAY = "#D9D9D9";
-  const scrollSensor = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ target: scrollSensor, offset: ["start end", "end start"] });
-
   const IntroAnimationDelay = {
     "모든 데이터에서": { duration: 0.6, delay: 0.0 },
     회색바: { duration: 0.25, delay: 0.32 },
@@ -340,7 +326,7 @@ const IntroObj = ({ className, firstRender = false, setFirstRender = (e) => {}, 
     <div className={` w-full h-[100vh]  relative  ${className} `}>
       <div className={`w-full h-fit  justify-end text-center items-center top-[10%]   `}>
         <div className={`flex flex-col items-center pt-[260px]`}>
-          <div ref={scrollSensor} className={`relative overflow-hidden  `}>
+          <div className={`relative overflow-hidden  `}>
             <motion.div
               initial={{ y: "100%" }}
               animate={isAnimated ? { y: 0 } : { y: "100%" }}
@@ -361,7 +347,6 @@ const IntroObj = ({ className, firstRender = false, setFirstRender = (e) => {}, 
           >
             <motion.div
               className={` absolute top-0 left-0 w-full h-full    `}
-              // style={{ background: `${GRAY}`, y: progressGrayBarY }}
               style={{ background: `${GRAY}` }}
               initial={{ y: "-100%" }}
               animate={isAnimated ? { y: 0 } : { y: "-100%" }}
@@ -374,7 +359,6 @@ const IntroObj = ({ className, firstRender = false, setFirstRender = (e) => {}, 
             <motion.div
               initial={{ y: "-100%" }}
               className={` absolute top-0 left-0 w-full h-full    `}
-              // style={{ background: `${GREEN}`, y: progressGreenBarY }}
               style={{ background: `${GREEN}` }}
               animate={isAnimated ? { y: 0 } : { y: "-100%" }}
               transition={{
@@ -655,6 +639,7 @@ const preloadImages = (imageUrls: string[]) => {
     img.src = url;
   });
 };
+
 const skills = [
   {
     img_src: "/img/skill/metadata.jpg",
@@ -685,27 +670,22 @@ const skills = [
     keywords: ["비정형 데이터", "Word2Vec", "임베딩", "KNN 알고리즘", "NLP Parser"],
   },
 ];
-const useScrollBlocker = (active: boolean) => {
+
+export const useIsMobile = (breakpoint = 768) => {
+  const getIsMobile = () => typeof window !== "undefined" && window.innerWidth < breakpoint;
+
+  const [isMobile, setIsMobile] = useState(getIsMobile);
+
   useEffect(() => {
-    if (!active) return;
-
-    const prevent = (e: Event) => e.preventDefault();
-    const preventKey = (e: KeyboardEvent) => {
-      const keys = ["ArrowUp", "ArrowDown", " ", "PageUp", "PageDown"];
-      if (keys.includes(e.key)) {
-        e.preventDefault();
-      }
+    const handleResize = () => {
+      setIsMobile(getIsMobile());
     };
 
-    window.addEventListener("wheel", prevent, { passive: false });
-    window.addEventListener("touchmove", prevent, { passive: false });
-    window.addEventListener("keydown", preventKey, false);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [breakpoint]);
 
-    return () => {
-      window.removeEventListener("wheel", prevent);
-      window.removeEventListener("touchmove", prevent);
-      window.removeEventListener("keydown", preventKey);
-    };
-  }, [active]);
+  return isMobile;
 };
+
 export default SkillPage;

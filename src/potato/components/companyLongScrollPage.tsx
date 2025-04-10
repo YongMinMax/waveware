@@ -3,6 +3,18 @@ import { motion, AnimatePresence, Variants, useMotionValueEvent, useScroll } fro
 import { GoArrowUpRight } from "react-icons/go";
 import { useRouter } from "next/router";
 const CompanyLongScrollPage = () => {
+  return (
+    <>
+      <div className={`hidden md:block`}>
+        <CompanyLongScrollPage_DeskTop />
+      </div>
+      <div className={`block md:hidden`}>
+        <CompanyLongScrollPage_Mobile />
+      </div>
+    </>
+  );
+};
+const CompanyLongScrollPage_DeskTop = () => {
   const [rotationAngle, setRotationAngle] = useState(0);
   const [isScrollDown, setIsScrollDown] = useState(true);
   const [firstRender, setFirstRender] = useState(true);
@@ -151,7 +163,7 @@ const CompanyLongScrollPage = () => {
       >
         <CompanyText selectedIndex={selectedIndex} isScrollDown={isScrollDown} firstRender={firstRender} />
 
-        <CompanyCircle
+        <CompanyCircle_Desktop
           smallCirclePositions={smallCirclePositions}
           rotationAngle={rotationAngle}
           selectedIndex={selectedIndex}
@@ -161,6 +173,11 @@ const CompanyLongScrollPage = () => {
     </div>
   );
 };
+
+const CompanyLongScrollPage_Mobile = () => {
+  return <div className="Mobile-area w-full bg-red-300"></div>;
+};
+
 const CompanyText = ({ selectedIndex, isScrollDown, firstRender }) => {
   const titles = [
     "미래가치 분석을 위한\n 데이터 프로세싱",
@@ -225,7 +242,7 @@ const CompanyText = ({ selectedIndex, isScrollDown, firstRender }) => {
   );
 };
 
-const CompanyCircle = ({ rotationAngle, smallCirclePositions, selectedIndex, isScrollDown }) => {
+const CompanyCircle_Desktop = ({ rotationAngle, smallCirclePositions, selectedIndex, isScrollDown }) => {
   const c_color = "#9BBB59";
   const img_size = selectedIndex === 2 ? " w-[320px] h-[320px]" : " w-[350px] h-[350px] ";
   const img_link =

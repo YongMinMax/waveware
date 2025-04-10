@@ -1,18 +1,17 @@
-import {useRef, useEffect, useState} from "react";
+import { useRef, useEffect, useState } from "react";
 import HeroSection from "../kwon/main/HeroSection";
 import HeroSection1 from "../kwon/main/HeroSection1";
 
 import Career from "../kwon/main/career";
 import CompanyLongScrollPage from "../potato/components/companyLongScrollPage";
-import SkillPage, { SkillIntroPage, SkillTogglePage } from "../potato/components/skillPage";
+import SkillPage, { SkillIntroPage, SkillTogglePage, useIsMobile } from "../potato/components/skillPage";
 import { IndustrySection } from "../potato/components/skillPage copy";
 import Layout from "../layouts/Layout";
-import {useInView} from "framer-motion";
+import { useInView } from "framer-motion";
 
 export default function Home() {
   // 스크롤을 잠구는 state
   const [isScrollLock, setIsScrollLock] = useState(false);
-
   // 섹션 참조
   const refs = {
     hero: useRef(null),
@@ -21,7 +20,6 @@ export default function Home() {
     skill: useRef(null),
     career: useRef(null),
   };
-
   useEffect(() => {
     let isThrottled = false;
     const THROTTLE_TIME = 500;
@@ -133,12 +131,12 @@ export default function Home() {
   }, []);
 
   return (
-      <Layout title={"Home | waveware"} isDark={isDark}>
-        {sections.map((section, index) => (
-          <div key={index} ref={section.ref} className="w-full min-h-screen">
-            {section.component}
-          </div>
-        ))}
-      </Layout>
+    <Layout title={"Home | waveware"} isDark={isDark}>
+      {sections.map((section, index) => (
+        <div key={index} ref={section.ref} className="w-full min-h-screen ">
+          {section.component}
+        </div>
+      ))}
+    </Layout>
   );
 }
