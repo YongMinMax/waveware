@@ -121,7 +121,7 @@ const CompanyLongScrollPage = () => {
     >
       <div
         ref={firstSensor}
-        className={`first-section w-[100%]  absolute  bg-green-200   `}
+        className={`first-section w-[100%]  absolute      `}
         style={{
           height: `${SECTION_HEIGHT.first}vh`,
           minWidth: `${MIN_WIDTH}px`,
@@ -129,7 +129,7 @@ const CompanyLongScrollPage = () => {
       ></div>
       <div
         ref={secondSensor}
-        className={`second-section  w-[100%]   absolute  bg-yellow-200 `}
+        className={`second-section  w-[100%]   absolute   `}
         style={{
           height: `${SECTION_HEIGHT.second}vh`,
           top: `${SECTION_HEIGHT.first}vh`,
@@ -138,7 +138,7 @@ const CompanyLongScrollPage = () => {
       ></div>
       <div
         ref={thirdSensor}
-        className={`third-section   w-[100%]  absolute bg-red-200  `}
+        className={`third-section   w-[100%]  absolute    `}
         style={{
           height: `${SECTION_HEIGHT.third}vh`,
           top: `${SECTION_HEIGHT.first + SECTION_HEIGHT.second}vh`,

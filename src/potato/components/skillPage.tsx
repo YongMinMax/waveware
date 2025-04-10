@@ -26,16 +26,13 @@ export const SkillIntroPage = () => {
 const SkillPage = () => {
   return (
     <div className={`relative    min-w-full max-w-full `}>
-      <SkillContainer className={`min-w-[1440px] mt-[100px]`} />
+      <SkillContainer className={`min-w-[1440px] mt-[100px]`} handleScrollLock={() => {}} />
     </div>
   );
 };
 
-export const SkillTogglePage = ({}) => {
-  useEffect(() => {
-    const imageUrls = ["/img/metadata.jpg", "/img/visulation_.jpg", "/img/sns.jpg", "/img/NLP.jpg"];
-    preloadImages(imageUrls); // 이미지 미리 로드
-  }, []);
+export const SkillTogglePage = ({ handleScrollLock }) => {
+  const { isScrollLock, setIsScrollLock } = handleScrollLock;
   const [firstRender, setFirstRender] = useState(false);
   const stateRef = useRef<"intro" | "content" | null>("intro");
   const scrollRef = useRef(null);
@@ -45,6 +42,13 @@ export const SkillTogglePage = ({}) => {
 
   const firstSensor = useRef<HTMLDivElement>(null);
   const secondSensor = useRef<HTMLDivElement>(null);
+
+  // 이미지 미리 로드
+  useEffect(() => {
+    const imageUrls = ["/img/metadata.jpg", "/img/visulation_.jpg", "/img/sns.jpg", "/img/NLP.jpg"];
+    preloadImages(imageUrls);
+  }, []);
+
   useMotionValueEvent(scrollYProgress, "change", (scroll) => {
     if (scroll >= 0.5) {
       if (stateRef.current !== "content") {
@@ -61,13 +65,17 @@ export const SkillTogglePage = ({}) => {
       setIsIntroAnimated(true);
       if (!firstRender) {
         setFirstRender(true);
-        blockScrollTemporarily(1200);
+        setIsScrollLock(true);
+        setTimeout(() => {
+          setIsScrollLock(false);
+        }, 1200);
       }
     } else if (scroll < 0.1) {
       setIsIntroAnimated(false);
     }
   });
 
+  // 섹션 스크롤링
   useEffect(() => {
     let isThrottled = false;
     const THROTTLE_TIME = 500;
@@ -94,6 +102,7 @@ export const SkillTogglePage = ({}) => {
     };
     const handleScroll = (e: WheelEvent) => {
       e.preventDefault();
+      if (isScrollLock) return;
       if (isThrottled) return;
       isThrottled = true;
       setTimeout(() => (isThrottled = false), THROTTLE_TIME);
@@ -101,7 +110,7 @@ export const SkillTogglePage = ({}) => {
       const p = getPos();
       if (isDown) {
         // 아래로 스크롤
-        if (firstRender && p.scroll >= p.first.top && p.scroll < p.second.top) {
+        if (p.scroll >= p.first.top && p.scroll < p.second.top) {
           // first -> sceond
           scrollTo(secondSensor, "start");
         }
@@ -115,14 +124,14 @@ export const SkillTogglePage = ({}) => {
     };
     window.addEventListener("wheel", handleScroll, { passive: false });
     return () => window.removeEventListener("wheel", handleScroll);
-  }, []);
+  }, [isScrollLock]);
 
   return (
     <section ref={scrollRef} className={`relative   h-[200vh]     min-w-full max-w-full `}>
-      <div ref={firstSensor} className={`firstSection w-full h-[100vh] absolute bg-blue-300`}>
+      <div ref={firstSensor} className={`firstSection w-full h-[100vh] absolute  `}>
         {" "}
       </div>
-      <div ref={secondSensor} className={`secondSection top-[100vh] w-full h-[100vh] absolute bg-green-300`}>
+      <div ref={secondSensor} className={`secondSection top-[100vh] w-full h-[100vh] absolute `}>
         {" "}
       </div>
 
@@ -136,7 +145,7 @@ export const SkillTogglePage = ({}) => {
               exit={{ opacity: 0, scale: 0.7 }}
               transition={{ ease: "easeOut", duration: 0.15 }}
             >
-              <SkillContainer className={`min-w-[1440px] h-screen pt-[100px] `} />
+              <SkillContainer className={`min-w-[1440px] h-screen pt-[100px] `} handleScrollLock={setIsScrollLock} />
             </motion.div>
           ) : (
             <motion.div
@@ -159,7 +168,7 @@ export const SkillTogglePage = ({}) => {
   );
 };
 
-const SkillContainer = ({ className }) => {
+const SkillContainer = ({ className, handleScrollLock }) => {
   const [seletedIndex, setSelectedIndex] = useState(1);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -183,7 +192,12 @@ const SkillContainer = ({ className }) => {
         </motion.div>
       </div>
 
-      <Modal isOpen={isModalOpen} onClose={closeModal} selectedIndex={seletedIndex}></Modal>
+      <Modal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        selectedIndex={seletedIndex}
+        handleScrollLock={handleScrollLock}
+      ></Modal>
       <div className={` w-[1440px] h-[640px] flex gap-[4px] overflow-hidden`}>
         {skills.map((skill, index) => {
           return (
@@ -284,25 +298,6 @@ const SkillBox = ({ idx, skillInfo, isHovered, handleMouseEnter, handleClick }) 
     </div>
   );
 };
-const blockScrollTemporarily = (duration = 2000) => {
-  const prevent = (e: Event) => e.preventDefault();
-  const preventKey = (e: KeyboardEvent) => {
-    const keys = ["ArrowUp", "ArrowDown", " ", "PageUp", "PageDown"];
-    if (keys.includes(e.key)) e.preventDefault();
-  };
-
-  // 등록
-  window.addEventListener("wheel", prevent, { passive: false });
-  window.addEventListener("touchmove", prevent, { passive: false });
-  window.addEventListener("keydown", preventKey);
-
-  // 일정 시간 뒤 해제
-  setTimeout(() => {
-    window.removeEventListener("wheel", prevent);
-    window.removeEventListener("touchmove", prevent);
-    window.removeEventListener("keydown", preventKey);
-  }, duration);
-};
 const IntroObj = ({ className, firstRender = false, setFirstRender = (e) => {}, isAnimated = false }) => {
   const introText1 = `데이터 처리 기술을 통해 미래의 잠재력을 미리 예측하고 혁신을 위한 새로운 가치를 발굴합니다.\n`;
   const introText2 = `다년간 R&D 사업의 노하우를 통해 데이터 분석으로 의미를 추출합니다.`;
@@ -311,24 +306,11 @@ const IntroObj = ({ className, firstRender = false, setFirstRender = (e) => {}, 
   const scrollSensor = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: scrollSensor, offset: ["start end", "end start"] });
 
-  // 스크롤 관측
-  // const [isAnimated, setIsAnimated] = useState(firstRender);
-  // useMotionValueEvent(scrollYProgress, "change", (latest) => {
-  //   if (latest >= 0.1 && latest < 0.7) {
-  //     setIsAnimated(true);
-  //     if (!firstRender) {
-  //       setFirstRender(true);
-  //       blockScrollTemporarily(2000);
-  //     }
-  //   } else {
-  //     setIsAnimated(false);
-  //   }
-  // });
   const IntroAnimationDelay = {
     "모든 데이터에서": { duration: 0.6, delay: 0.0 },
     회색바: { duration: 0.25, delay: 0.32 },
     녹색바: { duration: 0.25, delay: 0.1 },
-    설명: { duration: 0.25, delay: -0.24 },
+    설명: { duration: 0.25, delay: -0.2 },
   };
   // 등장 애니메이션의 duration과 delay기반으로 idx의 delay값 리턴
   const getCurrentDelay = (idx: string) => {
@@ -509,7 +491,17 @@ const MoveScrollText = ({
     </div>
   );
 };
-const Modal = ({ isOpen, onClose, selectedIndex }: { isOpen: boolean; onClose: () => void; selectedIndex: number }) => {
+const Modal = ({
+  isOpen,
+  onClose,
+  selectedIndex,
+  handleScrollLock,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  selectedIndex: number;
+  handleScrollLock: React.Dispatch<React.SetStateAction<boolean>>;
+}) => {
   const video_link = [
     `/videos/skill_metadata.mp4`,
     `/videos/skill_visulation.mp4`,
@@ -533,18 +525,21 @@ const Modal = ({ isOpen, onClose, selectedIndex }: { isOpen: boolean; onClose: (
   useEffect(() => {
     if (isOpen) {
       // 스크롤 막기
+      handleScrollLock(true);
       document.body.style.overflow = "hidden";
       document.body.style.height = "100%";
     } else {
       // 스크롤 해제
       document.body.style.overflow = "auto";
       document.body.style.height = "auto";
+      handleScrollLock(false);
     }
 
     return () => {
       // 컴포넌트 언마운트 시 복구
       document.body.style.overflow = "auto";
       document.body.style.height = "auto";
+      handleScrollLock(false);
     };
   }, [isOpen]);
   return (
