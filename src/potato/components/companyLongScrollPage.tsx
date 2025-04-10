@@ -175,20 +175,153 @@ const CompanyLongScrollPage_DeskTop = () => {
 };
 
 const CompanyLongScrollPage_Mobile = () => {
-  return <div className="Mobile-area w-full bg-red-300"></div>;
+  const container_arr = [0, 1, 2];
+  return (
+    <div className="Mobile-area w-full relative overflow-hidden mx-auto  ">
+      <div className={`px-[18px]`}>
+        <motion.div className={`flex h-full`}>
+          {container_arr.map((val, idx) => {
+            return (
+              <motion.div key={`${idx} + ${val}`} className="w-full flex-shrink-0 h-full  ">
+                {/* 텍스트 area */}
+                <div className={`  `}>
+                  <div className={`text-[14px]`}>{`> 0${val + 1}`}</div>
+                  <div className={`text-[24px] whitespace-pre-line  font-bold pt-[10px]`}>{titles[val]}</div>
+                  <div className={`text-[18px] font-normal pt-[20px]`}>{contents[val]}</div>
+                </div>
+
+                <CompanyCircle_Mobile className={`mt-[50px] mx-auto overflow-hidden`} selectedIndex={val} />
+              </motion.div>
+            );
+          })}
+        </motion.div>
+      </div>
+    </div>
+  );
+};
+
+const CompanyCircle_Mobile = ({ className, selectedIndex = 0 }) => {
+  const smallCirclePositions = [
+    {
+      x: parseFloat((50 + 40 * Math.cos(-Math.PI / 2)).toFixed(6)),
+      y: parseFloat((50 + 40 * Math.sin(-Math.PI / 2)).toFixed(6)),
+    },
+    {
+      x: parseFloat((50 + 40 * Math.cos((5 * Math.PI) / 6)).toFixed(6)),
+      y: parseFloat((50 + 40 * Math.sin((5 * Math.PI) / 6)).toFixed(6)),
+    },
+    {
+      x: parseFloat((50 + 40 * Math.cos(Math.PI / 6)).toFixed(6)),
+      y: parseFloat((50 + 40 * Math.sin(Math.PI / 6)).toFixed(6)),
+    },
+  ];
+  const rotationAngle = selectedIndex * 120;
+  const img_size = " w-[150px] h-[150px] ";
+  const img_link =
+    selectedIndex === 0
+      ? "/img/company_dataProcessing.png"
+      : selectedIndex === 1
+      ? "/img/company_dataAnalysis.png"
+      : "/img/company_dataVisualizing.png";
+  const c_color = "#9BBB59";
+  return (
+    <div className={`relative w-[283px] h-[283px]   ${className}`}>
+      <FloatingImage
+        img_link={img_link}
+        img_size={img_size}
+        selectedIndex={selectedIndex}
+        isScrollDown={false}
+        isMobile={true}
+      />
+      <motion.svg // 애니메이션 공간 확보
+        className="w-[283] h-[283px] absolute "
+        viewBox="0 0 100 100"
+        animate={{ rotate: rotationAngle }}
+        transition={{ duration: 0.3 }}
+      >
+        <circle cx="50" cy="50" r="40" fill="none" stroke="black" strokeWidth="1.3" strokeDasharray="0.15, 2" />
+        {smallCirclePositions.map((pos: { x: number; y: number }, index: number) => {
+          const isSelected = index === selectedIndex;
+          const beforeSelected = index === (selectedIndex + 2) % 3;
+
+          if (isSelected) {
+            return (
+              <g key={index}>
+                <AnimatedCircle
+                  key={`${index}-outer`}
+                  cx={pos.x}
+                  cy={pos.y}
+                  fill={c_color}
+                  animateR={7.2}
+                  transitionDuration={0.5}
+                />
+                <AnimatedCircle
+                  key={`${index}-inner`}
+                  cx={pos.x}
+                  cy={pos.y}
+                  fill={"white"}
+                  animateR={6.1}
+                  transitionDuration={0.5}
+                />
+                <AnimatedCircle
+                  key={`${index}-smallest`}
+                  cx={pos.x}
+                  cy={pos.y}
+                  fill={c_color}
+                  animateR={3.8}
+                  transitionDuration={0.5}
+                />
+              </g>
+            );
+          } else if (beforeSelected) {
+            return (
+              <g key={index}>
+                <AnimatedCircle
+                  key={`${index}-outer`}
+                  cx={pos.x}
+                  cy={pos.y}
+                  fill={"#c3d69b"}
+                  animateR={2.3}
+                  transitionDuration={0.5}
+                />
+                <AnimatedCircle
+                  key={`${index}-inner`}
+                  cx={pos.x}
+                  cy={pos.y}
+                  fill={c_color}
+                  animateR={1.5}
+                  transitionDuration={0.5}
+                />
+              </g>
+            );
+          }
+          return (
+            <g key={index}>
+              <AnimatedCircle
+                key={`${index}-outer`}
+                cx={pos.x}
+                cy={pos.y}
+                fill={c_color}
+                animateR={3.8}
+                transitionDuration={0.5}
+              />
+              <AnimatedCircle
+                key={`${index}-inner`}
+                cx={pos.x}
+                cy={pos.y}
+                fill={"white"}
+                animateR={2.6}
+                transitionDuration={0.5}
+              />
+            </g>
+          );
+        })}
+      </motion.svg>
+    </div>
+  );
 };
 
 const CompanyText = ({ selectedIndex, isScrollDown, firstRender }) => {
-  const titles = [
-    "미래가치 분석을 위한\n 데이터 프로세싱",
-    "더 나은 선택을 위한\n 데이터 분석",
-    "문제 해결을 위한\n 데이터 시각화",
-  ];
-  const contents = [
-    "우리는 다년간 쌓아온 언어, 문서, 재난, 의료과학 분야에 전문화된\n데이터 처리 기술을 통해 미래의 새로운 가치를 발굴합니다.",
-    "데이터는 우리가 살고 있는 세상을 다르게 볼 수 있는 정보를 제공하며,\n 데이터 분석을 통해 의미를 추출하고 더 나은 결정을 내릴 수 있도록\n연구하고 개발합니다.",
-    "데이터 시각화를 통하여 모든 일련의 과정을 설명하며, 다양한 시각적\n요소를 활용해 누구든지 쉽게 정보를 이해할 수 있도록 합니다.",
-  ];
   const text_movement = {
     enter: ({ isScrollDown }: { isScrollDown: boolean }) => ({
       x: "20%",
@@ -347,8 +480,10 @@ const CompanyCircle_Desktop = ({ rotationAngle, smallCirclePositions, selectedIn
     </div>
   );
 };
-const FloatingImage = ({ img_link, img_size, selectedIndex, isScrollDown }) => {
-  const shadow = [" h-[140px] w-[300px] rounded-[50%] ", "h-[160px] w-[160px] ", "h-[120px] w-[260px] rounded-[50%]"];
+const FloatingImage = ({ img_link, img_size, selectedIndex, isScrollDown, isMobile = false }) => {
+  const shadow = isMobile
+    ? [" h-[70px] w-[140px] rounded-[50%] ", "h-[70px] w-[70px] ", "h-[60px] w-[130px] rounded-[50%]"]
+    : [" h-[140px] w-[350px] rounded-[50%] ", "h-[160px] w-[160px] ", "h-[120px] w-[260px] rounded-[50%]"];
   const shadow_animate = [
     { scaleX: [1.0, 1.1], x: ["-50%"], y: ["35%"], opacity: [1.0, 0.3] },
     { skew: [-30], rotate: [30], scaleX: [1.0, 1.1], x: ["-50%"], y: ["45%"], opacity: [1.0, 0.3] },
@@ -432,4 +567,14 @@ const AnimatedCircle = ({
     />
   );
 };
+const titles = [
+  "미래가치 분석을 위한\n 데이터 프로세싱",
+  "더 나은 선택을 위한\n 데이터 분석",
+  "문제 해결을 위한\n 데이터 시각화",
+];
+const contents = [
+  "우리는 다년간 쌓아온 언어, 문서, 재난, 의료과학 분야에 전문화된\n데이터 처리 기술을 통해 미래의 새로운 가치를 발굴합니다.",
+  "데이터는 우리가 살고 있는 세상을 다르게 볼 수 있는 정보를 제공하며,\n 데이터 분석을 통해 의미를 추출하고 더 나은 결정을 내릴 수 있도록\n연구하고 개발합니다.",
+  "데이터 시각화를 통하여 모든 일련의 과정을 설명하며, 다양한 시각적\n요소를 활용해 누구든지 쉽게 정보를 이해할 수 있도록 합니다.",
+];
 export default CompanyLongScrollPage;

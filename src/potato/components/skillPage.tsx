@@ -31,7 +31,7 @@ const SkillPage = () => {
   );
 };
 
-export const SkillTogglePage = ({ handleScrollLock }) => {
+const SkillTogglePage_Desktop = ({ handleScrollLock }) => {
   const { isScrollLock, setIsScrollLock } = handleScrollLock;
   const [firstRender, setFirstRender] = useState(false);
   const stateRef = useRef<"intro" | "content" | null>("intro");
@@ -160,6 +160,21 @@ export const SkillTogglePage = ({ handleScrollLock }) => {
         </AnimatePresence>
       </div>
     </section>
+  );
+};
+const SkillTogglePage_Mobile = () => {
+  return <>hihi</>;
+};
+export const SkillTogglePage = ({ handleScrollLock }) => {
+  return (
+    <>
+      <div className={`block md:hidden`}>
+        <SkillTogglePage_Mobile />
+      </div>
+      <div className={`hidden md:block`}>
+        <SkillTogglePage_Desktop handleScrollLock={handleScrollLock} />
+      </div>
+    </>
   );
 };
 
