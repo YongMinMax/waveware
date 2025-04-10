@@ -12,7 +12,7 @@ const CompanyLongScrollPage = () => {
   const secondSensor = useRef<HTMLDivElement>(null);
   const thirdSensor = useRef<HTMLDivElement>(null);
 
-  const SECTION_HEIGHT = { first: 70, second: 70, third: 70 };
+  const SECTION_HEIGHT = { first: 100, second: 100, third: 100 };
   const SCROLL_THRESHOLD = { firstToSecond: 0.4, secondToThird: 0.57 };
   const DEFAULT_SCROLL_THRESHOLD = 0.6;
   const MIN_WIDTH = 1440;
@@ -26,6 +26,66 @@ const CompanyLongScrollPage = () => {
 
   const { scrollYProgress: scrollProgress } = useScroll({ target: containerRef, offset: ["start end", "end start"] });
   const contextRef = useRef<"start" | "middle" | "end" | null>("start");
+
+  useEffect(() => {
+    let isThrottled = false;
+    const THROTTLE_TIME = 500;
+    const THRESHOLD = 10; // 섹션 감지를 위한 픽셀 임계값
+    const getPos = () => {
+      const firstRect = firstSensor.current?.getBoundingClientRect();
+      const secondRect = secondSensor.current?.getBoundingClientRect();
+      const thirdRect = thirdSensor.current?.getBoundingClientRect();
+
+      return {
+        vh: window.innerHeight,
+        scroll: window.scrollY,
+        first: {
+          top: firstRect ? firstRect.top + window.scrollY : 0, // 뷰포트 기준 위치를 문서 기준으로 변환
+          height: firstSensor.current?.offsetHeight ?? 0,
+        },
+        second: {
+          top: secondRect ? secondRect.top + window.scrollY : 0,
+          height: secondSensor.current?.offsetHeight ?? 0,
+        },
+        third: {
+          top: thirdRect ? thirdRect.top + window.scrollY : 0,
+          height: thirdSensor.current?.offsetHeight ?? 0,
+        },
+      };
+    };
+    const scrollTo = (ref: React.RefObject<HTMLElement>, block: ScrollLogicalPosition = "start"): void => {
+      ref.current?.scrollIntoView({ behavior: "smooth", block });
+    };
+    const handleScroll = (e: WheelEvent) => {
+      e.preventDefault();
+      if (isThrottled) return;
+      isThrottled = true;
+      setTimeout(() => (isThrottled = false), THROTTLE_TIME);
+      const isDown = e.deltaY > 0;
+      const p = getPos();
+      if (isDown) {
+        // 아래로 스크롤
+        if (p.scroll >= p.first.top && p.scroll < p.second.top) {
+          // first -> sceond
+          scrollTo(secondSensor, "start");
+        } else if (p.scroll >= p.second.top && p.scroll < p.third.top) {
+          // second -> third
+          scrollTo(thirdSensor, "start");
+        }
+      } else {
+        // 위로 스크롤
+        if (p.scroll >= p.third.top && p.scroll < p.third.top + p.third.height) {
+          // third -> second
+          scrollTo(secondSensor, "start");
+        } else if (p.scroll >= p.second.top && p.scroll < p.second.top + p.second.height) {
+          // second -> first
+          scrollTo(firstSensor, "start");
+        }
+      }
+    };
+    window.addEventListener("wheel", handleScroll, { passive: false });
+    return () => window.removeEventListener("wheel", handleScroll);
+  }, []);
 
   useMotionValueEvent(scrollProgress, "change", (scroll) => {
     if (scroll <= SCROLL_THRESHOLD.firstToSecond) {
@@ -61,7 +121,7 @@ const CompanyLongScrollPage = () => {
     >
       <div
         ref={firstSensor}
-        className={`first-section w-[100%]  absolute    `}
+        className={`first-section w-[100%]  absolute      `}
         style={{
           height: `${SECTION_HEIGHT.first}vh`,
           minWidth: `${MIN_WIDTH}px`,
@@ -78,7 +138,7 @@ const CompanyLongScrollPage = () => {
       ></div>
       <div
         ref={thirdSensor}
-        className={`third-section   w-[100%]  absolute  `}
+        className={`third-section   w-[100%]  absolute    `}
         style={{
           height: `${SECTION_HEIGHT.third}vh`,
           top: `${SECTION_HEIGHT.first + SECTION_HEIGHT.second}vh`,
