@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 
@@ -15,8 +15,6 @@ interface HeaderProps {
 
 export default function Header({ isDark }: HeaderProps) {
   const router = useRouter();
-  const [showHeader, setShowHeader] = useState(true);
-  const [lastScrollY, setLastScrollY] = useState(0);
 
   const isActive = (href) => {
     return router.asPath.startsWith(href) ? 'text-primary' : 'hover:text-gray-500';

@@ -119,7 +119,7 @@ export default function Home() {
       const careerBottom = refs.career.current?.getBoundingClientRect().bottom;
 
       const isHeroTouchingTop = heroTop <= 0 && heroBottom >= 0.1;
-      const isCareerTouchingTop = careerTop <= -0.1 && careerBottom >= 0;
+      const isCareerTouchingTop = careerTop <= 0 && careerBottom >= 0;
 
       setIsDark(isHeroTouchingTop || isCareerTouchingTop);
     };
