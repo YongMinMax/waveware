@@ -12,6 +12,7 @@ import {
   useMotionValueEvent,
   useSpring,
 } from "framer-motion";
+import { Modal_with_Portal } from "./Portal";
 
 // 소개 글귀 최상단 컴포넌트
 export const SkillIntroPage = () => {
@@ -31,137 +32,155 @@ const SkillPage = () => {
   );
 };
 
-const SkillTogglePage_Desktop = ({ handleScrollLock }) => {
-  const { isScrollLock, setIsScrollLock } = handleScrollLock;
-  const [firstRender, setFirstRender] = useState(false);
-  const stateRef = useRef<"intro" | "content" | null>("intro");
-  const scrollRef = useRef(null);
-  const [isToggled, setIsToggled] = useState(false);
-  const [isIntroAnimated, setIsIntroAnimated] = useState(false);
-  const { scrollYProgress } = useScroll({ target: scrollRef, offset: ["start end", "end start"] });
+const SkillTogglePage_Desktop = React.memo(
+  ({
+    handleScrollLock,
+  }: {
+    handleScrollLock: { isScrollLock: boolean; setIsScrollLock: React.Dispatch<React.SetStateAction<boolean>> };
+  }) => {
+    const { isScrollLock, setIsScrollLock } = handleScrollLock;
+    const [firstRender, setFirstRender] = useState(false);
+    const stateRef = useRef<"intro" | "content" | null>("intro");
+    const scrollRef = useRef(null);
+    const [isToggled, setIsToggled] = useState(false);
+    const [isIntroAnimated, setIsIntroAnimated] = useState(false);
+    const { scrollYProgress } = useScroll({ target: scrollRef, offset: ["start end", "end start"] });
 
-  const firstSensor = useRef<HTMLDivElement>(null);
-  const secondSensor = useRef<HTMLDivElement>(null);
+    const firstSensor = useRef<HTMLDivElement>(null);
+    const secondSensor = useRef<HTMLDivElement>(null);
 
-  // 이미지 미리 로드
-  useEffect(() => {
-    const imageUrls = ["/img/metadata.jpg", "/img/visulation_.jpg", "/img/sns.jpg", "/img/NLP.jpg"];
-    preloadImages(imageUrls);
-  }, []);
+    // 이미지 미리 로드
+    useEffect(() => {
+      const imageUrls = [skills[0].img_src, skills[1].img_src, skills[2].img_src, skills[3].img_src];
+      preloadImages(imageUrls).then(() => {
+        console.log("이미지 다 불러옴");
+      });
+    }, []);
 
-  useMotionValueEvent(scrollYProgress, "change", (scroll) => {
-    if (scroll >= 0.5) {
-      if (stateRef.current !== "content") {
-        stateRef.current = "content";
-        setIsToggled(true);
-      }
-    } else {
-      if (stateRef.current !== "intro") {
-        stateRef.current = "intro";
-        setIsToggled(false);
-      }
-    }
-    if (scroll > 0.1 && scroll <= 0.4) {
-      setIsIntroAnimated(true);
-      if (!firstRender) {
-        setFirstRender(true);
-        setIsScrollLock(true);
-        setTimeout(() => {
-          setIsScrollLock(false);
-        }, 1200);
-      }
-    } else if (scroll < 0.1) {
-      setIsIntroAnimated(false);
-    }
-  });
-
-  // 섹션 스크롤링
-  useEffect(() => {
-    let isThrottled = false;
-    const THROTTLE_TIME = 500;
-    const THRESHOLD = 10; // 섹션 감지를 위한 픽셀 임계값
-    const getPos = () => {
-      const firstRect = firstSensor.current?.getBoundingClientRect();
-      const secondRect = secondSensor.current?.getBoundingClientRect();
-
-      return {
-        vh: window.innerHeight,
-        scroll: window.scrollY,
-        first: {
-          top: firstRect ? firstRect.top + window.scrollY : 0, // 뷰포트 기준 위치를 문서 기준으로 변환
-          height: firstSensor.current?.offsetHeight ?? 0,
-        },
-        second: {
-          top: secondRect ? secondRect.top + window.scrollY : 0,
-          height: secondSensor.current?.offsetHeight ?? 0,
-        },
-      };
-    };
-    const scrollTo = (ref: React.RefObject<HTMLElement>, block: ScrollLogicalPosition = "start"): void => {
-      ref.current?.scrollIntoView({ behavior: "smooth", block });
-    };
-    const handleScroll = (e: WheelEvent) => {
-      e.preventDefault();
-      if (isScrollLock) return;
-      if (isThrottled) return;
-      isThrottled = true;
-      setTimeout(() => (isThrottled = false), THROTTLE_TIME);
-      const isDown = e.deltaY > 0;
-      const p = getPos();
-      if (isDown) {
-        // 아래로 스크롤
-        if (p.scroll >= p.first.top && p.scroll < p.second.top) {
-          // first -> sceond
-          scrollTo(secondSensor, "start");
+    useMotionValueEvent(scrollYProgress, "change", (scroll) => {
+      if (scroll >= 0.5) {
+        if (stateRef.current !== "content") {
+          stateRef.current = "content";
+          setIsToggled(true);
         }
       } else {
-        // 위로 스크롤
-        if (p.scroll >= p.second.top && p.scroll < p.second.top + p.second.height) {
-          // second -> first
-          scrollTo(firstSensor, "start");
+        if (stateRef.current !== "intro") {
+          stateRef.current = "intro";
+          setIsToggled(false);
         }
       }
-    };
-    window.addEventListener("wheel", handleScroll, { passive: false });
-    return () => window.removeEventListener("wheel", handleScroll);
-  }, [isScrollLock]);
+      if (scroll > 0.1 && scroll <= 0.4) {
+        setIsIntroAnimated(true);
+        if (!firstRender) {
+          setFirstRender(true);
+          setIsScrollLock(true);
+          setTimeout(() => {
+            setIsScrollLock(false);
+          }, 1200);
+        }
+      } else if (scroll < 0.1) {
+        setIsIntroAnimated(false);
+      }
+    });
 
-  return (
-    <section ref={scrollRef} className={`relative   h-[200vh]     min-w-full max-w-full `}>
-      <div ref={firstSensor} className={`firstSection w-full h-[100vh] absolute  `}>
-        {" "}
-      </div>
-      <div ref={secondSensor} className={`secondSection top-[100vh] w-full h-[100vh] absolute `}>
-        {" "}
-      </div>
+    // 섹션 스크롤링
+    useEffect(() => {
+      let isThrottled = false;
+      const THROTTLE_TIME = 500;
+      const THRESHOLD = 10; // 섹션 감지를 위한 픽셀 임계값
+      const getPos = () => {
+        const firstRect = firstSensor.current?.getBoundingClientRect();
+        const secondRect = secondSensor.current?.getBoundingClientRect();
 
-      <div className={`sticky top-0 w-full h-screen  `}>
-        <AnimatePresence initial={true} mode="popLayout">
-          {isToggled ? (
-            <motion.div
-              key={`skillContainer`}
-              initial={{ opacity: 0, scale: 0.7 }} // 초기 상태
-              animate={{ opacity: 1, scale: 1, transition: { ease: "easeOut", duration: 0.4, delay: 0.05 } }} // 나타날 때 상태
-              exit={{ opacity: 0, scale: 0.7 }}
-              transition={{ ease: "easeOut", duration: 0.15 }}
-            >
-              <SkillContainer className={`min-w-[1440px] h-screen pt-[100px] `} handleScrollLock={setIsScrollLock} />
-            </motion.div>
-          ) : (
-            <motion.div
-              key={`SkillIntro`}
-              animate={{ opacity: 1, scale: 1 }} // 나타날 때 상태
-              exit={{ opacity: 0, scale: 0.8 }} // 사라질 때 상태
-              transition={{ ease: "easeOut", duration: 0.15 }}
-            >
-              <IntroObj className={`min-w-[1440px]  `} isAnimated={isIntroAnimated} />
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
-    </section>
-  );
-};
+        return {
+          vh: window.innerHeight,
+          scroll: window.scrollY,
+          first: {
+            top: firstRect ? firstRect.top + window.scrollY : 0, // 뷰포트 기준 위치를 문서 기준으로 변환
+            height: firstSensor.current?.offsetHeight ?? 0,
+          },
+          second: {
+            top: secondRect ? secondRect.top + window.scrollY : 0,
+            height: secondSensor.current?.offsetHeight ?? 0,
+          },
+        };
+      };
+      const scrollTo = (ref: React.RefObject<HTMLElement>, block: ScrollLogicalPosition = "start"): void => {
+        ref.current?.scrollIntoView({ behavior: "smooth", block });
+      };
+      const handleScroll = (e: WheelEvent) => {
+        e.preventDefault();
+        if (isScrollLock) return;
+        if (isThrottled) return;
+        isThrottled = true;
+        setTimeout(() => (isThrottled = false), THROTTLE_TIME);
+        const isDown = e.deltaY > 0;
+        const p = getPos();
+        if (isDown) {
+          // 아래로 스크롤
+          if (p.scroll >= p.first.top && p.scroll < p.second.top) {
+            // first -> sceond
+            scrollTo(secondSensor, "start");
+          }
+        } else {
+          // 위로 스크롤
+          if (p.scroll >= p.second.top && p.scroll < p.second.top + p.second.height) {
+            // second -> first
+            scrollTo(firstSensor, "start");
+          }
+        }
+      };
+      window.addEventListener("wheel", handleScroll, { passive: false });
+      return () => window.removeEventListener("wheel", handleScroll);
+    }, [isScrollLock]);
+
+    return (
+      <section ref={scrollRef} className={`relative   h-[200vh]     min-w-full max-w-full `}>
+        <div ref={firstSensor} className={`firstSection w-full h-[100vh] absolute  `}>
+          {" "}
+        </div>
+        <div ref={secondSensor} className={`secondSection top-[100vh] w-full h-[100vh] absolute `}>
+          {" "}
+        </div>
+
+        <div className={`sticky top-0 w-full h-screen  `}>
+          <motion.div
+            key={`skillContainer`}
+            style={{ willChange: "scale, opacity" }}
+            // initial={{ opacity: 0, scale: 0.7 }}
+            // initial={false}
+            // animate={{ opacity: 1, scale: 1, transition: { ease: "easeOut", duration: 0.4 } }} // 나타날 때 상태
+            animate={{
+              opacity: isToggled ? [0, 1] : [1, 0],
+              scale: isToggled ? [0.7, 1] : [1, 0.7],
+              transition: { ease: "easeOut", duration: 0.4 },
+            }}
+            // exit={{ opacity: 0, scale: 0.7 }}
+            className={`absolute w-full h-full `}
+            transition={{ ease: "easeOut", duration: 0.15 }}
+          >
+            <SkillContainer className={`min-w-[1440px] h-screen pt-[100px] `} handleScrollLock={setIsScrollLock} />
+          </motion.div>
+          <AnimatePresence initial={true} mode="popLayout">
+            {isToggled ? (
+              <></>
+            ) : (
+              <motion.div
+                key={`SkillIntro`}
+                animate={{ opacity: 1, scale: 1 }} // 나타날 때 상태
+                exit={{ opacity: 0, scale: 0.8 }} // 사라질 때 상태
+                transition={{ ease: "easeOut", duration: 0.15 }}
+                className={`z-30`}
+              >
+                <IntroObj className={`min-w-[1440px]  `} isAnimated={isIntroAnimated} />
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </section>
+    );
+  }
+);
 const SkillTogglePage_Mobile = () => {
   return (
     <div className={` min-w-[375px]`}>
@@ -209,19 +228,19 @@ const SkillContainer = ({ className, handleScrollLock }) => {
       <div className={`overflow-hidden relative`}>
         <motion.div
           initial={{ x: "100%" }}
+          // initial={false}
           animate={{ x: 0 }}
           transition={{ ease: "easeOut", duration: 0.5, delay: 0.4 }}
         >
           <span className={` text-[#F1EFEE] text-[128px] font-bold leading-[0.9]`}>WAVEWARE</span>
         </motion.div>
       </div>
-
-      <Modal
+      <Modal_with_Portal
         isOpen={isModalOpen}
         onClose={closeModal}
         selectedIndex={seletedIndex}
         handleScrollLock={handleScrollLock}
-      ></Modal>
+      ></Modal_with_Portal>
       <div className={` w-[1440px] h-[640px] flex gap-[4px] overflow-hidden`}>
         {skills.map((skill, index) => {
           return (
@@ -252,13 +271,11 @@ const SkillBox = ({ idx, skillInfo, isHovered, handleMouseEnter, handleClick }) 
     small: {
       width: "147px",
       height: "630px",
-      x: 0,
       transition: { duration: 0.5, ease: "easeInOut" },
     },
     large: {
       width: "987px",
       height: "630px",
-      x: 0,
       transition: { duration: 0.5, ease: "easeInOut" },
     },
   };
@@ -272,6 +289,7 @@ const SkillBox = ({ idx, skillInfo, isHovered, handleMouseEnter, handleClick }) 
           backgroundImage: `${background_CSS},url(${img_src})`,
           backgroundPosition: `center top`,
           backgroundSize: `auto,${img_size}`,
+          willChange: "transform, opacity",
           backgroundRepeat: "no-repeat",
           padding: isHovered ? "352px 0px 100px 100px " : "90px 0px 0px 0px",
         }}
@@ -370,10 +388,7 @@ const IntroObj = ({ className, isAnimated = false }) => {
               </span>
             </motion.div>
           </div>
-          <div
-            className={`relative  w-[5px] h-[150px] overflow-hidden mt-[37px] mb-[37px]  `}
-            style={{ background: `white` }}
-          >
+          <div className={`relative  w-[5px] h-[150px] overflow-hidden mt-[37px] mb-[37px]  `}>
             <motion.div
               className={` absolute top-0 left-0 w-full h-full    `}
               style={{ background: `${GRAY}` }}
@@ -596,7 +611,7 @@ const Modal = ({
     </AnimatePresence>
   );
 };
-const CustomVideoPlayer = ({ src }: { src: string }) => {
+export const CustomVideoPlayer = ({ src }: { src: string }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [showControls, setShowControls] = useState(true); // 아이콘 표시 여부
@@ -663,10 +678,16 @@ const CustomVideoPlayer = ({ src }: { src: string }) => {
 };
 
 const preloadImages = (imageUrls: string[]) => {
-  imageUrls.forEach((url) => {
-    const img = new Image();
-    img.src = url;
-  });
+  return Promise.all(
+    imageUrls.map((url) => {
+      return new Promise<void>((resolve, reject) => {
+        const img = new Image();
+        img.src = url;
+        img.onload = () => resolve();
+        img.onerror = () => reject();
+      });
+    })
+  );
 };
 
 const skills = [

@@ -198,7 +198,7 @@ const CompanyLongScrollPage_Mobile = () => {
   const handleDragEnd = (event, info) => {
     const offset = info.offset.x;
     const direction = offset < 0 ? 1 : -1;
-    const threshold = 180;
+    const threshold = 90;
 
     if (Math.abs(offset) > threshold) {
       const newIndex = Math.min(Math.max(active + direction, 0), container_arr.length - 1);
@@ -213,7 +213,7 @@ const CompanyLongScrollPage_Mobile = () => {
       <div className="Mobile-area w-full relative overflow-hidden max-w-[350px] mx-auto   ">
         <motion.div
           ref={containerRef}
-          className="flex h-full   " // gap으로 peek
+          className="flex h-full   pb-[40px]" // gap으로 peek
           style={{ gap: `${containerGap}px` }}
           drag="x"
           animate={controls}
@@ -222,7 +222,7 @@ const CompanyLongScrollPage_Mobile = () => {
         >
           {container_arr.map((val, idx) => {
             return (
-              <motion.div key={`${idx} + ${val}`} className="w-full  flex-shrink-0 h-full  ">
+              <motion.div key={`${idx} + ${val}`} className="w-full z-10  flex-shrink-0 h-full  ">
                 {/* 텍스트 area */}
                 <div className={`  `}>
                   <div className={`text-[14px]`}>{`> 0${val + 1}`}</div>
@@ -235,7 +235,7 @@ const CompanyLongScrollPage_Mobile = () => {
             );
           })}
         </motion.div>
-        <Dots count={container_arr.length} active={active} className={`mt-[40px]`} />
+        <Dots count={container_arr.length} active={active} className={``} />
       </div>
     </div>
   );
