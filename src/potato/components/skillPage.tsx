@@ -163,7 +163,21 @@ const SkillTogglePage_Desktop = ({ handleScrollLock }) => {
   );
 };
 const SkillTogglePage_Mobile = () => {
-  return <>hihi</>;
+  return (
+    <div className={` min-w-[375px]`}>
+      {/* 텍스트 구간 */}
+      <div className={` whitespace-pre-line`}>
+        <div className={`text-[36px] font-`}>
+          모든 <span className={`text-[#3A9100]`}>데이터</span>에서
+        </div>
+        <div>
+          <span className={`text-[#3A9100]`}>waveware</span>
+          {`는 데이터 처리 기술을 통해 미래의 잠재력을\n미리 예측하고 혁신을 위한 새로운 가치를발굴합니다`}
+        </div>
+      </div>
+      {/* 이미지 구간 */}
+    </div>
+  );
 };
 export const SkillTogglePage = ({ handleScrollLock }) => {
   return (
@@ -702,18 +716,5 @@ export const useIsMobile = (breakpoint = 768) => {
 
   return isMobile;
 };
-const Dots = ({ count, active }) => (
-  <div className="dot-container">
-    {Array.from({ length: count }, (_, i) => (
-      <motion.div
-        className="dot"
-        initial={false}
-        animate={{
-          scale: active === i ? 1.5 : 1,
-          opacity: active === i ? 1 : 0.5,
-        }}
-      />
-    ))}
-  </div>
-);
+
 export default SkillPage;
