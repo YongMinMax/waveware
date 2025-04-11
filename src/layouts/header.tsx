@@ -21,7 +21,7 @@ export default function Header({ isDark }: HeaderProps) {
   };
 
   return (
-    <header className={`fixed top-0 left-0 right-0 flex justify-between items-center px-[100px] py-1 transition-colors duration-500 z-50 translate-y-0
+    <header className={`fixed top-0 left-0 right-0 flex justify-between items-center px-[100px] py-1 z-50 translate-y-0
                       ${isDark ? '' : ' bg-white/90 backdrop-blur-sm'}
                       `}>
 
