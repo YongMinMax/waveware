@@ -702,5 +702,18 @@ export const useIsMobile = (breakpoint = 768) => {
 
   return isMobile;
 };
-
+const Dots = ({ count, active }) => (
+  <div className="dot-container">
+    {Array.from({ length: count }, (_, i) => (
+      <motion.div
+        className="dot"
+        initial={false}
+        animate={{
+          scale: active === i ? 1.5 : 1,
+          opacity: active === i ? 1 : 0.5,
+        }}
+      />
+    ))}
+  </div>
+);
 export default SkillPage;

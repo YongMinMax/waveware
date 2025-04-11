@@ -1,5 +1,14 @@
 import React, { useEffect, useRef, useState } from "react";
-import { motion, AnimatePresence, Variants, useMotionValueEvent, useScroll } from "framer-motion";
+import {
+  motion,
+  AnimatePresence,
+  Variants,
+  useMotionValueEvent,
+  useScroll,
+  useMotionValue,
+  useAnimation,
+  clamp,
+} from "framer-motion";
 import { GoArrowUpRight } from "react-icons/go";
 import { useRouter } from "next/router";
 const CompanyLongScrollPage = () => {
@@ -176,13 +185,44 @@ const CompanyLongScrollPage_DeskTop = () => {
 
 const CompanyLongScrollPage_Mobile = () => {
   const container_arr = [0, 1, 2];
+  const [active, setActive] = useState(0);
+  const x = useMotionValue(0);
+  const controls = useAnimation();
+  const containerRef = useRef(null);
+  const containerGap = 120;
+  const width = (containerRef.current && containerRef.current.offsetWidth) || 350;
+  useEffect(() => {
+    x.set(-active * (width + containerGap));
+  }, [active, width, x]);
+
+  const handleDragEnd = (event, info) => {
+    const offset = info.offset.x;
+    const direction = offset < 0 ? 1 : -1;
+    const threshold = 180;
+
+    if (Math.abs(offset) > threshold) {
+      const newIndex = Math.min(Math.max(active + direction, 0), container_arr.length - 1);
+      setActive(newIndex);
+      controls.start({ x: -newIndex * (width + containerGap), transition: { duration: 0.3, ease: "easeOut" } });
+    } else {
+      controls.start({ x: -active * (width + containerGap), transition: { duration: 0.6, ease: "easeOut" } });
+    }
+  };
   return (
-    <div className="Mobile-area w-full relative overflow-hidden mx-auto  ">
-      <div className={`px-[18px]`}>
-        <motion.div className={`flex h-full`}>
+    <div className={`mx-[18px]`}>
+      <div className="Mobile-area w-full relative overflow-hidden max-w-[350px] mx-auto   ">
+        <motion.div
+          ref={containerRef}
+          className="flex h-full   " // gap으로 peek
+          style={{ gap: `${containerGap}px` }}
+          drag="x"
+          animate={controls}
+          dragConstraints={{ left: -(width + containerGap) * (container_arr.length - 1), right: 0 }} // 드래그 제한
+          onDragEnd={handleDragEnd}
+        >
           {container_arr.map((val, idx) => {
             return (
-              <motion.div key={`${idx} + ${val}`} className="w-full flex-shrink-0 h-full  ">
+              <motion.div key={`${idx} + ${val}`} className="w-full  flex-shrink-0 h-full  ">
                 {/* 텍스트 area */}
                 <div className={`  `}>
                   <div className={`text-[14px]`}>{`> 0${val + 1}`}</div>
@@ -195,6 +235,7 @@ const CompanyLongScrollPage_Mobile = () => {
             );
           })}
         </motion.div>
+        <Dots count={container_arr.length} active={active} className={`mt-[40px]`} />
       </div>
     </div>
   );
@@ -567,6 +608,21 @@ const AnimatedCircle = ({
     />
   );
 };
+const Dots = ({ count, active, className }) => (
+  <div className={` flex justify-center relative bottom-[20px] gap-[10px] ${className}`}>
+    {Array.from({ length: count }, (_, i) => (
+      <motion.div
+        key={`${active} + ${i}`}
+        className="w-[8px] h-[8px] bg-gray-700 rounded-[7px] opacity-80"
+        initial={false}
+        animate={{
+          scale: active === i ? 1.5 : 1,
+          opacity: active === i ? 1 : 0.5,
+        }}
+      />
+    ))}
+  </div>
+);
 const titles = [
   "미래가치 분석을 위한\n 데이터 프로세싱",
   "더 나은 선택을 위한\n 데이터 분석",
