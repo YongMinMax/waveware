@@ -2,9 +2,9 @@ import React from 'react';
 
 export default function MenuHeader({ title, description }) {
   return (
-    <div className="flex flex-col w-[1400px] items-end gap-7 border-b-2 border-gray-200 pb-12 px-2 pt-40">
-      <h1 className="text-primary text-[30px] font-semibold">{title}</h1>
-      <div className="text-[62px] font-semibold text-right leading-tight">
+    <div className="flex flex-col md:w-[1400px] items-end gap-7 border-b-2 border-gray-200 pb-12 md:px-2 pt-40 mx-6 md:mx-0">
+      <h1 className="text-primary text-2xl md:text-[30px] font-semibold">{title}</h1>
+      <div className="text-4xl md:text-[62px] font-semibold text-right leading-tight">
         {description?.split('/').map((text, index) => (
           <p key={index}>{text}</p>
         ))}
