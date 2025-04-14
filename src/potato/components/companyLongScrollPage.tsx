@@ -17,7 +17,7 @@ const CompanyLongScrollPage = () => {
       <div className={`hidden md:block`}>
         <CompanyLongScrollPage_DeskTop />
       </div>
-      <div className={`block md:hidden`}>
+      <div className={`flex items-center justify-center md:hidden min-h-screen `}>
         <CompanyLongScrollPage_Mobile />
       </div>
     </>
@@ -209,7 +209,7 @@ const CompanyLongScrollPage_Mobile = () => {
     }
   };
   return (
-    <div className={`mx-[18px]`}>
+    <div className={`mx-[18px] `}>
       <div className="Mobile-area w-full relative overflow-hidden max-w-[350px] mx-auto   ">
         <motion.div
           ref={containerRef}
