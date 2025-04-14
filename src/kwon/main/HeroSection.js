@@ -63,18 +63,19 @@ export default function HeroSection() {
       </div>
 
       {/* 컨텐츠 오버레이 */}
-      <div className="relative container h-full flex items-center text-white -mt-[55px]">
-        <div className="flex gap-x-28 items-center">
+      <div className="relative container h-full flex items-center justify-center text-white -mt-[55px]">
+
+        <div className="flex flex-col md:flex-row gap-x-28 items-start md:items-center">
           {/* 텍스트 그룹 */}
-          <div className="flex flex-col items-start pb-10">
+          <div className="flex flex-col items-start pb-10 gap-3">
             <span
-              className="text-[32px] opacity-0 animate-text-up"
+              className="text-4xl opacity-0 animate-text-up"
               style={{ animationDelay: "1.3s" }}
             >
               WE ARE
             </span>
             <h1
-              className="text-[72px] font-semibold opacity-0 animate-text-up"
+              className="text-6xl md:text-7xl font-semibold opacity-0 animate-text-up"
               style={{ animationDelay: "1.4s" }}
             >
               WAVEWARE
@@ -82,15 +83,15 @@ export default function HeroSection() {
           </div>
 
           {/* 구분선 */}
-          <div className="w-[400px] overflow-hidden">
+          <div className="w-full md:w-[400px] overflow-hidden">
             <div
-              className="w-[400px] h-[8px] bg-white font-medium animate-line-grow"
+              className="w-full h-[4px] md:h-[8px] bg-white font-medium animate-line-grow"
               style={{ animationDelay: "1.3s" }}
             ></div>
           </div>
 
           {/* 설명 텍스트 */}
-          <div className="text-[30px] pt-20 whitespace-nowrap">
+          <div className="text-xl md:text-[30px] pt-20 whitespace-nowrap flex flex-col gap-0 md:gap-1.5">
             <p
               className="opacity-0 animate-text-up"
               style={{ animationDelay: "1.5s" }}
@@ -117,6 +118,7 @@ export default function HeroSection() {
             </p>
           </div>
         </div>
+
       </div>
 
       {/* 스크롤 유도 UI */}

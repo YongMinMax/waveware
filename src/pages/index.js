@@ -2,7 +2,7 @@ import { useRef, useEffect, useState } from "react";
 import HeroSection from "../kwon/main/HeroSection";
 import HeroSection1 from "../kwon/main/HeroSection1";
 
-import Career from "../kwon/main/career";
+import Career from "../kwon/main/career_section";
 import CompanyLongScrollPage from "../potato/components/companyLongScrollPage";
 import SkillPage, { SkillIntroPage, SkillTogglePage, useIsMobile } from "../potato/components/skillPage";
 import { IndustrySection } from "../potato/components/skillPage copy";
