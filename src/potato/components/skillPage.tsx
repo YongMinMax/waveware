@@ -11,6 +11,8 @@ import {
   useTransform,
   useMotionValueEvent,
   useSpring,
+  Variant,
+  VariantLabels,
 } from "framer-motion";
 import { Modal_with_Portal } from "./Portal";
 
@@ -182,26 +184,79 @@ const SkillTogglePage_Desktop = React.memo(
   }
 );
 const SkillTogglePage_Mobile = () => {
+  const scrollRef = useRef(null);
+  const { scrollYProgress } = useScroll({ target: scrollRef, offset: ["start end", "end start"] });
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
+
+  useMotionValueEvent(scrollYProgress, "change", (latest) => {
+    // 스크롤에 따른 이벤트
+    if (latest > 0.2) {
+      setIsIntroAnimate(true);
+    } else {
+      setIsIntroAnimate(false);
+    }
+    if (latest > 0.25) {
+      setIsImageAnimate(true);
+    } else {
+      setIsImageAnimate(false);
+    }
+  });
+  // 여기 추가해야 함
+  const handleScrollLock = () => {};
+  const [isIntroAnimate, setIsIntroAnimate] = useState(false);
+  const [isImageAnimate, setIsImageAnimate] = useState(false);
+  const [selectedIndex, setSelectedIndex] = useState(-1);
   return (
-    <div className={` min-w-[375px]`}>
+    <div className={` min-w-[375px] flex flex-col items-center mt-[75px] `}>
+      <Modal_with_Portal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        selectedIndex={selectedIndex}
+        handleScrollLock={handleScrollLock}
+      ></Modal_with_Portal>
       {/* 텍스트 구간 */}
-      <div className={` whitespace-pre-line`}>
-        <div className={`text-[36px] font-`}>
-          모든 <span className={`text-[#3A9100]`}>데이터</span>에서
+      <motion.div
+        className={` whitespace-pre-line pb-[40px]`}
+        animate={{ y: isIntroAnimate ? 0 : "100%", opacity: isIntroAnimate ? 1 : 0.5 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+      >
+        <div className={`text-[36px] text-center`}>
+          모든
+          <span className={`text-[#3A9100]`}>{` 데이터`}</span>에서
         </div>
-        <div>
+        <div className="text-center pt-[10px]">
           <span className={`text-[#3A9100]`}>waveware</span>
-          {`는 데이터 처리 기술을 통해 미래의 잠재력을\n미리 예측하고 혁신을 위한 새로운 가치를발굴합니다`}
+          {`는 데이터 처리 기술을 통해 미래의 잠재력을\n미리 예측하고 혁신을 위한 새로운 가치를 발굴합니다`}
         </div>
-      </div>
+      </motion.div>
       {/* 이미지 구간 */}
+      <motion.div
+        className={` flex flex-col gap-[2px]`}
+        animate={{ y: isImageAnimate ? 0 : "30%", opacity: isImageAnimate ? 1 : 0.5 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+      >
+        {skills.map((skill, idx) => {
+          return (
+            <SkillBox_Mobile
+              key={`${idx}-${skill.title}`}
+              skill={skill}
+              handleIndex={{ selectedIndex, setSelectedIndex }}
+              idx={idx}
+              handleClick={openModal}
+            />
+          );
+        })}
+      </motion.div>
     </div>
   );
 };
 export const SkillTogglePage = ({ handleScrollLock }) => {
   return (
     <>
-      <div className={`block md:hidden`}>
+      <div className={`flex md:hidden min-h-screen items-center justify-center`}>
         <SkillTogglePage_Mobile />
       </div>
       <div className={`hidden md:block`}>
@@ -244,7 +299,7 @@ const SkillContainer = ({ className, handleScrollLock }) => {
       <div className={` w-[1440px] h-[640px] flex gap-[4px] overflow-hidden`}>
         {skills.map((skill, index) => {
           return (
-            <SkillBox
+            <SkillBox_Desktop
               key={index}
               skillInfo={skill}
               isHovered={index === seletedIndex}
@@ -261,7 +316,7 @@ const SkillContainer = ({ className, handleScrollLock }) => {
   );
 };
 
-const SkillBox = ({ idx, skillInfo, isHovered, handleMouseEnter, handleClick }) => {
+const SkillBox_Desktop = ({ idx, skillInfo, isHovered, handleMouseEnter, handleClick }) => {
   const { img_size, img_src, title, content, keywords } = skillInfo;
   const background_CSS = isHovered
     ? `linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.8))`
@@ -334,6 +389,84 @@ const SkillBox = ({ idx, skillInfo, isHovered, handleMouseEnter, handleClick }) 
     </div>
   );
 };
+const SkillBox_Mobile = ({ skill, handleIndex, idx, handleClick }) => {
+  const { img_src, img_size, title, content, keywords } = skill;
+  const { selectedIndex, setSelectedIndex } = handleIndex;
+  const variants = {
+    small: { height: "115px", transition: { duration: 0.5, ease: "easeInOut" } },
+    large: { height: "240px", transition: { duration: 0.5, ease: "easeInOut" } },
+  };
+  const handleCompoClick = () => {
+    // 선택된 상황에서 또 선택 => 모달 오픈
+    if (selectedIndex === idx) {
+      handleClick();
+    } else {
+      // 미선택된 상황에서 선택 => 열리기
+      setSelectedIndex(idx);
+    }
+  };
+  return (
+    <motion.div
+      className={` w-screen    relative overflow-hidden`}
+      onClick={handleCompoClick}
+      variants={variants}
+      animate={selectedIndex === idx ? "large" : "small"}
+      initial={false}
+      transition={{ duration: 0.5, ease: "easeInOut" }}
+      layout
+    >
+      <img
+        src={img_src}
+        alt={`background image`}
+        className={` absolute top-1/2 transform -translate-y-1/2 left-0 -z-10 ${img_size} `}
+        style={{}}
+      />
+      {/* 텍스트 */}
+      {selectedIndex === idx ? (
+        // 선택시
+        <div className="text-white pb-[21px] px-[30px] flex flex-col justify-end h-full   backdrop-blur-[1px] bg-black/50  ">
+          <motion.div
+            className=" font-bold text-[40px] "
+            initial={{ scale: 0.7 }}
+            animate={{ scale: 1.0 }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
+          >
+            {title}
+          </motion.div>
+          <MoveEnterText className="mt-[10px]" duration={0.3}>
+            <div className=" font-medium text-[16px]">{content}</div>
+          </MoveEnterText>
+          {/* 키워드 */}
+          <MoveEnterText className="mt-[10px]" duration={0.3}>
+            <div className="flex gap-x-[15px] gap-y-[8px] flex-wrap">
+              {keywords.map((keyword: string, idx: number) => {
+                return (
+                  <div
+                    key={`${keyword}+${idx}`}
+                    className={`rounded-[5px] border border-[#FFFFF] text-[12px] font-normal py-[3px] px-[8px] flex-shrink-0  `}
+                  >
+                    {keyword}
+                  </div>
+                );
+              })}
+            </div>
+          </MoveEnterText>
+        </div>
+      ) : (
+        // 미 선택 시
+        <motion.div
+          className="h-full flex items-center text-white font-bold text-[24px] pl-[20px]  backdrop-blur-[1px] bg-black/50 "
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5, ease: "easeOut", delay: 0.3 }}
+        >
+          {title}
+        </motion.div>
+      )}
+    </motion.div>
+  );
+};
+
 const IntroObj = ({ className, isAnimated = false }) => {
   const introText1 = `데이터 처리 기술을 통해 미래의 잠재력을 미리 예측하고 혁신을 위한 새로운 가치를 발굴합니다.\n`;
   const introText2 = `다년간 R&D 사업의 노하우를 통해 데이터 분석으로 의미를 추출합니다.`;
@@ -461,9 +594,9 @@ const IntroObj = ({ className, isAnimated = false }) => {
   );
 };
 
-const MoveEnterText = ({ children, duration = 0.5, delay = 0.2 }) => {
+const MoveEnterText = ({ children, duration = 0.5, delay = 0.2, className = `` }) => {
   return (
-    <div className={`relative overflow-hidden `}>
+    <div className={`relative overflow-hidden ${className}`}>
       <motion.div
         initial={{ y: "110%" }}
         animate={{ y: 0 }}

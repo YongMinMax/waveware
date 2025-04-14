@@ -77,42 +77,102 @@ export const Modal_with_Portal = ({
   return createPortal(
     <AnimatePresence>
       {isOpen && (
-        <motion.div
-          className={`fixed top-0 left-0 z-[9999] w-full h-full  flex items-center justify-center bg-black bg-opacity-70  gap-[50px]  `}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          onClick={onClose}
-        >
-          <motion.div
-            className="bg-white rounded-lg shadow-lg  w-[1530px] h-[800px] max-w-full relative flex"
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.8, opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            onClick={(e) => {
-              e.stopPropagation();
-            }}
-          >
-            <CustomVideoPlayer src={`${video_link[selectedIndex]}`} />
-            <button className="absolute top-4 right-4 text-white hover:text-gray-500 text-[22px]  " onClick={onClose}>
-              ✕
-            </button>
-            <div
-              className={`whitespace-pre-line w-[350px]  px-[25px] pt-[60px] border-l-[3px] bg-[#191919] text-white border-black`}
-            >
-              <div className={` text-[18px] font-semibold  text-[#3A9100] `}>{video_subTitle[selectedIndex]}</div>
-              <div className={` w-fit text-[26px] font-bold mt-[15px]  `}>
-                {video_title[selectedIndex]}
-                <motion.div className={`w-full  h-[4px] bg-white mt-[8px]`}></motion.div>
-              </div>
-
-              <div className={` text-[16px] font-light mt-[20px]`}>{video_description[selectedIndex]}</div>
-            </div>
-          </motion.div>
-        </motion.div>
+        <>
+          <div className="hidden md:block">
+            <Modal_Desktop
+              selectedIndex={selectedIndex}
+              onClose={onClose}
+              videoInfo={{ video_title, video_link, video_description, video_subTitle }}
+            />
+          </div>
+          <div className="block md:hidden">
+            <Modal_Mobile
+              selectedIndex={selectedIndex}
+              onClose={onClose}
+              videoInfo={{ video_title, video_link, video_description, video_subTitle }}
+            />
+          </div>
+        </>
       )}
     </AnimatePresence>,
     portalRoot
+  );
+};
+const Modal_Desktop = ({ selectedIndex, onClose, videoInfo }) => {
+  const { video_title, video_link, video_description, video_subTitle } = videoInfo;
+  return (
+    <motion.div
+      className={`fixed top-0 left-0 z-[9999] w-full h-full  flex items-center justify-center bg-black bg-opacity-70  gap-[50px]  `}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      onClick={onClose}
+    >
+      <motion.div
+        className="bg-white rounded-lg shadow-lg  w-[1530px] h-[800px] max-w-full relative flex"
+        initial={{ scale: 0.8, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.8, opacity: 0 }}
+        transition={{ duration: 0.3 }}
+        onClick={(e) => {
+          e.stopPropagation();
+        }}
+      >
+        <CustomVideoPlayer src={`${video_link[selectedIndex]}`} />
+        <button className="absolute top-4 right-4 text-white hover:text-gray-500 text-[22px]  " onClick={onClose}>
+          ✕
+        </button>
+        <div
+          className={`whitespace-pre-line w-[350px]  px-[25px] pt-[60px] border-l-[3px] bg-[#191919] text-white border-black`}
+        >
+          <div className={` text-[18px] font-semibold  text-[#3A9100] `}>{video_subTitle[selectedIndex]}</div>
+          <div className={` w-fit text-[26px] font-bold mt-[15px]  `}>
+            {video_title[selectedIndex]}
+            <motion.div className={`w-full  h-[4px] bg-white mt-[8px]`}></motion.div>
+          </div>
+
+          <div className={` text-[16px] font-light mt-[20px]`}>{video_description[selectedIndex]}</div>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+};
+const Modal_Mobile = ({ selectedIndex, onClose, videoInfo }) => {
+  const { video_title, video_link, video_description, video_subTitle } = videoInfo;
+  return (
+    <motion.div
+      className={`fixed top-0 left-0 z-[9999] w-full h-full  flex items-center justify-center bg-black bg-opacity-70  gap-[50px]  `}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      onClick={onClose}
+    >
+      <motion.div
+        className="bg-white rounded-lg shadow-lg  w-[1530px] h-[800px] max-w-full relative flex"
+        initial={{ scale: 0.8, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.8, opacity: 0 }}
+        transition={{ duration: 0.3 }}
+        onClick={(e) => {
+          e.stopPropagation();
+        }}
+      >
+        <CustomVideoPlayer src={`${video_link[selectedIndex]}`} />
+        <button className="absolute top-4 right-4 text-white hover:text-gray-500 text-[22px]  " onClick={onClose}>
+          ✕
+        </button>
+        <div
+          className={`whitespace-pre-line w-[350px]  px-[25px] pt-[60px] border-l-[3px] bg-[#191919] text-white border-black`}
+        >
+          <div className={` text-[18px] font-semibold  text-[#3A9100] `}>{video_subTitle[selectedIndex]}</div>
+          <div className={` w-fit text-[26px] font-bold mt-[15px]  `}>
+            {video_title[selectedIndex]}
+            <motion.div className={`w-full  h-[4px] bg-white mt-[8px]`}></motion.div>
+          </div>
+
+          <div className={` text-[16px] font-light mt-[20px]`}>{video_description[selectedIndex]}</div>
+        </div>
+      </motion.div>
+    </motion.div>
   );
 };

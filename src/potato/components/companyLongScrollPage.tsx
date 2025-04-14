@@ -17,7 +17,7 @@ const CompanyLongScrollPage = () => {
       <div className={`hidden md:block`}>
         <CompanyLongScrollPage_DeskTop />
       </div>
-      <div className={`flex items-center justify-center md:hidden min-h-screen `}>
+      <div className={`flex items-center justify-center md:hidden min-h-screen  mt-[75px] `}>
         <CompanyLongScrollPage_Mobile />
       </div>
     </>
@@ -203,9 +203,9 @@ const CompanyLongScrollPage_Mobile = () => {
     if (Math.abs(offset) > threshold) {
       const newIndex = Math.min(Math.max(active + direction, 0), container_arr.length - 1);
       setActive(newIndex);
-      controls.start({ x: -newIndex * (width + containerGap), transition: { duration: 0.3, ease: "easeOut" } });
+      controls.start({ x: -newIndex * (width + containerGap), transition: { duration: 0.3, ease: "easeInOut" } });
     } else {
-      controls.start({ x: -active * (width + containerGap), transition: { duration: 0.6, ease: "easeOut" } });
+      controls.start({ x: -active * (width + containerGap), transition: { duration: 0.6, ease: "easeInOut" } });
     }
   };
   return (
