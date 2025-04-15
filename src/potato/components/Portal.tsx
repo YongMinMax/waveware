@@ -118,7 +118,7 @@ const Modal_Desktop = ({ selectedIndex, onClose, videoInfo }) => {
           e.stopPropagation();
         }}
       >
-        <CustomVideoPlayer src={`${video_link[selectedIndex]}`} />
+        <CustomVideoPlayer src={`${video_link[selectedIndex]}`} isMobile={false} />
         <button className="absolute top-4 right-4 text-white hover:text-gray-500 text-[22px]  " onClick={onClose}>
           ✕
         </button>
@@ -139,16 +139,29 @@ const Modal_Desktop = ({ selectedIndex, onClose, videoInfo }) => {
 };
 const Modal_Mobile = ({ selectedIndex, onClose, videoInfo }) => {
   const { video_title, video_link, video_description, video_subTitle } = videoInfo;
+
+  // 터치 이벤트 막기
+  useEffect(() => {
+    const originalStyle = window.getComputedStyle(document.body).overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = originalStyle;
+    };
+  }, []);
+
   return (
     <motion.div
-      className={`fixed top-0 left-0 z-[9999] w-full h-full  flex items-center justify-center bg-black bg-opacity-70  gap-[50px]  `}
+      className={`fixed top-0 left-0 z-[9999] w-full h-full  flex items-center justify-center bg-black bg-opacity-80  gap-[50px]  `}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       onClick={onClose}
     >
+      <button className="absolute top-4 right-4 text-white hover:text-gray-500 text-[22px]  " onClick={onClose}>
+        ✕
+      </button>
       <motion.div
-        className="bg-white rounded-lg shadow-lg  w-[1530px] h-[800px] max-w-full relative flex"
+        className=" rounded-lg shadow-lg  w-full max-w-full relative flex flex-col gap-[20px]"
         initial={{ scale: 0.8, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.8, opacity: 0 }}
@@ -157,20 +170,16 @@ const Modal_Mobile = ({ selectedIndex, onClose, videoInfo }) => {
           e.stopPropagation();
         }}
       >
-        <CustomVideoPlayer src={`${video_link[selectedIndex]}`} />
-        <button className="absolute top-4 right-4 text-white hover:text-gray-500 text-[22px]  " onClick={onClose}>
-          ✕
-        </button>
-        <div
-          className={`whitespace-pre-line w-[350px]  px-[25px] pt-[60px] border-l-[3px] bg-[#191919] text-white border-black`}
-        >
-          <div className={` text-[18px] font-semibold  text-[#3A9100] `}>{video_subTitle[selectedIndex]}</div>
-          <div className={` w-fit text-[26px] font-bold mt-[15px]  `}>
+        <CustomVideoPlayer src={`${video_link[selectedIndex]}`} isMobile={true} />
+
+        <div className={`whitespace-pre-line  mx-[16px] px-4 py-4  bg-[#191919] text-white `}>
+          <div className={` text-[16px] font-semibold  text-[#3A9100] `}>{video_subTitle[selectedIndex]}</div>
+          <div className={` w-fit text-[22px] font-bold mt-[15px]  `}>
             {video_title[selectedIndex]}
             <motion.div className={`w-full  h-[4px] bg-white mt-[8px]`}></motion.div>
           </div>
 
-          <div className={` text-[16px] font-light mt-[20px]`}>{video_description[selectedIndex]}</div>
+          <div className={` text-[14px] font-light mt-[20px]`}>{video_description[selectedIndex]}</div>
         </div>
       </motion.div>
     </motion.div>
