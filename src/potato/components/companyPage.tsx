@@ -5,29 +5,25 @@ import SectionTitle from "../../kwon/components/section_title";
 export default function CompanyPage() {
   return (
     <>
+      <MenuHeader
+        title={"Company"}
+        description={"데이터의 힘을 통해 미래를 예측하고/혁신을 이끄는 기술을 연구합니다."}
+      />
+      <SectionTitle text={"Who We Are"} />
       <div className="block md:hidden overflow-hidden">
-        <MenuHeader
-          title={"Company"}
-          description={"데이터의 힘을 통해 미래를 예측하고/혁신을 이끄는 기술을 연구합니다."}
-        />
-        <SectionTitle text={"Who We Are"} />
         <WaveSection_Mobile />
         <IntroSection_Mobile />
-        <SectionTitle text={"What We Do"} />
-        <BannerSection_Mobile />
       </div>
-      <div className="hidden md:block">
-        <MenuHeader
-          title={"Company"}
-          description={"데이터의 힘을 통해 미래를 예측하고/혁신을 이끄는 기술을 연구합니다."}
-        />
-        <SectionTitle text={"Who We Are"} />
+      <div className="hidden md:block ">
         <WaveSection_Desktop />
-
         <IntroSection_Desktop />
-
-        <SectionTitle text={"What We Do"} />
+      </div>
+      <SectionTitle text={"What We Do"} />
+      <div className="hidden md:block w-full">
         <BannerSection_Desktop />
+      </div>
+      <div className="block md:hidden overflow-hidden w-full">
+        <BannerSection_Mobile />
       </div>
     </>
   );
@@ -224,14 +220,14 @@ const IntroSection_Mobile = ({}) => {
         scrollY={introProgress}
         treshold={0.1}
         className={
-          "font-normal xs:text-[12px] 2xs:text-[12px]  absolute text-center top-[60%] left-1/2 transform -translate-x-1/2 text-nowrap pt-[10px]"
+          "font-normal xs:text-[12px] 2xs:text-[14px]  absolute text-center top-[60%] left-1/2 transform -translate-x-1/2 text-nowrap pt-[10px] px-[5px]"
         }
       >
         {/* 작은 모바일 환경 */}
-        <div className={`2xs:block xs:hidden  font-normal     text-center  text-nowrap pt-[10px]`}>
-          <div className={`mb-[15px]`}>waveware는 미래 가치 분석을 위한 데이터 프로세싱을 통해 더 나은 선택을 위한</div>
-          <div className={`mb-[15px]`}>데이터 분석을 주도하며 데이터 시각화를 통해 데이터의 의미를 추출하고</div>
-          <div> 더 나은 결정을 내릴 수 있도록 연구하고 개발합니다</div>
+        <div className={`2xs:block xs:hidden  font-normal     text-center  text-nowrap pt-[10px]  `}>
+          <div className={`mb-[15px]`}>waveware는 미래 가치 분석을 위한 데이터 프로세싱을 통해 </div>
+          <div className={`mb-[15px]`}>데이터 분석을 주도하며 데이터 시각화를 통해 데이터의 의미를</div>
+          <div>추출하고 더 나은 결정을 내릴 수 있도록 연구하고 개발합니다</div>
         </div>
         {/* 큰 모바일 환경 */}
         <div className={`2xs:hidden xs:block  font-normal     text-center  text-nowrap pt-[10px]`}>
@@ -363,7 +359,7 @@ const BannerSection_Mobile = ({ img_num = 2 }) => {
               <div className="font-bold text-[25px] pb-[12px] ">Data Processing</div>
             </MoveText>
             <MoveText scrollY={bannerProgress} treshold={animate_timing[0]} duration={duration}>
-              <div className="font-normal text-[16px]">
+              <div className="font-normal text-[16px] px-[5px]">
                 전문화된 데이터 처리 기술을 통해 혁신을 위한 가치를 발굴합니다.
               </div>
             </MoveText>
@@ -376,7 +372,7 @@ const BannerSection_Mobile = ({ img_num = 2 }) => {
               <div className="font-bold text-[25px] pb-[12px]   ">Data Analysis</div>
             </MoveText>
             <MoveText scrollY={bannerProgress} treshold={animate_timing[1]} duration={duration}>
-              <div className="font-normal text-[16px]">
+              <div className="font-normal text-[16px]  px-[5px]">
                 데이터 분석을 통해 더 나은 결정을 내릴 수 있도록 연구하고 개발합니다.
               </div>
             </MoveText>
@@ -389,7 +385,7 @@ const BannerSection_Mobile = ({ img_num = 2 }) => {
               <div className="font-bold text-[25px] pb-[12px]  ">Data Visualization</div>
             </MoveText>
             <MoveText scrollY={bannerProgress} treshold={animate_timing[2]} duration={duration}>
-              <div className="font-normal text-[16px]">
+              <div className="font-normal text-[16px]  px-[5px]">
                 다양한 시각적 요소를 활용해 누구든지 쉽게 정보를 이해할 수 있도록 합니다.
               </div>
             </MoveText>

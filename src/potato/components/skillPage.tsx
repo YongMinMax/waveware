@@ -796,10 +796,11 @@ export const CustomVideoPlayer = ({ src, isMobile = false }: { src: string; isMo
 
   return (
     <>
-      {isMobile ? (
-        <div className={`relative ${width} h-full bg-black cursor-pointer group rounded-l-lg  `}>
-          <video className="" controls playsInline src={src} />
-        </div>
+      <div className={`relative ${width} h-full bg-black cursor-pointer group rounded-l-lg  `}>
+        <video className="" controls playsInline src={src} controlsList="nofullscreen" />
+      </div>
+      {/* {!isMobile ? (
+        <></>
       ) : (
         <motion.div
           className={`relative ${width} h-full bg-black cursor-pointer group rounded-l-lg  `}
@@ -819,7 +820,7 @@ export const CustomVideoPlayer = ({ src, isMobile = false }: { src: string; isMo
             </div>
           )}
         </motion.div>
-      )}
+      )} */}
     </>
   );
 };
