@@ -14,12 +14,12 @@ export default function WhoWeWant() {
     }
   });
   return (
-    <section ref={scrollSensor} className="w-full h-[700px] bg-gray-100 flex justify-center">
-      <div className="w-[1400px] h-full flex justify-between items-center">
+    <section ref={scrollSensor} className="w-full md:h-[700px] bg-gray-100 flex justify-center">
+      <div className="md:w-[1400px] h-full flex flex-col md:flex-row justify-between items-center">
         <Requirements animate={animate} requirements={requirements[1]} />
-        <div className="w-[1.5px] h-[80%] bg-gray-300"></div>
+        <div className="w-[90%] h-[1.5px] md:w-[1.5px] md:h-[80%] bg-gray-300"></div>
         <Requirements animate={animate} delay={animate ? 0.2 : 0} requirements={requirements[2]} />
-        <div className="w-[1.5px] h-[80%] bg-gray-300"></div>
+        <div className="w-[90%] h-[1.5px] md:w-[1.5px] md:h-[80%] bg-gray-300"></div>
         <Requirements animate={animate} delay={animate ? 0.4 : 0} requirements={requirements[3]} />
       </div>
     </section>
