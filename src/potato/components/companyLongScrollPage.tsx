@@ -17,7 +17,7 @@ const CompanyLongScrollPage = () => {
       <div className={`hidden md:block`}>
         <CompanyLongScrollPage_DeskTop />
       </div>
-      <div className={`block md:hidden`}>
+      <div className={`flex items-center justify-center md:hidden min-h-screen  mt-[75px] `}>
         <CompanyLongScrollPage_Mobile />
       </div>
     </>
@@ -203,14 +203,14 @@ const CompanyLongScrollPage_Mobile = () => {
     if (Math.abs(offset) > threshold) {
       const newIndex = Math.min(Math.max(active + direction, 0), container_arr.length - 1);
       setActive(newIndex);
-      controls.start({ x: -newIndex * (width + containerGap), transition: { duration: 0.3, ease: "easeOut" } });
+      controls.start({ x: -newIndex * (width + containerGap), transition: { duration: 0.3, ease: "easeInOut" } });
     } else {
-      controls.start({ x: -active * (width + containerGap), transition: { duration: 0.6, ease: "easeOut" } });
+      controls.start({ x: -active * (width + containerGap), transition: { duration: 0.6, ease: "easeInOut" } });
     }
   };
   return (
-    <div className={`mx-[18px]`}>
-      <div className="Mobile-area w-full relative overflow-hidden max-w-[350px] mx-auto   ">
+    <div className={` `}>
+      <div className="Mobile-area w-full relative overflow-hidden max-w-[350px] mx-auto   px-[15px]">
         <motion.div
           ref={containerRef}
           className="flex h-full   pb-[40px]" // gap으로 peek
@@ -277,13 +277,13 @@ const CompanyCircle_Mobile = ({ className, selectedIndex = 0 }) => {
       <motion.svg // 애니메이션 공간 확보
         className="w-[283] h-[283px] absolute "
         viewBox="0 0 100 100"
-        animate={{ rotate: rotationAngle }}
+        animate={{ rotate: 0 }}
         transition={{ duration: 0.3 }}
       >
         <circle cx="50" cy="50" r="40" fill="none" stroke="black" strokeWidth="1.3" strokeDasharray="0.15, 2" />
         {smallCirclePositions.map((pos: { x: number; y: number }, index: number) => {
-          const isSelected = index === selectedIndex;
-          const beforeSelected = index === (selectedIndex + 2) % 3;
+          const isSelected = index === 0;
+          const beforeSelected = index === 2;
 
           if (isSelected) {
             return (
@@ -630,7 +630,7 @@ const titles = [
 ];
 const contents = [
   "우리는 다년간 쌓아온 언어, 문서, 재난, 의료과학 분야에 전문화된\n데이터 처리 기술을 통해 미래의 새로운 가치를 발굴합니다.",
-  "데이터는 우리가 살고 있는 세상을 다르게 볼 수 있는 정보를 제공하며,\n 데이터 분석을 통해 의미를 추출하고 더 나은 결정을 내릴 수 있도록\n연구하고 개발합니다.",
+  "데이터는 세상을 다르게 볼 수 있는 정보를 제공하며, 데이터 분석을 통해\n의미를 추출하고 더 나은 결정을 내릴 수 있도록 연구하고 개발합니다.",
   "데이터 시각화를 통하여 모든 일련의 과정을 설명하며, 다양한 시각적\n요소를 활용해 누구든지 쉽게 정보를 이해할 수 있도록 합니다.",
 ];
 export default CompanyLongScrollPage;

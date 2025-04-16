@@ -51,6 +51,8 @@ export const Modal_with_Portal = ({
     "비정형 데이터는 구조화되지 않은 데이터로 처리 및 분석이 어렵고 데이터의 패턴이나 추세를 파악하기도 어렵습니다. 하지만 비정형 데이터는 많은 양의 정보를 포함하고 있으며 이를 분석해 새로운 가치를 발견할 수 있습니다.\n\n과제 및 논문 데이터를 NLP Parser를 통해 문장을 구조화 하고 Word2Vec 알고리즘으로 임베딩하여 Z-score 및 knn 알고리즘을 통해 분류하는 모델을 개발하였습니다.",
   ];
   const [mounted, setMounted] = useState(false);
+
+  const [isFullScreen, setFullScreen] = useState(false);
   useEffect(() => {
     if (isOpen) {
       // 스크롤 막기
@@ -77,42 +79,118 @@ export const Modal_with_Portal = ({
   return createPortal(
     <AnimatePresence>
       {isOpen && (
-        <motion.div
-          className={`fixed top-0 left-0 z-[9999] w-full h-full  flex items-center justify-center bg-black bg-opacity-70  gap-[50px]  `}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          onClick={onClose}
-        >
-          <motion.div
-            className="bg-white rounded-lg shadow-lg  w-[1530px] h-[800px] max-w-full relative flex"
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.8, opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            onClick={(e) => {
-              e.stopPropagation();
-            }}
-          >
-            <CustomVideoPlayer src={`${video_link[selectedIndex]}`} />
-            <button className="absolute top-4 right-4 text-white hover:text-gray-500 text-[22px]  " onClick={onClose}>
-              ✕
-            </button>
-            <div
-              className={`whitespace-pre-line w-[350px]  px-[25px] pt-[60px] border-l-[3px] bg-[#191919] text-white border-black`}
-            >
-              <div className={` text-[18px] font-semibold  text-[#3A9100] `}>{video_subTitle[selectedIndex]}</div>
-              <div className={` w-fit text-[26px] font-bold mt-[15px]  `}>
-                {video_title[selectedIndex]}
-                <motion.div className={`w-full  h-[4px] bg-white mt-[8px]`}></motion.div>
-              </div>
-
-              <div className={` text-[16px] font-light mt-[20px]`}>{video_description[selectedIndex]}</div>
-            </div>
-          </motion.div>
-        </motion.div>
+        <>
+          <div className="hidden md:block">
+            <Modal_Desktop
+              selectedIndex={selectedIndex}
+              onClose={onClose}
+              videoInfo={{ video_title, video_link, video_description, video_subTitle }}
+            />
+          </div>
+          <div className="block md:hidden">
+            <Modal_Mobile
+              selectedIndex={selectedIndex}
+              onClose={onClose}
+              videoInfo={{ video_title, video_link, video_description, video_subTitle }}
+            />
+          </div>
+        </>
       )}
     </AnimatePresence>,
     portalRoot
+  );
+};
+const Modal_Desktop = ({ selectedIndex, onClose, videoInfo }) => {
+  const { video_title, video_link, video_description, video_subTitle } = videoInfo;
+  return (
+    <motion.div
+      className={`fixed top-0 left-0 z-[9999] w-full h-full  flex items-center justify-center bg-black bg-opacity-70  gap-[50px]  `}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      onClick={onClose}
+    >
+      <motion.div
+        className="bg-white rounded-lg shadow-lg  w-[1530px] h-[800px] max-w-full relative flex"
+        initial={{ scale: 0.8, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.8, opacity: 0 }}
+        transition={{ duration: 0.3 }}
+        onClick={(e) => {
+          e.stopPropagation();
+        }}
+      >
+        <CustomVideoPlayer src={`${video_link[selectedIndex]}`} isMobile={false} />
+        <button className="absolute top-4 right-4 text-white hover:text-gray-500 text-[22px]  " onClick={onClose}>
+          ✕
+        </button>
+        <div
+          className={`whitespace-pre-line w-[350px]  px-[25px] pt-[60px] border-l-[3px] bg-[#191919] text-white border-black`}
+        >
+          <div className={` text-[18px] font-semibold  text-[#3A9100] `}>{video_subTitle[selectedIndex]}</div>
+          <div className={` w-fit text-[26px] font-bold mt-[15px]  `}>
+            {video_title[selectedIndex]}
+            <motion.div className={`w-full  h-[4px] bg-white mt-[8px]`}></motion.div>
+          </div>
+
+          <div className={` text-[16px] font-light mt-[20px]`}>{video_description[selectedIndex]}</div>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+};
+const Modal_Mobile = ({ selectedIndex, onClose, videoInfo }) => {
+  const { video_title, video_link, video_description, video_subTitle } = videoInfo;
+  console.log(window.innerWidth);
+  useEffect(() => {
+    const handleResize = () => {
+      console.log(window.innerWidth);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+  // 터치 이벤트 막기
+  useEffect(() => {
+    const originalStyle = window.getComputedStyle(document.body).overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = originalStyle;
+    };
+  }, []);
+  console.log("hihi");
+  return (
+    <motion.div
+      className={`fixed top-0 left-0 z-[9999] w-full h-full  flex items-center justify-center bg-black bg-opacity-80  gap-[50px]  `}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      onClick={onClose}
+    >
+      <button className="absolute top-4 right-4 text-white hover:text-gray-500 text-[22px]  " onClick={onClose}>
+        ✕
+      </button>
+      <motion.div
+        className=" rounded-lg shadow-lg  w-full max-w-full relative flex flex-col gap-[20px]"
+        initial={{ scale: 0.8, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.8, opacity: 0 }}
+        transition={{ duration: 0.3 }}
+        onClick={(e) => {
+          e.stopPropagation();
+        }}
+      >
+        <CustomVideoPlayer src={`${video_link[selectedIndex]}`} isMobile={true} />
+
+        <div className={`whitespace-pre-line  mx-[16px] px-4 py-4  bg-[#191919] text-white `}>
+          <div className={` text-[16px] font-semibold  text-[#3A9100] `}>{video_subTitle[selectedIndex]}</div>
+          <div className={` w-fit text-[22px] font-bold mt-[15px]  `}>
+            {video_title[selectedIndex]}
+            <motion.div className={`w-full  h-[4px] bg-white mt-[8px]`}></motion.div>
+          </div>
+
+          <div className={` text-[14px] font-light mt-[20px]`}>{video_description[selectedIndex]}</div>
+        </div>
+      </motion.div>
+    </motion.div>
   );
 };

@@ -11,6 +11,8 @@ import {
   useTransform,
   useMotionValueEvent,
   useSpring,
+  Variant,
+  VariantLabels,
 } from "framer-motion";
 import { Modal_with_Portal } from "./Portal";
 
@@ -182,26 +184,79 @@ const SkillTogglePage_Desktop = React.memo(
   }
 );
 const SkillTogglePage_Mobile = () => {
+  const scrollRef = useRef(null);
+  const { scrollYProgress } = useScroll({ target: scrollRef, offset: ["start end", "end start"] });
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
+
+  useMotionValueEvent(scrollYProgress, "change", (latest) => {
+    // 스크롤에 따른 이벤트
+    if (latest > 0.18) {
+      setIsIntroAnimate(true);
+    } else {
+      setIsIntroAnimate(false);
+    }
+    if (latest > 0.2) {
+      setIsImageAnimate(true);
+    } else {
+      setIsImageAnimate(false);
+    }
+  });
+  // 여기 추가해야 함
+  const handleScrollLock = () => {};
+  const [isIntroAnimate, setIsIntroAnimate] = useState(false);
+  const [isImageAnimate, setIsImageAnimate] = useState(false);
+  const [selectedIndex, setSelectedIndex] = useState(-1);
   return (
-    <div className={` min-w-[375px]`}>
+    <div className={` min-w-[375px] flex flex-col items-center mt-[75px] `}>
+      <Modal_with_Portal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        selectedIndex={selectedIndex}
+        handleScrollLock={handleScrollLock}
+      ></Modal_with_Portal>
       {/* 텍스트 구간 */}
-      <div className={` whitespace-pre-line`}>
-        <div className={`text-[36px] font-`}>
-          모든 <span className={`text-[#3A9100]`}>데이터</span>에서
+      <motion.div
+        className={` whitespace-pre-line pb-[40px]`}
+        animate={{ y: isIntroAnimate ? 0 : "50%", opacity: isIntroAnimate ? 1 : 0 }}
+        transition={{ duration: 0.8, ease: "easeInOut" }}
+      >
+        <div className={`text-[36px] text-center`}>
+          모든
+          <span className={`text-[#3A9100]`}>{` 데이터`}</span>에서
         </div>
-        <div>
+        <div className="text-center pt-[10px]">
           <span className={`text-[#3A9100]`}>waveware</span>
-          {`는 데이터 처리 기술을 통해 미래의 잠재력을\n미리 예측하고 혁신을 위한 새로운 가치를발굴합니다`}
+          {`는 데이터 처리 기술을 통해 미래의 잠재력을\n미리 예측하고 혁신을 위한 새로운 가치를 발굴합니다`}
         </div>
-      </div>
+      </motion.div>
       {/* 이미지 구간 */}
+      <motion.div
+        className={` flex flex-col gap-[2px]`}
+        animate={{ y: isImageAnimate ? 0 : "15%", opacity: isImageAnimate ? 1 : 0 }}
+        transition={{ duration: 0.8, ease: "easeInOut" }}
+      >
+        {skills.map((skill, idx) => {
+          return (
+            <SkillBox_Mobile
+              key={`${idx}-${skill.title}`}
+              skill={skill}
+              handleIndex={{ selectedIndex, setSelectedIndex }}
+              idx={idx}
+              handleClick={openModal}
+            />
+          );
+        })}
+      </motion.div>
     </div>
   );
 };
 export const SkillTogglePage = ({ handleScrollLock }) => {
   return (
     <>
-      <div className={`block md:hidden`}>
+      <div className={`flex md:hidden min-h-screen items-center justify-center`}>
         <SkillTogglePage_Mobile />
       </div>
       <div className={`hidden md:block`}>
@@ -244,7 +299,7 @@ const SkillContainer = ({ className, handleScrollLock }) => {
       <div className={` w-[1440px] h-[640px] flex gap-[4px] overflow-hidden`}>
         {skills.map((skill, index) => {
           return (
-            <SkillBox
+            <SkillBox_Desktop
               key={index}
               skillInfo={skill}
               isHovered={index === seletedIndex}
@@ -261,7 +316,7 @@ const SkillContainer = ({ className, handleScrollLock }) => {
   );
 };
 
-const SkillBox = ({ idx, skillInfo, isHovered, handleMouseEnter, handleClick }) => {
+const SkillBox_Desktop = ({ idx, skillInfo, isHovered, handleMouseEnter, handleClick }) => {
   const { img_size, img_src, title, content, keywords } = skillInfo;
   const background_CSS = isHovered
     ? `linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.8))`
@@ -334,6 +389,84 @@ const SkillBox = ({ idx, skillInfo, isHovered, handleMouseEnter, handleClick }) 
     </div>
   );
 };
+const SkillBox_Mobile = ({ skill, handleIndex, idx, handleClick }) => {
+  const { img_src, img_size, title, content, keywords } = skill;
+  const { selectedIndex, setSelectedIndex } = handleIndex;
+  const variants = {
+    small: { height: "115px", transition: { duration: 0.5, ease: "easeInOut" } },
+    large: { height: "240px", transition: { duration: 0.5, ease: "easeInOut" } },
+  };
+  const handleCompoClick = () => {
+    // 선택된 상황에서 또 선택 => 모달 오픈
+    if (selectedIndex === idx) {
+      handleClick();
+    } else {
+      // 미선택된 상황에서 선택 => 열리기
+      setSelectedIndex(idx);
+    }
+  };
+  return (
+    <motion.div
+      className={` w-screen    relative overflow-hidden`}
+      onClick={handleCompoClick}
+      variants={variants}
+      animate={selectedIndex === idx ? "large" : "small"}
+      initial={false}
+      transition={{ duration: 0.5, ease: "easeInOut" }}
+      layout
+    >
+      <img
+        src={img_src}
+        alt={`background image`}
+        className={` absolute top-1/2 transform -translate-y-1/2 left-0 -z-10 ${img_size} `}
+        style={{}}
+      />
+      {/* 텍스트 */}
+      {selectedIndex === idx ? (
+        // 선택시
+        <div className="text-white pb-[21px] px-[30px] flex flex-col justify-end h-full   backdrop-blur-[1px] bg-black/50  ">
+          <motion.div
+            className=" font-bold text-[40px] "
+            initial={{ scale: 0.7 }}
+            animate={{ scale: 1.0 }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
+          >
+            {title}
+          </motion.div>
+          <MoveEnterText className="mt-[10px]" duration={0.3}>
+            <div className=" font-medium text-[16px]">{content}</div>
+          </MoveEnterText>
+          {/* 키워드 */}
+          <MoveEnterText className="mt-[10px]" duration={0.3}>
+            <div className="flex gap-x-[15px] gap-y-[8px] flex-wrap">
+              {keywords.map((keyword: string, idx: number) => {
+                return (
+                  <div
+                    key={`${keyword}+${idx}`}
+                    className={`rounded-[5px] border border-[#FFFFF] text-[12px] font-normal py-[3px] px-[8px] flex-shrink-0  `}
+                  >
+                    {keyword}
+                  </div>
+                );
+              })}
+            </div>
+          </MoveEnterText>
+        </div>
+      ) : (
+        // 미 선택 시
+        <motion.div
+          className="h-full flex items-center text-white font-bold text-[24px] pl-[20px]  backdrop-blur-[1px] bg-black/50 "
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5, ease: "easeOut", delay: 0.3 }}
+        >
+          {title}
+        </motion.div>
+      )}
+    </motion.div>
+  );
+};
+
 const IntroObj = ({ className, isAnimated = false }) => {
   const introText1 = `데이터 처리 기술을 통해 미래의 잠재력을 미리 예측하고 혁신을 위한 새로운 가치를 발굴합니다.\n`;
   const introText2 = `다년간 R&D 사업의 노하우를 통해 데이터 분석으로 의미를 추출합니다.`;
@@ -461,9 +594,9 @@ const IntroObj = ({ className, isAnimated = false }) => {
   );
 };
 
-const MoveEnterText = ({ children, duration = 0.5, delay = 0.2 }) => {
+const MoveEnterText = ({ children, duration = 0.5, delay = 0.2, className = `` }) => {
   return (
-    <div className={`relative overflow-hidden `}>
+    <div className={`relative overflow-hidden ${className}`}>
       <motion.div
         initial={{ y: "110%" }}
         animate={{ y: 0 }}
@@ -519,103 +652,105 @@ const MoveScrollText = ({
     </div>
   );
 };
-const Modal = ({
-  isOpen,
-  onClose,
-  selectedIndex,
-  handleScrollLock,
-}: {
-  isOpen: boolean;
-  onClose: () => void;
-  selectedIndex: number;
-  handleScrollLock: React.Dispatch<React.SetStateAction<boolean>>;
-}) => {
-  const video_link = [
-    `/videos/skill_metadata.mp4`,
-    `/videos/skill_visulation.mp4`,
-    `/videos/skill_dc.mp4`,
-    `/videos/skill_nlp.mp4`,
-  ];
-  const video_subTitle = ["메타데이터", "시각화", "분산처리", "NLP"];
-  const video_title = [
-    "치매 연구를 위한 데이터 분석",
-    "재난재해 피해예측 시각화",
-    "SNS 수집기",
-    "국가 과학기술 표준분류체계",
-  ];
-  const video_description = [
-    "의료 데이터는 사람의 건강과 직결되어 있기 때문에 데이터가 가지는 특징이 매우 중요합니다. 또한 질병 예측 및 치료 방법 개발에 활용할 수 있기에 의료 데이터의 중요성은 더욱 부각되고 있습니다.\n\n일상생활 수행능력 측정 환경 구축 및 뇌파, ADL, 건강검진 등의 데이터를 분석하고 다년간 구축된 Cohort연구를 통해 치매 초기 증상을 예측하는 모델을 개발하였습니다.",
-    "지형 및 지도 데이터는 도시계획 및 재난재해 대응에 이르기까지 광범위한 분야에서 사용되는 중요한 유형의 데이터로 시각화 했을때 더욱 의미가 있습니다.\n\n수치표고모형(DEM) 데이터의 고도 및 침수심을 통해 피해영역을 가시화하고 재난이력 데이터로 재난 취약도를 계산해 재난운영 피해금액 예측 모델을 구축 및 시각화하였습니다.",
-    "실시간 대용량 처리를 위해서는 데이터를 수집하고 저장하는 데이터베이스와 함께 실시간으로 데이터를 처리하고 분석할 수 있는 소프트웨어가 필요합니다. 이를 위해 분산 시스템을 이용하여 데이터 처리 작업을 분산하고, 병목현상을 방지하여 성능을 향상시킵니다.\n\n하루에 약 500만건이 생성되는 SNS 데이터를 수집하여 처리하기 위해 Apache Spark를 활용해 실시간으로 처리하였으며, 위도,경도와 유저 정보를 통해 국가별, 유저별로 특징을 파악해 분류 후 적재하여 시각화합니다.",
-    "비정형 데이터는 구조화되지 않은 데이터로 처리 및 분석이 어렵고 데이터의 패턴이나 추세를 파악하기도 어렵습니다. 하지만 비정형 데이터는 많은 양의 정보를 포함하고 있으며 이를 분석해 새로운 가치를 발견할 수 있습니다.\n\n과제 및 논문 데이터를 NLP Parser를 통해 문장을 구조화 하고 Word2Vec 알고리즘으로 임베딩하여 Z-score 및 knn 알고리즘을 통해 분류하는 모델을 개발하였습니다.",
-  ];
+// const Modal = ({
+//   isOpen,
+//   onClose,
+//   selectedIndex,
+//   handleScrollLock,
+// }: {
+//   isOpen: boolean;
+//   onClose: () => void;
+//   selectedIndex: number;
+//   handleScrollLock: React.Dispatch<React.SetStateAction<boolean>>;
+// }) => {
+//   const video_link = [
+//     `/videos/skill_metadata.mp4`,
+//     `/videos/skill_visulation.mp4`,
+//     `/videos/skill_dc.mp4`,
+//     `/videos/skill_nlp.mp4`,
+//   ];
+//   const video_subTitle = ["메타데이터", "시각화", "분산처리", "NLP"];
+//   const video_title = [
+//     "치매 연구를 위한 데이터 분석",
+//     "재난재해 피해예측 시각화",
+//     "SNS 수집기",
+//     "국가 과학기술 표준분류체계",
+//   ];
+//   const video_description = [
+//     "의료 데이터는 사람의 건강과 직결되어 있기 때문에 데이터가 가지는 특징이 매우 중요합니다. 또한 질병 예측 및 치료 방법 개발에 활용할 수 있기에 의료 데이터의 중요성은 더욱 부각되고 있습니다.\n\n일상생활 수행능력 측정 환경 구축 및 뇌파, ADL, 건강검진 등의 데이터를 분석하고 다년간 구축된 Cohort연구를 통해 치매 초기 증상을 예측하는 모델을 개발하였습니다.",
+//     "지형 및 지도 데이터는 도시계획 및 재난재해 대응에 이르기까지 광범위한 분야에서 사용되는 중요한 유형의 데이터로 시각화 했을때 더욱 의미가 있습니다.\n\n수치표고모형(DEM) 데이터의 고도 및 침수심을 통해 피해영역을 가시화하고 재난이력 데이터로 재난 취약도를 계산해 재난운영 피해금액 예측 모델을 구축 및 시각화하였습니다.",
+//     "실시간 대용량 처리를 위해서는 데이터를 수집하고 저장하는 데이터베이스와 함께 실시간으로 데이터를 처리하고 분석할 수 있는 소프트웨어가 필요합니다. 이를 위해 분산 시스템을 이용하여 데이터 처리 작업을 분산하고, 병목현상을 방지하여 성능을 향상시킵니다.\n\n하루에 약 500만건이 생성되는 SNS 데이터를 수집하여 처리하기 위해 Apache Spark를 활용해 실시간으로 처리하였으며, 위도,경도와 유저 정보를 통해 국가별, 유저별로 특징을 파악해 분류 후 적재하여 시각화합니다.",
+//     "비정형 데이터는 구조화되지 않은 데이터로 처리 및 분석이 어렵고 데이터의 패턴이나 추세를 파악하기도 어렵습니다. 하지만 비정형 데이터는 많은 양의 정보를 포함하고 있으며 이를 분석해 새로운 가치를 발견할 수 있습니다.\n\n과제 및 논문 데이터를 NLP Parser를 통해 문장을 구조화 하고 Word2Vec 알고리즘으로 임베딩하여 Z-score 및 knn 알고리즘을 통해 분류하는 모델을 개발하였습니다.",
+//   ];
 
-  useEffect(() => {
-    if (isOpen) {
-      // 스크롤 막기
-      handleScrollLock(true);
-      document.body.style.overflow = "hidden";
-      document.body.style.height = "100%";
-    } else {
-      // 스크롤 해제
-      document.body.style.overflow = "auto";
-      document.body.style.height = "auto";
-      handleScrollLock(false);
-    }
+//   useEffect(() => {
+//     if (isOpen) {
+//       // 스크롤 막기
+//       handleScrollLock(true);
+//       document.body.style.overflow = "hidden";
+//       document.body.style.height = "100%";
+//     } else {
+//       // 스크롤 해제
+//       document.body.style.overflow = "auto";
+//       document.body.style.height = "auto";
+//       handleScrollLock(false);
+//     }
 
-    return () => {
-      // 컴포넌트 언마운트 시 복구
-      document.body.style.overflow = "auto";
-      document.body.style.height = "auto";
-      handleScrollLock(false);
-    };
-  }, [isOpen]);
-  return (
-    <AnimatePresence>
-      {isOpen && (
-        <motion.div
-          className={`fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70  gap-[50px]`}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          onClick={onClose}
-        >
-          <motion.div
-            className="bg-white rounded-lg shadow-lg  w-[1530px] h-[800px] max-w-full relative flex"
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.8, opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            onClick={(e) => {
-              e.stopPropagation();
-            }}
-          >
-            <CustomVideoPlayer src={`${video_link[selectedIndex]}`} />
-            <button className="absolute top-4 right-4 text-white hover:text-gray-500 text-[22px]  " onClick={onClose}>
-              ✕
-            </button>
-            <div
-              className={`whitespace-pre-line w-[350px]  px-[25px] pt-[60px] border-l-[3px] bg-[#191919] text-white border-black`}
-            >
-              <div className={` text-[18px] font-semibold  text-[#3A9100] `}>{video_subTitle[selectedIndex]}</div>
-              <div className={` w-fit text-[26px] font-bold mt-[15px]  `}>
-                {video_title[selectedIndex]}
-                <motion.div className={`w-full  h-[4px] bg-white mt-[8px]`}></motion.div>
-              </div>
+//     return () => {
+//       // 컴포넌트 언마운트 시 복구
+//       document.body.style.overflow = "auto";
+//       document.body.style.height = "auto";
+//       handleScrollLock(false);
+//     };
+//   }, [isOpen]);
+//   return (
+//     <AnimatePresence>
+//       {isOpen && (
+//         <motion.div
+//           className={`fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70  gap-[50px]`}
+//           initial={{ opacity: 0 }}
+//           animate={{ opacity: 1 }}
+//           exit={{ opacity: 0 }}
+//           onClick={onClose}
+//         >
+//           <motion.div
+//             className="bg-white rounded-lg shadow-lg  w-[1530px] h-[800px] max-w-full relative flex"
+//             initial={{ scale: 0.8, opacity: 0 }}
+//             animate={{ scale: 1, opacity: 1 }}
+//             exit={{ scale: 0.8, opacity: 0 }}
+//             transition={{ duration: 0.3 }}
+//             onClick={(e) => {
+//               e.stopPropagation();
+//             }}
+//           >
+//             <CustomVideoPlayer src={`${video_link[selectedIndex]}`} />
+//             <button className="absolute top-4 right-4 text-white hover:text-gray-500 text-[22px]  " onClick={onClose}>
+//               ✕
+//             </button>
+//             <div
+//               className={`whitespace-pre-line w-[350px]  px-[25px] pt-[60px] border-l-[3px] bg-[#191919] text-white border-black`}
+//             >
+//               <div className={` text-[18px] font-semibold  text-[#3A9100] `}>{video_subTitle[selectedIndex]}</div>
+//               <div className={` w-fit text-[26px] font-bold mt-[15px]  `}>
+//                 {video_title[selectedIndex]}
+//                 <motion.div className={`w-full  h-[4px] bg-white mt-[8px]`}></motion.div>
+//               </div>
 
-              <div className={` text-[16px] font-light mt-[20px]`}>{video_description[selectedIndex]}</div>
-            </div>
-          </motion.div>
-        </motion.div>
-      )}
-    </AnimatePresence>
-  );
-};
-export const CustomVideoPlayer = ({ src }: { src: string }) => {
+//               <div className={` text-[16px] font-light mt-[20px]`}>{video_description[selectedIndex]}</div>
+//             </div>
+//           </motion.div>
+//         </motion.div>
+//       )}
+//     </AnimatePresence>
+//   );
+// };
+export const CustomVideoPlayer = ({ src, isMobile = false }: { src: string; isMobile: boolean }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [showControls, setShowControls] = useState(true); // 아이콘 표시 여부
   const hideControlsTimeout = useRef<NodeJS.Timeout | null>(null);
+
+  const width = isMobile ? ` w-full ` : ` w-[1180px] `;
 
   const handleVideoClick = () => {
     if (videoRef.current) {
@@ -660,20 +795,33 @@ export const CustomVideoPlayer = ({ src }: { src: string }) => {
   }, []);
 
   return (
-    <motion.div
-      className={`relative w-[1180px] h-full bg-black cursor-pointer group rounded-l-lg  `}
-      onClick={handleVideoClick}
-      onMouseMove={handleMouseMove} // 마우스 움직임 감지
-    >
-      <video ref={videoRef} className="w-full h-full object-cover rounded-l-lg" src={src}></video>
-      {(!isPlaying || showControls) && ( // 아이콘 표시 여부에 따라 렌더링
-        <div className="absolute inset-0 flex items-center  justify-center">
-          <div className="flex items-center justify-center w-20 h-20 bg-black rounded-full">
-            {isPlaying ? <MdPause className="text-white text-4xl" /> : <MdPlayArrow className="text-white text-4xl" />}
-          </div>
-        </div>
-      )}
-    </motion.div>
+    <>
+      <div className={`relative ${width} h-full bg-black cursor-pointer group rounded-l-lg  `}>
+        <video className="" controls playsInline src={src} controlsList="nofullscreen" />
+      </div>
+      {/* {!isMobile ? (
+        <></>
+      ) : (
+        <motion.div
+          className={`relative ${width} h-full bg-black cursor-pointer group rounded-l-lg  `}
+          onClick={handleVideoClick}
+          onMouseMove={handleMouseMove} // 마우스 움직임 감지
+        >
+          <video ref={videoRef} className="w-full h-full object-cover rounded-l-lg" src={src}></video>
+          {(!isPlaying || showControls) && ( // 아이콘 표시 여부에 따라 렌더링
+            <div className="absolute inset-0 flex items-center  justify-center">
+              <div className="flex items-center justify-center w-20 h-20 bg-black rounded-full">
+                {isPlaying ? (
+                  <MdPause className="text-white text-4xl" />
+                ) : (
+                  <MdPlayArrow className="text-white text-4xl" />
+                )}
+              </div>
+            </div>
+          )}
+        </motion.div>
+      )} */}
+    </>
   );
 };
 

@@ -1,11 +1,7 @@
 const defaultTheme = require("tailwindcss/defaultTheme");
 
 module.exports = {
-  content: [
-    "./pages/**/*.{js,ts,jsx,tsx}",
-    "./components/**/*.{js,ts,jsx,tsx}",
-    "./src/**/*.{js,ts,jsx,tsx}",
-  ],
+  content: ["./pages/**/*.{js,ts,jsx,tsx}", "./components/**/*.{js,ts,jsx,tsx}", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
       colors: {
@@ -85,6 +81,11 @@ module.exports = {
         "scroll-down": "scroll-down 1.5s ease-in-out infinite",
         "char-appear": "char-appear 0.5s ease-out forwards",
         "slide-up": "slide-up 0.8s ease-out forwards",
+      },
+      screens: {
+        "3xs": { min: "100px", max: "300px" },
+        "2xs": { min: "300px", max: "520px" },
+        xs: { min: "520px", max: "768px" },
       },
     },
     container: {
