@@ -796,9 +796,33 @@ export const CustomVideoPlayer = ({ src, isMobile = false }: { src: string; isMo
 
   return (
     <>
-      <div className={`relative ${width} h-full bg-black cursor-pointer group rounded-l-lg  `}>
-        <video className="" controls playsInline src={src} controlsList="nofullscreen" />
-      </div>
+      {isMobile ? (
+        // 모바일 비디오
+        <div className={` ${width}  h-full    group rounded-l-lg flex items-center justify-center  `}>
+          <video
+            ref={videoRef}
+            className={`  h-auto cursor-pointer`}
+            controls
+            playsInline
+            src={src}
+            controlsList="nofullscreen"
+            onClick={handleVideoClick}
+          />
+        </div>
+      ) : (
+        // 데스크탑 비디오
+        <div className={` ${width}  h-full bg-black   group  flex items-center justify-center  `}>
+          <video
+            ref={videoRef}
+            className={`  h-full cursor-pointer`}
+            controls
+            playsInline
+            src={src}
+            controlsList="nofullscreen"
+            onClick={handleVideoClick}
+          />
+        </div>
+      )}
       {/* {!isMobile ? (
         <></>
       ) : (

@@ -81,11 +81,7 @@ export const Modal_with_Portal = ({
       {isOpen && (
         <>
           <div className="hidden md:block">
-            <Modal_Desktop
-              selectedIndex={selectedIndex}
-              onClose={onClose}
-              videoInfo={{ video_title, video_link, video_description, video_subTitle }}
-            />
+            <Modal_Desktop selectedIndex={selectedIndex} onClose={onClose} />
           </div>
           <div className="block md:hidden">
             <Modal_Mobile
@@ -100,18 +96,21 @@ export const Modal_with_Portal = ({
     portalRoot
   );
 };
-const Modal_Desktop = ({ selectedIndex, onClose, videoInfo }) => {
-  const { video_title, video_link, video_description, video_subTitle } = videoInfo;
+const Modal_Desktop = ({ selectedIndex, onClose }) => {
+  // const { video_title, video_link, video_description, video_subTitle } = videoInfo;
+  const infos = video_info[selectedIndex];
+  const [selectedVideoIndex, setSelectedVideoIndex] = useState(0);
   return (
     <motion.div
-      className={`fixed top-0 left-0 z-[9999] w-full h-full  flex items-center justify-center bg-black bg-opacity-70  gap-[50px]  `}
+      id={"modal"}
+      className={`fixed top-0 left-0 z-[9999] w-full h-full  flex items-center justify-center bg-black bg-opacity-70  gap-[0px]  `}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       onClick={onClose}
     >
       <motion.div
-        className="bg-white rounded-lg shadow-lg  w-[1530px] h-[800px] max-w-full relative flex"
+        className="  rounded-lg shadow-lg  w-[1630px] h-[800px] max-w-full relative flex"
         initial={{ scale: 0.8, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.8, opacity: 0 }}
@@ -120,13 +119,12 @@ const Modal_Desktop = ({ selectedIndex, onClose, videoInfo }) => {
           e.stopPropagation();
         }}
       >
-        <CustomVideoPlayer src={`${video_link[selectedIndex]}`} isMobile={false} />
-        <button className="absolute top-4 right-4 text-white hover:text-gray-500 text-[22px]  " onClick={onClose}>
+        <button className="absolute top-4 right-8 text-white hover:text-gray-500 text-[26px] z-10   " onClick={onClose}>
           ✕
         </button>
-        <div
-          className={`whitespace-pre-line w-[350px]  px-[25px] pt-[60px] border-l-[3px] bg-[#191919] text-white border-black`}
-        >
+        <CustomVideoPlayer src={`${infos[selectedVideoIndex].link}`} isMobile={false} />
+        {/* 원본 코드 */}
+        {/* <div className={`whitespace-pre-line flex-1   px-[40px] pt-[100px]   bg-[#191919] text-white  `}>
           <div className={` text-[18px] font-semibold  text-[#3A9100] `}>{video_subTitle[selectedIndex]}</div>
           <div className={` w-fit text-[26px] font-bold mt-[15px]  `}>
             {video_title[selectedIndex]}
@@ -134,6 +132,64 @@ const Modal_Desktop = ({ selectedIndex, onClose, videoInfo }) => {
           </div>
 
           <div className={` text-[16px] font-light mt-[20px]`}>{video_description[selectedIndex]}</div>
+        </div> */}
+
+        <div
+          className={`whitespace-pre-line flex-1  pt-[60px]   bg-[#191919] text-white flex flex-col `}
+          onWheel={(e) => e.stopPropagation()}
+        >
+          <div className={` text-[24px] font-semibold  text-[#3A9100] pb-[40px] px-[30px]`}>{infos[0].title}</div>
+          <div className="flex flex-col  gap-[0px] select-none flex-1  overflow-y-auto scrollbar-hide ">
+            {infos.map((info, idx) => {
+              return (
+                <>
+                  <motion.div
+                    key={`${info.name}-${idx}`}
+                    className={`relative    px-[30px]  pt-[30px] pb-[60px]   cursor-pointer  ${
+                      selectedVideoIndex === idx ? "bg-[#3a3a3a]" : "hover:bg-[#2a2a2a]/60"
+                    } `}
+                    whileHover="hover"
+                    onClick={() => {
+                      setSelectedVideoIndex(idx);
+                    }}
+                    // initial="initial"
+                  >
+                    {/* 호버 효과 주는 div */}
+                    {/* <motion.div
+                    className={`absolute inset-0 bg-white/20 w-full h-full mix-blend-lighten  `}
+                    variants={{
+                      initial: { x: "-130%" },
+                      hover: {
+                        x: "0%",
+                        transition: {
+                          duration: 0.3,
+                        },
+                      },
+                    }}
+                  ></motion.div> */}
+                    <motion.div className={` text-[18px] pb-[35px]`} variants={{ hover: { color: "" } }}>
+                      {String(idx + 1).padStart(2, "0")}
+                    </motion.div>
+                    <motion.div
+                      className={` text-[34px] pb-[60px] font-bold ${selectedVideoIndex === idx ? "text-[#fff]" : ""} `}
+                      variants={{ hover: { color: "" } }}
+                    >
+                      {info.name}
+                    </motion.div>
+                    <motion.div
+                      className={` text-[16px]  font-light  ${
+                        selectedVideoIndex === idx ? "text-[#ccc]" : "text-[#999]"
+                      }`}
+                      variants={{ hover: { color: "#bbb" } }}
+                    >
+                      {info.description}
+                    </motion.div>
+                  </motion.div>
+                  <div className="border-b-[1px] mx-[30px] opacity-30" />
+                </>
+              );
+            })}
+          </div>
         </div>
       </motion.div>
     </motion.div>
@@ -194,3 +250,102 @@ const Modal_Mobile = ({ selectedIndex, onClose, videoInfo }) => {
     </motion.div>
   );
 };
+
+const video_info = [
+  // 메타데이터
+  [
+    {
+      link: "/videos/skill_metadata.mp4",
+      title: "메타데이터",
+      name: "치매 연구를 위한  데이터 분석",
+      description:
+        "일상생활 수행능력 측정 환경 구축 및 뇌파, ADL, 건강검진 등의 데이터를 분석하고 다년간 구축된 Cohort연구를 통해 치매 초기 증상을 예측하는 모델을 개발하였습니다.",
+    },
+    {
+      link: "/videos/skill_metadata.mp4",
+      title: "메타데이터",
+      name: "치매 연구를 위한 데이터 분석",
+      description:
+        "일상생활 수행능력 측정 환경 구축 및 뇌파, ADL, 건강검진 등의 데이터를 분석하고 다년간 구축된 Cohort연구를 통해 치매 초기 증상을 예측하는 모델을 개발하였습니다.",
+    },
+    {
+      link: "/videos/skill_metadata.mp4",
+      title: "메타데이터",
+      name: "치매 연구를 위한 데이터 분석",
+      description:
+        "일상생활 수행능력 측정 환경 구축 및 뇌파, ADL, 건강검진 등의 데이터를 분석하고 다년간 구축된 Cohort연구를 통해 치매 초기 증상을 예측하는 모델을 개발하였습니다.",
+    },
+  ],
+  // 시각화
+  [
+    {
+      link: "/videos/skill_visulation.mp4",
+      title: "시각화",
+      name: "재난재해 피해예측 시각화",
+      description:
+        "수치표고모형(DEM) 데이터의 고도 및 침수심을 통해 피해영역을 가시화하고 재난이력 데이터로 재난 취약도를 계산해 재난운영 피해금액 예측 모델을 구축 및 시각화하였습니다.",
+    },
+    {
+      link: "/videos/skill_metadata.mp4",
+      title: "메타데이터",
+      name: "치매 연구를 위한 데이터 분석",
+      description:
+        "일상생활 수행능력 측정 환경 구축 및 뇌파, ADL, 건강검진 등의 데이터를 분석하고 다년간 구축된 Cohort연구를 통해 치매 초기 증상을 예측하는 모델을 개발하였습니다.",
+    },
+    {
+      link: "/videos/skill_metadata.mp4",
+      title: "메타데이터",
+      name: "치매 연구를 위한 데이터 분석",
+      description:
+        "일상생활 수행능력 측정 환경 구축 및 뇌파, ADL, 건강검진 등의 데이터를 분석하고 다년간 구축된 Cohort연구를 통해 치매 초기 증상을 예측하는 모델을 개발하였습니다.",
+    },
+  ],
+  // 분산처리
+  [
+    {
+      link: "/videos/skill_dc.mp4",
+      title: "분산처리",
+      name: "SNS 수집기",
+      description:
+        "하루에 약 500만건이 생성되는 SNS 데이터를 수집하여 처리하기 위해 Apache Spark를 활용해 실시간으로 처리하였으며, 위도,경도와 유저 정보를 통해 국가별, 유저별로 특징을 파악해 분류 후 적재하여 시각화합니다.",
+    },
+    {
+      link: "/videos/skill_metadata.mp4",
+      title: "메타데이터",
+      name: "치매 연구를 위한 데이터 분석",
+      description:
+        "일상생활 수행능력 측정 환경 구축 및 뇌파, ADL, 건강검진 등의 데이터를 분석하고 다년간 구축된 Cohort연구를 통해 치매 초기 증상을 예측하는 모델을 개발하였습니다.",
+    },
+    {
+      link: "/videos/skill_metadata.mp4",
+      title: "메타데이터",
+      name: "치매 연구를 위한 데이터 분석",
+      description:
+        "일상생활 수행능력 측정 환경 구축 및 뇌파, ADL, 건강검진 등의 데이터를 분석하고 다년간 구축된 Cohort연구를 통해 치매 초기 증상을 예측하는 모델을 개발하였습니다.",
+    },
+  ],
+  // NLP
+  [
+    {
+      link: "/videos/skill_nlp.mp4",
+      title: "NLP",
+      name: "국가 과학기술 표준분류체계",
+      description:
+        "과제 및 논문 데이터를 NLP Parser를 통해 문장을 구조화 하고 Word2Vec 알고리즘으로 임베딩하여 Z-score 및 knn 알고리즘을 통해 분류하는 모델을 개발하였습니다.",
+    },
+    {
+      link: "/videos/skill_metadata.mp4",
+      title: "메타데이터",
+      name: "치매 연구를 위한 데이터 분석",
+      description:
+        "일상생활 수행능력 측정 환경 구축 및 뇌파, ADL, 건강검진 등의 데이터를 분석하고 다년간 구축된 Cohort연구를 통해 치매 초기 증상을 예측하는 모델을 개발하였습니다.",
+    },
+    {
+      link: "/videos/skill_metadata.mp4",
+      title: "메타데이터",
+      name: "치매 연구를 위한 데이터 분석",
+      description:
+        "일상생활 수행능력 측정 환경 구축 및 뇌파, ADL, 건강검진 등의 데이터를 분석하고 다년간 구축된 Cohort연구를 통해 치매 초기 증상을 예측하는 모델을 개발하였습니다.",
+    },
+  ],
+];
