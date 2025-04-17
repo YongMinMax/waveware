@@ -167,11 +167,11 @@ const Modal_Desktop = ({ selectedIndex, onClose }) => {
                       },
                     }}
                   ></motion.div> */}
-                    <motion.div className={` text-[18px] pb-[35px]`} variants={{ hover: { color: "" } }}>
+                    <motion.div className={` text-[18px] pb-[25px]`} variants={{ hover: { color: "" } }}>
                       {String(idx + 1).padStart(2, "0")}
                     </motion.div>
                     <motion.div
-                      className={` text-[34px] pb-[60px] font-bold ${selectedVideoIndex === idx ? "text-[#fff]" : ""} `}
+                      className={` text-[32px] pb-[50px] font-bold ${selectedVideoIndex === idx ? "text-[#fff]" : ""} `}
                       variants={{ hover: { color: "" } }}
                     >
                       {info.name}
@@ -185,7 +185,7 @@ const Modal_Desktop = ({ selectedIndex, onClose }) => {
                       {info.description}
                     </motion.div>
                   </motion.div>
-                  <div className="border-b-[1px] mx-[30px] opacity-30" />
+                  {idx !== infos.length - 1 && <div className="border-b-[1px] mx-[30px] opacity-30" />}
                 </>
               );
             })}
@@ -262,16 +262,9 @@ const video_info = [
         "일상생활 수행능력 측정 환경 구축 및 뇌파, ADL, 건강검진 등의 데이터를 분석하고 다년간 구축된 Cohort연구를 통해 치매 초기 증상을 예측하는 모델을 개발하였습니다.",
     },
     {
-      link: "/videos/skill_metadata.mp4",
+      link: "/videos/skill_sindi.mp4",
       title: "메타데이터",
-      name: "치매 연구를 위한 데이터 분석",
-      description:
-        "일상생활 수행능력 측정 환경 구축 및 뇌파, ADL, 건강검진 등의 데이터를 분석하고 다년간 구축된 Cohort연구를 통해 치매 초기 증상을 예측하는 모델을 개발하였습니다.",
-    },
-    {
-      link: "/videos/skill_metadata.mp4",
-      title: "메타데이터",
-      name: "치매 연구를 위한 데이터 분석",
+      name: "SINDI",
       description:
         "일상생활 수행능력 측정 환경 구축 및 뇌파, ADL, 건강검진 등의 데이터를 분석하고 다년간 구축된 Cohort연구를 통해 치매 초기 증상을 예측하는 모델을 개발하였습니다.",
     },
@@ -279,25 +272,18 @@ const video_info = [
   // 시각화
   [
     {
-      link: "/videos/skill_visulation.mp4",
+      link: "/videos/skill_sns.mp4",
       title: "시각화",
       name: "재난재해 피해예측 시각화",
       description:
         "수치표고모형(DEM) 데이터의 고도 및 침수심을 통해 피해영역을 가시화하고 재난이력 데이터로 재난 취약도를 계산해 재난운영 피해금액 예측 모델을 구축 및 시각화하였습니다.",
     },
     {
-      link: "/videos/skill_metadata.mp4",
-      title: "메타데이터",
-      name: "치매 연구를 위한 데이터 분석",
+      link: "/videos/skill_newsTrends.mp4",
+      title: "시각화",
+      name: "키워드 기반 실시간 추이 분석기",
       description:
-        "일상생활 수행능력 측정 환경 구축 및 뇌파, ADL, 건강검진 등의 데이터를 분석하고 다년간 구축된 Cohort연구를 통해 치매 초기 증상을 예측하는 모델을 개발하였습니다.",
-    },
-    {
-      link: "/videos/skill_metadata.mp4",
-      title: "메타데이터",
-      name: "치매 연구를 위한 데이터 분석",
-      description:
-        "일상생활 수행능력 측정 환경 구축 및 뇌파, ADL, 건강검진 등의 데이터를 분석하고 다년간 구축된 Cohort연구를 통해 치매 초기 증상을 예측하는 모델을 개발하였습니다.",
+        "95개의 언론사에서 하루 약 30,000 건의 기사를 통해 실시간으로 키워드를 감지,분류하여 사용자에게 실시간으로 키워드의 추이를 시각화하여 제공합니다.",
     },
   ],
   // 분산처리
@@ -310,18 +296,11 @@ const video_info = [
         "하루에 약 500만건이 생성되는 SNS 데이터를 수집하여 처리하기 위해 Apache Spark를 활용해 실시간으로 처리하였으며, 위도,경도와 유저 정보를 통해 국가별, 유저별로 특징을 파악해 분류 후 적재하여 시각화합니다.",
     },
     {
-      link: "/videos/skill_metadata.mp4",
-      title: "메타데이터",
-      name: "치매 연구를 위한 데이터 분석",
+      link: "/videos/skill_soda.mp4",
+      title: "분산처리",
+      name: "대용량 데이터 관리 플랫폼",
       description:
-        "일상생활 수행능력 측정 환경 구축 및 뇌파, ADL, 건강검진 등의 데이터를 분석하고 다년간 구축된 Cohort연구를 통해 치매 초기 증상을 예측하는 모델을 개발하였습니다.",
-    },
-    {
-      link: "/videos/skill_metadata.mp4",
-      title: "메타데이터",
-      name: "치매 연구를 위한 데이터 분석",
-      description:
-        "일상생활 수행능력 측정 환경 구축 및 뇌파, ADL, 건강검진 등의 데이터를 분석하고 다년간 구축된 Cohort연구를 통해 치매 초기 증상을 예측하는 모델을 개발하였습니다.",
+        "슈퍼컴퓨터 DTN 간 SFTP 및 GridFTP를 활용한 대용량 병렬처리를 개발하여 사용자 간 안정적인 고속 파일 전송이 가능하도록 했습니다. 또한, FreeIPA와의 연동을 통해 데이터셋에 대한 권한을 설정할 수 있는 기능을 구현하였습니다.",
     },
   ],
   // NLP
