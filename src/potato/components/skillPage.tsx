@@ -879,21 +879,21 @@ const skills = [
     img_size: "987px  ",
     title: "시각화",
     content: "데이터 해석과 의사결정을 지원하는 시각화 기술",
-    keywords: ["지도데이터", "수치표고모형(DEM)", "피해금액 예측 모델", "시각화"],
+    keywords: ["지도데이터", "수치표고모형(DEM)", "피해금액 예측 모델", "금융 데이터", "국제 무역 정보"],
   },
   {
     img_src: "/img/skill/sns.jpg",
     img_size: "987px ",
     title: "분산처리",
     content: "고속 데이터 작업와 실시간 분석을 위한 분산처리 환경 구축",
-    keywords: ["빅데이터", "Apache Spark", "분산 시스템", "실시간 데이터 처리", "데이터 적재"],
+    keywords: ["빅데이터", "Apache Spark", "분산 시스템", "GridFTP", "DTN"],
   },
   {
     img_src: "/img/skill/NLP.jpg",
     img_size: "987px  ",
     title: "NLP",
     content: "텍스트 기반 정보 활용을 위한 자연어처리 파이프라인 설계",
-    keywords: ["비정형 데이터", "Word2Vec", "임베딩", "KNN 알고리즘", "NLP Parser"],
+    keywords: ["비정형 데이터", "LLM", "Word2Vec", "임베딩", "KNN 알고리즘", "NLP Parser", "RAG"],
   },
 ];
 
