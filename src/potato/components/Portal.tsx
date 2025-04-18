@@ -145,7 +145,7 @@ const Modal_Desktop = ({ selectedIndex, onClose }) => {
                 <>
                   <motion.div
                     key={`${info.name}-${idx}`}
-                    className={`relative    px-[30px]  pt-[30px] pb-[60px]   cursor-pointer  ${
+                    className={`relative    px-[30px]  pt-[30px] pb-[0px]   cursor-pointer  ${
                       selectedVideoIndex === idx ? "bg-[#3a3a3a]" : "hover:bg-[#2a2a2a]/60"
                     } `}
                     whileHover="hover"
@@ -171,21 +171,24 @@ const Modal_Desktop = ({ selectedIndex, onClose }) => {
                       {String(idx + 1).padStart(2, "0")}
                     </motion.div>
                     <motion.div
-                      className={` text-[32px] pb-[50px] font-bold ${selectedVideoIndex === idx ? "text-[#fff]" : ""} `}
+                      className={` text-[32px] pb-[20px] font-bold ${selectedVideoIndex === idx ? "text-[#fff]" : ""} `}
                       variants={{ hover: { color: "" } }}
                     >
                       {info.name}
                     </motion.div>
                     <motion.div
-                      className={` text-[16px]  font-light  ${
-                        selectedVideoIndex === idx ? "text-[#ccc]" : "text-[#999]"
-                      }`}
+                      className={` text-[16px]  font-light pb-[60px]  ${
+                        idx !== infos.length - 1 && idx !== selectedVideoIndex && idx + 1 !== selectedVideoIndex
+                          ? "border-b-[1px] border-b-white/30"
+                          : ""
+                      }
+                        ${selectedVideoIndex === idx ? "text-[#ccc]" : "text-[#999]"}`}
                       variants={{ hover: { color: "#bbb" } }}
                     >
                       {info.description}
                     </motion.div>
                   </motion.div>
-                  {idx !== infos.length - 1 && <div className="border-b-[1px] mx-[30px] opacity-30" />}
+                  {/* {idx !== infos.length - 1 && <div className="border-b-[1px] mx-[30px] opacity-30" />} */}
                 </>
               );
             })}
@@ -264,15 +267,15 @@ const video_info = [
     {
       link: "/videos/skill_sindi.mp4",
       title: "메타데이터",
-      name: "SINDI",
+      name: "질병 Pathway 검색 도구",
       description:
-        "일상생활 수행능력 측정 환경 구축 및 뇌파, ADL, 건강검진 등의 데이터를 분석하고 다년간 구축된 Cohort연구를 통해 치매 초기 증상을 예측하는 모델을 개발하였습니다.",
+        "Pubmed DB에서 질병관련 논문, 보고서, 학회 발표 자료 데이터를 분석하고 정리해, 질병에 대한 생체적 요소간의 역학관계를 동적으로 구성하는 모델을 개발하였습니다",
     },
   ],
   // 시각화
   [
     {
-      link: "/videos/skill_sns.mp4",
+      link: "/videos/skill_visulation.mp4",
       title: "시각화",
       name: "재난재해 피해예측 시각화",
       description:
@@ -285,11 +288,25 @@ const video_info = [
       description:
         "95개의 언론사에서 하루 약 30,000 건의 기사를 통해 실시간으로 키워드를 감지,분류하여 사용자에게 실시간으로 키워드의 추이를 시각화하여 제공합니다.",
     },
+    {
+      link: "/videos/skill_gvc.mp4",
+      title: "시각화",
+      name: "공급망 문제 분석 시스템",
+      description:
+        "글로벌 뉴스 데이터, 국제 금융데이터와 무역정보를 수집하고 분석해, 글로벌 공급망 문제를 사전감지하고 관련 정보를 시각화한 시스템을 개발하였습니다.",
+    },
+    {
+      link: "/videos/skill_disaster.mp4",
+      title: "시각화",
+      name: "풍수해 위험도 측정 모델",
+      description:
+        "과거의 풍수해 재난 피해 및 복구 데이터를 GIS상에 융합,결합하여 재난 시 집중관리 및 대응 대비에 대한 정보를 시각화 하는 모델을 개발하였습니다.",
+    },
   ],
   // 분산처리
   [
     {
-      link: "/videos/skill_dc.mp4",
+      link: "/videos/skill_sns.mp4",
       title: "분산처리",
       name: "SNS 수집기",
       description:
@@ -313,18 +330,11 @@ const video_info = [
         "과제 및 논문 데이터를 NLP Parser를 통해 문장을 구조화 하고 Word2Vec 알고리즘으로 임베딩하여 Z-score 및 knn 알고리즘을 통해 분류하는 모델을 개발하였습니다.",
     },
     {
-      link: "/videos/skill_metadata.mp4",
-      title: "메타데이터",
-      name: "치매 연구를 위한 데이터 분석",
+      link: "/videos/skill_rnd.mp4",
+      title: "NLP",
+      name: "사회문제 R&D 분석 도구",
       description:
-        "일상생활 수행능력 측정 환경 구축 및 뇌파, ADL, 건강검진 등의 데이터를 분석하고 다년간 구축된 Cohort연구를 통해 치매 초기 증상을 예측하는 모델을 개발하였습니다.",
-    },
-    {
-      link: "/videos/skill_metadata.mp4",
-      title: "메타데이터",
-      name: "치매 연구를 위한 데이터 분석",
-      description:
-        "일상생활 수행능력 측정 환경 구축 및 뇌파, ADL, 건강검진 등의 데이터를 분석하고 다년간 구축된 Cohort연구를 통해 치매 초기 증상을 예측하는 모델을 개발하였습니다.",
+        "특허와 논문 데이터를 Clustering으로 분류 후 LDA,LSA로 데이터의 토픽을 추출하고,  RAG 기반 LLM을 활용해 사회 문제와 해결 방안에 대해 편향 없는 답변을 제공하는 시스템을 개발하였습니다.",
     },
   ],
 ];

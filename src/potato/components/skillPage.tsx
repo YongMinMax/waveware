@@ -815,7 +815,11 @@ export const CustomVideoPlayer = ({ src, isMobile = false }: { src: string; isMo
           <video
             ref={videoRef}
             className={`  h-full cursor-pointer`}
+            onCanPlay={() => {
+              videoRef.current?.play();
+            }}
             controls
+            muted
             playsInline
             src={src}
             controlsList="nofullscreen"
