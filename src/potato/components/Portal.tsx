@@ -125,13 +125,15 @@ const Modal_Desktop = ({ selectedIndex, onClose, setSelectedIndex }) => {
       exit={{ opacity: 0 }}
       onClick={onClose}
     >
-      <MdOutlineKeyboardArrowLeft
-        onClick={(e) => {
-          e.stopPropagation();
-          handleArrowClick(-1);
-        }}
-        className={`text-[100px] ${selectedIndex === 0 ? "text-gray-500" : "text-white"} `}
-      />
+      <motion.div whileHover={{ scale: selectedIndex === 0 ? 1 : 1.3, transition: { ease: "easeOut", duration: 0.2 } }}>
+        <MdOutlineKeyboardArrowLeft
+          onClick={(e) => {
+            e.stopPropagation();
+            handleArrowClick(-1);
+          }}
+          className={`text-[100px] ${selectedIndex === 0 ? "text-gray-500" : "text-white"} `}
+        />
+      </motion.div>
 
       <motion.div
         className="  rounded-lg shadow-lg  w-[1630px] h-[800px] max-w-full relative flex"
@@ -147,16 +149,6 @@ const Modal_Desktop = ({ selectedIndex, onClose, setSelectedIndex }) => {
           ✕
         </button>
         <CustomVideoPlayer src={`${infos[selectedVideoIndex].link}`} isMobile={false} />
-        {/* 원본 코드 */}
-        {/* <div className={`whitespace-pre-line flex-1   px-[40px] pt-[100px]   bg-[#191919] text-white  `}>
-          <div className={` text-[18px] font-semibold  text-[#3A9100] `}>{video_subTitle[selectedIndex]}</div>
-          <div className={` w-fit text-[26px] font-bold mt-[15px]  `}>
-            {video_title[selectedIndex]}
-            <motion.div className={`w-full  h-[4px] bg-white mt-[8px]`}></motion.div>
-          </div>
-
-          <div className={` text-[16px] font-light mt-[20px]`}>{video_description[selectedIndex]}</div>
-        </div> */}
 
         <div
           className={`whitespace-pre-line flex-1  pt-[60px]   bg-[#191919] text-white flex flex-col `}
@@ -177,7 +169,7 @@ const Modal_Desktop = ({ selectedIndex, onClose, setSelectedIndex }) => {
             </span>
           </div> */}
           {/* 두줄 공간 먹게한 버전  - X */}
-          {/* <div className={` text-[40px] font-semibold text-[#3A9100]  pb-[40px] px-[30px] flex flex-col gap-[10px]`}>
+          {/* <div className={` text-[40px] font-semibold text-lime-600  pb-[40px] px-[30px] flex flex-col gap-[10px]`}>
             <div className="text-[24px]">{`0${selectedIndex + 1}`}</div>
             <div>{infos[0].title}</div>
           </div> */}
@@ -240,13 +232,21 @@ const Modal_Desktop = ({ selectedIndex, onClose, setSelectedIndex }) => {
           </div>
         </div>
       </motion.div>
-      <MdOutlineKeyboardArrowRight
-        onClick={(e) => {
-          e.stopPropagation();
-          handleArrowClick(1);
+
+      <motion.div
+        whileHover={{
+          scale: selectedIndex === video_info.length - 1 ? 1 : 1.3,
+          transition: { ease: "easeOut", duration: 0.2 },
         }}
-        className={`text-[100px] ${selectedIndex === video_info.length - 1 ? "text-gray-500" : "text-white"}`}
-      />
+      >
+        <MdOutlineKeyboardArrowRight
+          onClick={(e) => {
+            e.stopPropagation();
+            handleArrowClick(1);
+          }}
+          className={`text-[100px] ${selectedIndex === video_info.length - 1 ? "text-gray-500" : "text-white"}`}
+        />
+      </motion.div>
     </motion.div>
   );
 };
@@ -268,7 +268,6 @@ const Modal_Mobile = ({ selectedIndex, onClose, videoInfo }) => {
       document.body.style.overflow = originalStyle;
     };
   }, []);
-  console.log("hihi");
   return (
     <motion.div
       className={`fixed top-0 left-0 z-[9999] w-full h-full  flex items-center justify-center bg-black bg-opacity-80  gap-[50px]  `}
