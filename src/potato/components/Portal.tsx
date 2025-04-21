@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import { CustomVideoPlayer } from "./skillPage";
 import { MdOutlineKeyboardArrowLeft, MdOutlineKeyboardArrowRight } from "react-icons/md";
 
+import { FaCircle } from "react-icons/fa";
 type Props = {
   children: React.ReactNode;
 };
@@ -87,11 +88,7 @@ export const Modal_with_Portal = ({
             <Modal_Desktop selectedIndex={selectedIndex} onClose={onClose} setSelectedIndex={setSelectedIndex} />
           </div>
           <div className="block md:hidden">
-            <Modal_Mobile
-              selectedIndex={selectedIndex}
-              onClose={onClose}
-              videoInfo={{ video_title, video_link, video_description, video_subTitle }}
-            />
+            <Modal_Mobile selectedIndex={selectedIndex} onClose={onClose} />
           </div>
         </>
       )}
@@ -228,16 +225,10 @@ const Modal_Desktop = ({ selectedIndex, onClose, setSelectedIndex }) => {
     </motion.div>
   );
 };
-const Modal_Mobile = ({ selectedIndex, onClose, videoInfo }) => {
-  const { video_title, video_link, video_description, video_subTitle } = videoInfo;
-  console.log(window.innerWidth);
-  useEffect(() => {
-    const handleResize = () => {
-      console.log(window.innerWidth);
-    };
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
+const Modal_Mobile = ({ selectedIndex, onClose }) => {
+  const infos = video_info[selectedIndex];
+  const [selectedVideoIndex, setSelectedVideoIndex] = useState(0);
+
   // 터치 이벤트 막기
   useEffect(() => {
     const originalStyle = window.getComputedStyle(document.body).overflow;
@@ -267,16 +258,33 @@ const Modal_Mobile = ({ selectedIndex, onClose, videoInfo }) => {
           e.stopPropagation();
         }}
       >
-        <CustomVideoPlayer src={`${video_link[selectedIndex]}`} isMobile={true} />
+        <CustomVideoPlayer src={`${infos[selectedVideoIndex].link}`} isMobile={true} />
 
         <div className={`whitespace-pre-line  mx-[16px] px-4 py-4  bg-[#191919] text-white `}>
-          <div className={` text-[16px] font-semibold  text-[#3A9100] `}>{video_subTitle[selectedIndex]}</div>
+          <div className={` text-[16px] font-semibold  text-[#3A9100] `}>{infos[selectedVideoIndex].title}</div>
           <div className={` w-fit text-[22px] font-bold mt-[15px]  `}>
-            {video_title[selectedIndex]}
+            {infos[selectedVideoIndex].name}
             <motion.div className={`w-full  h-[4px] bg-white mt-[8px]`}></motion.div>
           </div>
 
-          <div className={` text-[14px] font-light mt-[20px]`}>{video_description[selectedIndex]}</div>
+          <div className={` text-[14px] font-light mt-[20px]`}>{infos[selectedVideoIndex].description}</div>
+        </div>
+        <div className={`flex justify-center items-center gap-[15px] text-[15px] pt-[15px]`}>
+          {infos.map((info, idx) => {
+            if (idx === selectedVideoIndex) {
+              return (
+                <motion.div key={`${info.name}+${idx}`} className={`text-white`} animate={{ scale: 1.2 }}>
+                  <FaCircle />
+                </motion.div>
+              );
+            } else {
+              return (
+                <>
+                  <FaCircle key={`${info.name}+${idx}`} className={`text-gray-500`} />
+                </>
+              );
+            }
+          })}
         </div>
       </motion.div>
     </motion.div>
@@ -305,7 +313,7 @@ const video_info = [
   [
     {
       link: "/videos/skill_visulation.mp4",
-      title: "데이터 해석과 의사결정을 지원하는 시각화 기술",
+      title: "시각화",
       name: "재난재해 피해예측 시각화",
       description:
         "수치표고모형(DEM) 데이터의 고도 및 침수심을 통해 피해영역을 가시화하고 재난이력 데이터로 재난 취약도를 계산해 재난운영 피해금액 예측 모델을 구축 및 시각화하였습니다.",
