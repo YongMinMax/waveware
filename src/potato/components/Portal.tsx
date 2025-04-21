@@ -138,7 +138,28 @@ const Modal_Desktop = ({ selectedIndex, onClose }) => {
           className={`whitespace-pre-line flex-1  pt-[60px]   bg-[#191919] text-white flex flex-col `}
           onWheel={(e) => e.stopPropagation()}
         >
-          <div className={` text-[24px] font-semibold  text-[#3A9100] pb-[40px] px-[30px]`}>{infos[0].title}</div>
+          {/* 원본 */}
+          {/* <div className={` text-[24px] font-semibold text-[#3A9100] pb-[40px] px-[30px]`}>{infos[0].title}</div> */}
+          {/* 글자 키우고 밑줄 넣은 버젼 */}
+          {/* <div
+            className={` text-[28px] underline underline-offset-[10px] font-semibold text-[#3A9100] pb-[40px] px-[30px]  `}
+          >
+            {infos[0].title}
+          </div> */}
+          {/* 뱃지 처럼 만든 버젼 */}
+          {/* <div className="px-[30px]  pb-[40px] ">
+            <span className="inline-block bg-[#3A9100] text-white text-[24px] font-normal px-3 py-1 rounded-full uppercase tracking-wide ">
+              {infos[0].title}
+            </span>
+          </div> */}
+          {/* 두줄 공간 먹게한 버전  - X */}
+          {/* <div className={` text-[40px] font-semibold text-[#3A9100]  pb-[40px] px-[30px] flex flex-col gap-[10px]`}>
+            <div className="text-[24px]">{`0${selectedIndex + 1}`}</div>
+            <div>{infos[0].title}</div>
+          </div> */}
+
+          <div className={` text-[24px] font-semibold text-[#3A9100] pb-[40px] px-[30px]`}>{infos[0].title}</div>
+
           <div className="flex flex-col  gap-[0px] select-none flex-1  overflow-y-auto scrollbar-hide ">
             {infos.map((info, idx) => {
               return (
