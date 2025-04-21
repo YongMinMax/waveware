@@ -216,6 +216,7 @@ const SkillTogglePage_Mobile = () => {
         onClose={closeModal}
         selectedIndex={selectedIndex}
         handleScrollLock={handleScrollLock}
+        setSelectedIndex={setSelectedIndex}
       ></Modal_with_Portal>
       {/* 텍스트 구간 */}
       <motion.div
@@ -295,6 +296,7 @@ const SkillContainer = ({ className, handleScrollLock }) => {
         onClose={closeModal}
         selectedIndex={seletedIndex}
         handleScrollLock={handleScrollLock}
+        setSelectedIndex={setSelectedIndex}
       ></Modal_with_Portal>
       <div className={` w-[1440px] h-[640px] flex gap-[4px] overflow-hidden`}>
         {skills.map((skill, index) => {

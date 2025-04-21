@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { CustomVideoPlayer } from "./skillPage";
+import { MdOutlineKeyboardArrowLeft, MdOutlineKeyboardArrowRight } from "react-icons/md";
 
 type Props = {
   children: React.ReactNode;
@@ -25,11 +26,13 @@ export const Modal_with_Portal = ({
   onClose,
   selectedIndex,
   handleScrollLock,
+  setSelectedIndex,
 }: {
   isOpen: boolean;
   onClose: () => void;
   selectedIndex: number;
   handleScrollLock: React.Dispatch<React.SetStateAction<boolean>>;
+  setSelectedIndex: React.Dispatch<React.SetStateAction<number>>; // Added type for setSelectedIndex
 }) => {
   const video_link = [
     `/videos/skill_metadata.mp4`,
@@ -81,7 +84,7 @@ export const Modal_with_Portal = ({
       {isOpen && (
         <>
           <div className="hidden md:block">
-            <Modal_Desktop selectedIndex={selectedIndex} onClose={onClose} />
+            <Modal_Desktop selectedIndex={selectedIndex} onClose={onClose} setSelectedIndex={setSelectedIndex} />
           </div>
           <div className="block md:hidden">
             <Modal_Mobile
@@ -96,19 +99,40 @@ export const Modal_with_Portal = ({
     portalRoot
   );
 };
-const Modal_Desktop = ({ selectedIndex, onClose }) => {
+const Modal_Desktop = ({ selectedIndex, onClose, setSelectedIndex }) => {
   // const { video_title, video_link, video_description, video_subTitle } = videoInfo;
   const infos = video_info[selectedIndex];
   const [selectedVideoIndex, setSelectedVideoIndex] = useState(0);
+  const handleArrowClick = (direction: number) => {
+    if (direction === -1) {
+      if (selectedIndex !== 0) {
+        setSelectedIndex((prev: number) => prev - 1);
+        setSelectedVideoIndex(0);
+      }
+    } else if (direction === 1) {
+      if (selectedIndex !== video_info.length - 1) {
+        setSelectedIndex((prev: number) => prev + 1);
+        setSelectedVideoIndex(0);
+      }
+    }
+  };
   return (
     <motion.div
       id={"modal"}
-      className={`fixed top-0 left-0 z-[9999] w-full h-full  flex items-center justify-center bg-black bg-opacity-70  gap-[0px]  `}
+      className={`fixed top-0 left-0 z-[9999] w-full h-full  flex items-center justify-center bg-black bg-opacity-70  gap-[20px]  `}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       onClick={onClose}
     >
+      <MdOutlineKeyboardArrowLeft
+        onClick={(e) => {
+          e.stopPropagation();
+          handleArrowClick(-1);
+        }}
+        className={`text-[100px] ${selectedIndex === 0 ? "text-gray-500" : "text-white"} `}
+      />
+
       <motion.div
         className="  rounded-lg shadow-lg  w-[1630px] h-[800px] max-w-full relative flex"
         initial={{ scale: 0.8, opacity: 0 }}
@@ -216,6 +240,13 @@ const Modal_Desktop = ({ selectedIndex, onClose }) => {
           </div>
         </div>
       </motion.div>
+      <MdOutlineKeyboardArrowRight
+        onClick={(e) => {
+          e.stopPropagation();
+          handleArrowClick(1);
+        }}
+        className={`text-[100px] ${selectedIndex === video_info.length - 1 ? "text-gray-500" : "text-white"}`}
+      />
     </motion.div>
   );
 };
