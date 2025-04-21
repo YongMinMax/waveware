@@ -151,31 +151,9 @@ const Modal_Desktop = ({ selectedIndex, onClose, setSelectedIndex }) => {
         <CustomVideoPlayer src={`${infos[selectedVideoIndex].link}`} isMobile={false} />
 
         <div
-          className={`whitespace-pre-line flex-1  pt-[60px]   bg-[#191919] text-white flex flex-col `}
+          className={`whitespace-pre-line flex-1  pt-[80px]   bg-[#191919] text-white flex flex-col `}
           onWheel={(e) => e.stopPropagation()}
         >
-          {/* 원본 */}
-          {/* <div className={` text-[24px] font-semibold text-[#3A9100] pb-[40px] px-[30px]`}>{infos[0].title}</div> */}
-          {/* 글자 키우고 밑줄 넣은 버젼 */}
-          {/* <div
-            className={` text-[28px] underline underline-offset-[10px] font-semibold text-[#3A9100] pb-[40px] px-[30px]  `}
-          >
-            {infos[0].title}
-          </div> */}
-          {/* 뱃지 처럼 만든 버젼 */}
-          {/* <div className="px-[30px]  pb-[40px] ">
-            <span className="inline-block bg-[#3A9100] text-white text-[24px] font-normal px-3 py-1 rounded-full uppercase tracking-wide ">
-              {infos[0].title}
-            </span>
-          </div> */}
-          {/* 두줄 공간 먹게한 버전  - X */}
-          {/* <div className={` text-[40px] font-semibold text-lime-600  pb-[40px] px-[30px] flex flex-col gap-[10px]`}>
-            <div className="text-[24px]">{`0${selectedIndex + 1}`}</div>
-            <div>{infos[0].title}</div>
-          </div> */}
-
-          <div className={` text-[24px] font-semibold text-[#3A9100] pb-[40px] px-[30px]`}>{infos[0].title}</div>
-
           <div className="flex flex-col  gap-[0px] select-none flex-1  overflow-y-auto scrollbar-hide ">
             {infos.map((info, idx) => {
               return (
@@ -214,7 +192,7 @@ const Modal_Desktop = ({ selectedIndex, onClose, setSelectedIndex }) => {
                       {info.name}
                     </motion.div>
                     <motion.div
-                      className={` text-[16px]  font-light pb-[60px]  ${
+                      className={` text-[16px] min-h-[150px]  font-light pb-[60px]  ${
                         idx !== infos.length - 1 && idx !== selectedVideoIndex && idx + 1 !== selectedVideoIndex
                           ? "border-b-[1px] border-b-white/30"
                           : ""
@@ -327,7 +305,7 @@ const video_info = [
   [
     {
       link: "/videos/skill_visulation.mp4",
-      title: "시각화",
+      title: "데이터 해석과 의사결정을 지원하는 시각화 기술",
       name: "재난재해 피해예측 시각화",
       description:
         "수치표고모형(DEM) 데이터의 고도 및 침수심을 통해 피해영역을 가시화하고 재난이력 데이터로 재난 취약도를 계산해 재난운영 피해금액 예측 모델을 구축 및 시각화하였습니다.",
