@@ -17,7 +17,7 @@ const CompanyLongScrollPage = () => {
       <div className={`hidden md:block`}>
         <CompanyLongScrollPage_DeskTop />
       </div>
-      <div className={`flex items-center justify-center md:hidden min-h-screen  mt-[75px] `}>
+      <div className={`flex items-center justify-center md:hidden min-h-screen  mt-[0px] pb-[20px] `}>
         <CompanyLongScrollPage_Mobile />
       </div>
     </>

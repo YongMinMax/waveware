@@ -5,23 +5,37 @@ import SectionTitle from "../../kwon/components/section_title";
 export default function CompanyPage() {
   return (
     <>
-      <MenuHeader
-        title={"Company"}
-        description={"데이터의 힘을 통해 미래를 예측하고/혁신을 이끄는 기술을 연구합니다."}
-      />
+      {/* 공용 섹션 - Mobile*/}
+      <div className="block md:hidden">
+        <MenuHeader title={"Company"} description={"데이터를 통해 미래를 예측하고 혁신을 이끄는 기술을 연구합니다."} />
+      </div>
+
+      {/* 공용 섹션 - Desktop*/}
+      <div className="hidden md:block">
+        <MenuHeader
+          title={"Company"}
+          description={"데이터의 힘을 통해 미래를 예측하고/혁신을 이끄는 기술을 연구합니다."}
+        />
+      </div>
+
       <SectionTitle text={"Who We Are"} />
-      <div className="block md:hidden overflow-hidden">
+
+      {/* 파도와 소개문구 섹션 - Mobile */}
+      <div className="block md:hidden overflow-hidden w-full">
         <WaveSection_Mobile />
         <IntroSection_Mobile />
       </div>
+      {/* 파도와 소개문구 섹션 - Desktop */}
       <div className="hidden md:block ">
         <WaveSection_Desktop />
         <IntroSection_Desktop />
       </div>
       <SectionTitle text={"What We Do"} />
+      {/* 배너 섹션 - Desktop */}
       <div className="hidden md:block w-full">
         <BannerSection_Desktop />
       </div>
+      {/* 배너 섹션 - Mobile */}
       <div className="block md:hidden overflow-hidden w-full">
         <BannerSection_Mobile />
       </div>
@@ -174,7 +188,7 @@ const IntroSection_Mobile = ({}) => {
           style={{
             textShadow: " -1px 0px black, 0px 1px black, 1px 0px black, 0px -1px black",
             opacity: 0.1,
-            x: useTransform(introProgress, [0.0, 0.4], [-500, 0]),
+            x: useTransform(introProgress, [0.0, 0.3], [-500, 0]),
           }}
         >
           waveware
@@ -186,7 +200,7 @@ const IntroSection_Mobile = ({}) => {
           style={{
             textShadow: " -1px 0px black, 0px 1px black, 1px 0px black, 0px -1px black",
             opacity: 0.1,
-            x: useTransform(introProgress, [0.3, 0.5], [500, 0]),
+            x: useTransform(introProgress, [0.3, 0.4], [500, 0]),
           }}
         >
           waveware
@@ -198,7 +212,7 @@ const IntroSection_Mobile = ({}) => {
           style={{
             textShadow: " -1px 0px black, 0px 1px black, 1px 0px black, 0px -1px black",
             opacity: 0.1,
-            x: useTransform(introProgress, [0.4, 0.7], [-500, 0]),
+            x: useTransform(introProgress, [0.4, 0.5], [-500, 0]),
           }}
         >
           waveware

@@ -796,9 +796,37 @@ export const CustomVideoPlayer = ({ src, isMobile = false }: { src: string; isMo
 
   return (
     <>
-      <div className={`relative ${width} h-full bg-black cursor-pointer group rounded-l-lg  `}>
-        <video className="" controls playsInline src={src} controlsList="nofullscreen" />
-      </div>
+      {isMobile ? (
+        // 모바일 비디오
+        <div className={` ${width}  h-full    group rounded-l-lg flex items-center justify-center  `}>
+          <video
+            ref={videoRef}
+            className={`  h-auto cursor-pointer`}
+            controls
+            playsInline
+            src={src}
+            controlsList="nofullscreen"
+            onClick={handleVideoClick}
+          />
+        </div>
+      ) : (
+        // 데스크탑 비디오
+        <div className={` ${width}  h-full bg-black   group  flex items-center justify-center  `}>
+          <video
+            ref={videoRef}
+            className={`  h-full cursor-pointer`}
+            onCanPlay={() => {
+              videoRef.current?.play();
+            }}
+            controls
+            muted
+            playsInline
+            src={src}
+            controlsList="nofullscreen"
+            onClick={handleVideoClick}
+          />
+        </div>
+      )}
       {/* {!isMobile ? (
         <></>
       ) : (
@@ -843,29 +871,29 @@ const skills = [
     img_src: "/img/skill/metadata.jpg",
     img_size: "987.37px 702px",
     title: "메타 데이터",
-    content: "효과적인 치매 예방을 위한 데이터 분석",
-    keywords: ["의료 데이터", "질병 예측", "Cohort 연구", "ADL", "데이터 분석"],
+    content: "지능형 정보처리를 위한 메타데이터 처리 방식",
+    keywords: ["의료 데이터", "질병 예측", "Cohort 연구", "ADL", "Pubmed"],
   },
   {
     img_src: "/img/skill/visualization.jpg",
     img_size: "987px  ",
     title: "시각화",
-    content: "재난 재해 피해예측 시각화",
-    keywords: ["지도데이터", "수치표고모형(DEM)", "피해금액 예측 모델", "시각화"],
+    content: "데이터 해석과 의사결정을 지원하는 시각화 기술",
+    keywords: ["지도데이터", "수치표고모형(DEM)", "피해금액 예측 모델", "금융 데이터", "국제 무역 정보"],
   },
   {
     img_src: "/img/skill/sns.jpg",
     img_size: "987px ",
     title: "분산처리",
-    content: "유저 정보 분석을 위한 SNS 수집기",
-    keywords: ["빅데이터", "Apache Spark", "분산 시스템", "실시간 데이터 처리", "데이터 적재"],
+    content: "고속 데이터 작업와 실시간 분석을 위한 분산처리 환경 구축",
+    keywords: ["빅데이터", "Apache Spark", "분산 시스템", "GridFTP", "DTN"],
   },
   {
     img_src: "/img/skill/NLP.jpg",
     img_size: "987px  ",
     title: "NLP",
-    content: "국가 과학기술 표준 분류 체계",
-    keywords: ["비정형 데이터", "Word2Vec", "임베딩", "KNN 알고리즘", "NLP Parser"],
+    content: "텍스트 기반 정보 활용을 위한 자연어처리 파이프라인 설계",
+    keywords: ["비정형 데이터", "LLM", "Word2Vec", "임베딩", "KNN 알고리즘", "NLP Parser", "RAG"],
   },
 ];
 
