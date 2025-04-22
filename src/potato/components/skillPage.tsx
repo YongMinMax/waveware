@@ -1,8 +1,8 @@
 import React, { ReactNode, useRef } from "react";
 import { useEffect, useState } from "react";
 import { CiPause1, CiPlay1 } from "react-icons/ci";
-import { MdPlayCircle, MdPauseCircle } from "react-icons/md";
-import { MdPlayArrow, MdPause } from "react-icons/md";
+import { MdPlayCircle, MdPauseCircle, MdPlayArrow, MdPause } from "react-icons/md";
+import { HiArrowRight } from "react-icons/hi2";
 import {
   motion,
   AnimatePresence,
@@ -394,10 +394,16 @@ const SkillBox_Desktop = ({ idx, skillInfo, isHovered, handleMouseEnter, handleC
 const SkillBox_Mobile = ({ skill, handleIndex, idx, handleClick }) => {
   const { img_src, img_size, title, content, keywords } = skill;
   const { selectedIndex, setSelectedIndex } = handleIndex;
+  const boxRef = useRef(null);
   const variants = {
     small: { height: "115px", transition: { duration: 0.5, ease: "easeInOut" } },
     large: { height: "240px", transition: { duration: 0.5, ease: "easeInOut" } },
   };
+  // 뷰포트가 화면 중앙에 왔을때 동작하는 메소드
+  handleScrollCenter(() => {
+    setSelectedIndex(idx);
+  }, boxRef);
+
   const handleCompoClick = () => {
     // 선택된 상황에서 또 선택 => 모달 오픈
     if (selectedIndex === idx) {
@@ -407,8 +413,10 @@ const SkillBox_Mobile = ({ skill, handleIndex, idx, handleClick }) => {
       setSelectedIndex(idx);
     }
   };
+
   return (
     <motion.div
+      ref={boxRef}
       className={` w-screen    relative overflow-hidden`}
       onClick={handleCompoClick}
       variants={variants}
@@ -426,20 +434,21 @@ const SkillBox_Mobile = ({ skill, handleIndex, idx, handleClick }) => {
       {/* 텍스트 */}
       {selectedIndex === idx ? (
         // 선택시
-        <div className="text-white pb-[21px] px-[30px] flex flex-col justify-end h-full   backdrop-blur-[1px] bg-black/50  ">
+        <div className="text-white pb-[40px] px-[30px] flex flex-col justify-end h-full   backdrop-blur-[1px] bg-black/50  ">
           <motion.div
-            className=" font-bold text-[40px] "
+            className=" font-bold text-[40px] flex items-center gap-[15px]"
             initial={{ scale: 0.7 }}
             animate={{ scale: 1.0 }}
             transition={{ duration: 0.5, ease: "easeOut" }}
           >
             {title}
+            <HiArrowRight className="" />
           </motion.div>
           <MoveEnterText className="mt-[10px]" duration={0.3}>
-            <div className=" font-medium text-[16px]">{content}</div>
+            <div className=" font-medium text-[13px]">{content}</div>
           </MoveEnterText>
           {/* 키워드 */}
-          <MoveEnterText className="mt-[10px]" duration={0.3}>
+          <MoveEnterText className="mt-[15px]" duration={0.3}>
             <div className="flex gap-x-[15px] gap-y-[8px] flex-wrap">
               {keywords.map((keyword: string, idx: number) => {
                 return (
@@ -800,7 +809,7 @@ export const CustomVideoPlayer = ({ src, isMobile = false }: { src: string; isMo
     <>
       {isMobile ? (
         // 모바일 비디오
-        <div className={` ${width}  h-full    group rounded-l-lg flex items-center justify-center  `}>
+        <div className={` ${width}  h-full aspect-video    group rounded-l-lg flex items-center justify-center  `}>
           <video
             ref={videoRef}
             className={`  h-auto cursor-pointer`}
@@ -918,6 +927,33 @@ export const useIsMobile = (breakpoint = 768) => {
   }, [breakpoint]);
 
   return isMobile;
+};
+
+// ref 가 뷰포트 중앙에 왔을때 onCenter 함수를 실행하는 함수
+const handleScrollCenter = (onCenter, ref) => {
+  const [hasTriggered, setHasTriggered] = useState(false);
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!ref.current || hasTriggered) return;
+
+      const rect = ref.current.getBoundingClientRect();
+      const centerY = window.innerHeight / 2;
+
+      // 요소가 뷰포트 중심 교차할 때만 트리거
+      if (rect.top < centerY && rect.bottom > centerY) {
+        onCenter();
+        setHasTriggered(true);
+        //쓰로틀링
+        window.setTimeout(() => {
+          setHasTriggered(false);
+        }, 1000);
+      }
+    };
+    handleScroll(); // 처음 렌더링 시에도 체크
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [hasTriggered, onCenter]);
 };
 
 export default SkillPage;

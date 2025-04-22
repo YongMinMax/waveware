@@ -225,9 +225,23 @@ const Modal_Desktop = ({ selectedIndex, onClose, setSelectedIndex }) => {
     </motion.div>
   );
 };
+
 const Modal_Mobile = ({ selectedIndex, onClose }) => {
+  // 일단 버튼 버전 개발 부터
   const infos = video_info[selectedIndex];
   const [selectedVideoIndex, setSelectedVideoIndex] = useState(0);
+
+  const handleClick = (dir) => {
+    if (dir === -1) {
+      if (selectedVideoIndex + dir >= 0) {
+        setSelectedVideoIndex((prev) => prev - 1);
+      }
+    } else if (dir === 1) {
+      if (selectedVideoIndex + dir < infos.length) {
+        setSelectedVideoIndex((prev) => prev + 1);
+      }
+    }
+  };
 
   // 터치 이벤트 막기
   useEffect(() => {
@@ -258,22 +272,58 @@ const Modal_Mobile = ({ selectedIndex, onClose }) => {
           e.stopPropagation();
         }}
       >
+        {/* video player */}
         <CustomVideoPlayer src={`${infos[selectedVideoIndex].link}`} isMobile={true} />
-
-        <div className={`whitespace-pre-line  mx-[16px] px-4 py-4  bg-[#191919] text-white `}>
-          <div className={` text-[16px] font-semibold  text-[#3A9100] `}>{infos[selectedVideoIndex].title}</div>
-          <div className={` w-fit text-[22px] font-bold mt-[15px]  `}>
-            {infos[selectedVideoIndex].name}
-            <motion.div className={`w-full  h-[4px] bg-white mt-[8px]`}></motion.div>
+        {/* video description */}
+        <div className={`relative w-full h-full text-white bg-[#191919] flex items-stretch`}>
+          <div className={`leftside flex items-center text-[35px] ${selectedVideoIndex !== 0 ? "" : "text-gray-600"} `}>
+            <MdOutlineKeyboardArrowLeft
+              onClick={(e) => {
+                e.stopPropagation();
+                handleClick(-1);
+              }}
+            />
           </div>
-
-          <div className={` text-[14px] font-light mt-[20px]`}>{infos[selectedVideoIndex].description}</div>
+          <div className={`whitespace-pre-line    mx-[0px] px-4 py-4  `}>
+            <div className={` text-[16px] font-semibold  text-[#3A9100] `}>{infos[selectedVideoIndex].title}</div>
+            <div className={` w-fit text-[22px] font-bold mt-[15px]  `}>
+              <span className={`border-b-[1px] pb-[8px]`}>{infos[selectedVideoIndex].name}</span>
+              <div className={` text-[14px] font-light mt-[20px] min-h-[100px] `}>
+                {infos[selectedVideoIndex].description}
+              </div>
+            </div>
+          </div>
+          <div
+            className={`rightside flex items-center text-[35px] ${
+              selectedVideoIndex !== infos.length - 1 ? "" : "text-gray-600"
+            } `}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleClick(1);
+            }}
+          >
+            <MdOutlineKeyboardArrowRight />
+          </div>
+          {/* <MdOutlineKeyboardArrowLeft
+            onClick={(e) => {
+              e.stopPropagation();
+              handleClick(-1);
+            }}
+            className={` absolute left-0 top-1/2 transfrom  -translate-y-1/2 text-[35px]`}
+          />
+          <MdOutlineKeyboardArrowRight
+            onClick={(e) => {
+              handleClick(1);
+            }}
+            className={` absolute right-0 top-1/2 transfrom  -translate-y-1/2 text-[35px]`}
+          /> */}
         </div>
-        <div className={`flex justify-center items-center gap-[15px] text-[15px] pt-[15px]`}>
+        {/* slide indicator */}
+        <div className={`flex justify-center items-center gap-[15px] text-[8px] pt-[15px]`}>
           {infos.map((info, idx) => {
             if (idx === selectedVideoIndex) {
               return (
-                <motion.div key={`${info.name}+${idx}`} className={`text-white`} animate={{ scale: 1.2 }}>
+                <motion.div key={`${info.name}+${idx}`} className={`text-white`} animate={{ scale: 1 }}>
                   <FaCircle />
                 </motion.div>
               );
