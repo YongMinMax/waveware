@@ -154,9 +154,8 @@ const Modal_Desktop = ({ selectedIndex, onClose, setSelectedIndex }) => {
           <div className="flex flex-col  gap-[0px] select-none flex-1  overflow-y-auto scrollbar-hide ">
             {infos.map((info, idx) => {
               return (
-                <>
+                <div key={`${info.name}-${idx}`}>
                   <motion.div
-                    key={`${info.name}-${idx}`}
                     className={`relative    px-[30px]  pt-[30px] pb-[0px]   cursor-pointer  ${
                       selectedVideoIndex === idx ? "bg-[#3a3a3a]" : "hover:bg-[#2a2a2a]/60"
                     } `}
@@ -179,12 +178,12 @@ const Modal_Desktop = ({ selectedIndex, onClose, setSelectedIndex }) => {
                       },
                     }}
                   ></motion.div> */}
-                    <motion.div className={` text-[18px] pb-[25px]`} variants={{ hover: { color: "" } }}>
+                    <motion.div className={` text-[18px] pb-[25px]`} variants={{ hover: {} }}>
                       {String(idx + 1).padStart(2, "0")}
                     </motion.div>
                     <motion.div
                       className={` text-[32px] pb-[20px] font-bold ${selectedVideoIndex === idx ? "text-[#fff]" : ""} `}
-                      variants={{ hover: { color: "" } }}
+                      variants={{ hover: {} }}
                     >
                       {info.name}
                     </motion.div>
@@ -201,7 +200,7 @@ const Modal_Desktop = ({ selectedIndex, onClose, setSelectedIndex }) => {
                     </motion.div>
                   </motion.div>
                   {/* {idx !== infos.length - 1 && <div className="border-b-[1px] mx-[30px] opacity-30" />} */}
-                </>
+                </div>
               );
             })}
           </div>
@@ -328,11 +327,7 @@ const Modal_Mobile = ({ selectedIndex, onClose }) => {
                 </motion.div>
               );
             } else {
-              return (
-                <>
-                  <FaCircle key={`${info.name}+${idx}`} className={`text-gray-500`} />
-                </>
-              );
+              return <FaCircle key={`${info.name}+${idx}`} className={`text-gray-500`} />;
             }
           })}
         </div>
@@ -369,7 +364,7 @@ const video_info = [
         "수치표고모형(DEM) 데이터의 고도 및 침수심을 통해 피해영역을 가시화하고 재난이력 데이터로 재난 취약도를 계산해 재난운영 피해금액 예측 모델을 구축 및 시각화하였습니다.",
     },
     {
-      link: "/videos/skill_newsTrends.mp4",
+      link: "/videos/skill_visulation1.mp4",
       title: "시각화",
       name: "키워드 기반 실시간 추이 분석기",
       description:

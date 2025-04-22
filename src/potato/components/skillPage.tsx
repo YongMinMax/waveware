@@ -209,8 +209,18 @@ const SkillTogglePage_Mobile = () => {
   const [isIntroAnimate, setIsIntroAnimate] = useState(false);
   const [isImageAnimate, setIsImageAnimate] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
+
+  const refs = [useRef(null), useRef(null), useRef(null), useRef(null)];
+  const onCenters = [
+    () => setSelectedIndex(0),
+    () => setSelectedIndex(1),
+    () => setSelectedIndex(2),
+    () => setSelectedIndex(3),
+  ];
+  useScrollCenter(refs, onCenters, 1000);
+
   return (
-    <div className={` min-w-[375px] flex flex-col items-center mt-[75px] `}>
+    <div ref={scrollRef} className={` min-w-[375px] flex flex-col items-center mt-[75px] `}>
       <Modal_with_Portal
         isOpen={isModalOpen}
         onClose={closeModal}
@@ -241,13 +251,14 @@ const SkillTogglePage_Mobile = () => {
       >
         {skills.map((skill, idx) => {
           return (
-            <SkillBox_Mobile
-              key={`${idx}-${skill.title}`}
-              skill={skill}
-              handleIndex={{ selectedIndex, setSelectedIndex }}
-              idx={idx}
-              handleClick={openModal}
-            />
+            <div ref={refs[idx]} key={`${idx}-${skill.title}`}>
+              <SkillBox_Mobile
+                skill={skill}
+                handleIndex={{ selectedIndex, setSelectedIndex }}
+                idx={idx}
+                handleClick={openModal}
+              />
+            </div>
           );
         })}
       </motion.div>
@@ -320,6 +331,7 @@ const SkillContainer = ({ className, handleScrollLock }) => {
 
 const SkillBox_Desktop = ({ idx, skillInfo, isHovered, handleMouseEnter, handleClick }) => {
   const { img_size, img_src, title, content, keywords } = skillInfo;
+
   const background_CSS = isHovered
     ? `linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.8))`
     : `linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6))`;
@@ -394,15 +406,14 @@ const SkillBox_Desktop = ({ idx, skillInfo, isHovered, handleMouseEnter, handleC
 const SkillBox_Mobile = ({ skill, handleIndex, idx, handleClick }) => {
   const { img_src, img_size, title, content, keywords } = skill;
   const { selectedIndex, setSelectedIndex } = handleIndex;
-  const boxRef = useRef(null);
   const variants = {
     small: { height: "115px", transition: { duration: 0.5, ease: "easeInOut" } },
     large: { height: "240px", transition: { duration: 0.5, ease: "easeInOut" } },
   };
   // 뷰포트가 화면 중앙에 왔을때 동작하는 메소드
-  handleScrollCenter(() => {
-    setSelectedIndex(idx);
-  }, boxRef);
+  // handleScrollCenter(() => {
+  //   setSelectedIndex(idx);
+  // }, boxRef);
 
   const handleCompoClick = () => {
     // 선택된 상황에서 또 선택 => 모달 오픈
@@ -416,7 +427,6 @@ const SkillBox_Mobile = ({ skill, handleIndex, idx, handleClick }) => {
 
   return (
     <motion.div
-      ref={boxRef}
       className={` w-screen    relative overflow-hidden`}
       onClick={handleCompoClick}
       variants={variants}
@@ -949,11 +959,40 @@ const handleScrollCenter = (onCenter, ref) => {
         }, 1000);
       }
     };
-    handleScroll(); // 처음 렌더링 시에도 체크
     window.addEventListener("scroll", handleScroll, { passive: true });
 
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [hasTriggered, onCenter]);
+  }, []);
+};
+
+// 배열 두개를 인자로 받아, 각 refs[i] 가 뷰포트 중앙에 왔을때 onCenters[i] 를 실행
+const useScrollCenter = (refs, onCenters, throttleTime = 200) => {
+  useEffect(() => {
+    let isThrottled = false;
+
+    const handleScroll = () => {
+      if (isThrottled) return;
+
+      isThrottled = true;
+      setTimeout(() => {
+        isThrottled = false;
+      }, throttleTime);
+
+      const centerY = window.innerHeight / 2;
+
+      refs.forEach((ref, index) => {
+        if (!ref.current) return;
+
+        const rect = ref.current.getBoundingClientRect();
+        if (rect.top < centerY && rect.bottom > centerY) {
+          onCenters[index](); // 각 ref에 해당하는 onCenter 호출
+        }
+      });
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [refs, onCenters, throttleTime]);
 };
 
 export default SkillPage;
