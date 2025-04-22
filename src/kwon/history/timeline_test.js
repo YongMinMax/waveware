@@ -4,6 +4,11 @@ export default function TimeLine() {
   const [selectedYear, setSelectedYear] = useState("2024");
   const [prevSelectedYear, setPrevSelectedYear] = useState("2024");
   const yearRefs = useRef({});
+  const [imagePage, setImagePage] = useState(0);
+
+  useEffect(() => {
+    setImagePage(0);
+  }, [selectedYear]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -29,23 +34,27 @@ export default function TimeLine() {
     };
 
     window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [selectedYear]);
 
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const totalSlides = Math.ceil(
+        historyData[selectedYear].images.length / 2
+      );
+      setImagePage((prev) => (prev + 1) % totalSlides);
+    }, 4000);
+    return () => clearInterval(interval);
   }, [selectedYear]);
 
   return (
     <div>
-      {/*상단 연도 인덱스*/}
       <div className="w-full sticky top-0 bg-white">
-        <div
-          className={"container mx-auto flex justify-center items-start py-24"}
-        >
+        <div className="container mx-auto flex justify-center items-start py-24">
           {Object.keys(historyData)
             .sort((a, b) => b - a)
             .map((year) => (
-              <div className={"flex flex-col items-center"} key={year}>
+              <div className="flex flex-col items-center" key={year}>
                 <button
                   className={`px-6 py-2 ${
                     selectedYear === year
@@ -62,58 +71,93 @@ export default function TimeLine() {
                   {year}
                 </button>
                 {selectedYear === year && (
-                  <div className={"w-1 h-1 bg-black rounded-full"}></div>
+                  <div className="w-1 h-1 bg-black rounded-full"></div>
                 )}
               </div>
             ))}
         </div>
       </div>
 
-      {/*연도별 내용*/}
-      <div className={"flex w-[1400px]"}>
-        {/*이미지*/}
-        <div className={"sticky top-[25vh] w-[500px] h-[70vh] overflow-hidden"}>
-          {Object.keys(historyData).map((year) => (
+      <div className="flex w-[1400px]">
+        <div className="sticky top-[25vh] w-[500px] h-[70vh] overflow-hidden relative bg-white rounded-xl shadow-lg">
+          <button
+            className="absolute left-2 top-1/2 transform -translate-y-1/2 z-10 text-3xl font-bold text-gray-700 hover:text-black"
+            onClick={() => setImagePage((prev) => Math.max(0, prev - 1))}
+          >
+            〈
+          </button>
+          <button
+            className="absolute right-2 top-1/2 transform -translate-y-1/2 z-10 text-3xl font-bold text-gray-700 hover:text-black"
+            onClick={() =>
+              setImagePage((prev) =>
+                Math.min(
+                  Math.ceil(historyData[selectedYear].images.length / 2) - 1,
+                  prev + 1
+                )
+              )
+            }
+          >
+            〉
+          </button>
+
+          <div className="relative w-full h-full">
             <div
-              key={year}
-              className={
-                "w-full h-full overflow-y-scroll  flex flex-col gap-2 top-0 object-cover transition-transform duration-500 ease-in-out"
-              }
+              className="absolute inset-0 transition-transform duration-500 ease-in-out"
               style={{
                 transform:
-                  selectedYear > year
-                    ? "translateY(200%)"
-                    : selectedYear < year
-                    ? "translateY(-200%)"
+                  selectedYear > prevSelectedYear
+                    ? "translateY(-100%)"
+                    : selectedYear < prevSelectedYear
+                    ? "translateY(100%)"
                     : "translateY(0)",
-                opacity:
-                  selectedYear === year || prevSelectedYear === year ? 1 : 0,
-                zIndex:
-                  selectedYear === year
-                    ? 20
-                    : prevSelectedYear === year
-                    ? 10
-                    : 0,
-                position: "absolute",
-                transition:
-                  "transform 0.5s ease-in-out, opacity 0.5s ease-in-out",
-                scrollbarWidth: "none",
               }}
             >
-              {Object.keys(historyData[year].images).map((imgIndex) => (
-                <img
-                  key={imgIndex}
-                  className={`w-full`}
-                  src={historyData[year].images[imgIndex]}
-                  alt={`Image ${imgIndex}`}
-                />
-              ))}
+              <div
+                className="flex h-full transition-transform duration-500 ease-in-out"
+                style={{
+                  width: `${
+                    Math.ceil(historyData[selectedYear].images.length / 2) * 500
+                  }px`,
+                  transform: `translateX(-${imagePage * 500}px)`,
+                }}
+              >
+                {Array.from({
+                  length: Math.ceil(
+                    historyData[selectedYear].images.length / 2
+                  ),
+                }).map((_, pageIndex) => (
+                  <div
+                    key={pageIndex}
+                    className="w-[500px] h-full flex-shrink-0 flex flex-col justify-between p-2 gap-4 box-border"
+                  >
+                    {[0, 1].map((offset) => {
+                      const img =
+                        historyData[selectedYear].images[
+                          pageIndex * 2 + offset
+                        ];
+                      return (
+                        img && (
+                          <div
+                            key={offset}
+                            className="h-[45%] rounded-lg overflow-hidden relative shadow-md"
+                          >
+                            <img
+                              src={img}
+                              alt={`Image ${pageIndex * 2 + offset}`}
+                              className="w-full h-full object-cover transition-transform duration-300 hover:scale-105 z-10 relative"
+                            />
+                          </div>
+                        )
+                      );
+                    })}
+                  </div>
+                ))}
+              </div>
             </div>
-          ))}
+          </div>
         </div>
 
-        {/*내용*/}
-        <div className={"flex flex-col mx-12 border-t-2 border-black"}>
+        <div className="flex flex-col mx-12 border-t-2 border-black">
           {Object.entries(historyData)
             .sort(([a], [b]) => b - a)
             .map(([year, data]) => (
@@ -122,9 +166,9 @@ export default function TimeLine() {
                 ref={(el) => (yearRefs.current[year] = el)}
                 data-year={year}
                 style={{ scrollMarginTop: "25vh" }}
-                className={"flex justify-start border-b-[1px] px-12 py-12"}
+                className="flex justify-start border-b-[1px] px-12 py-12"
               >
-                <h2 className={"text-[50px] font-semibold px-10"}>{year}</h2>
+                <h2 className="text-[50px] font-semibold px-10">{year}</h2>
                 <ul>
                   {data.events.map((event, index) => (
                     <li key={index} className="mt-2 mb-2 ml-12">
@@ -147,14 +191,14 @@ const historyData = {
   //         "오윤 100일",
   //         "임직원 롯데마트 방문",
   //     ],
-  //     images: ["/img/history/2025.png"]
+  //     images: ["/img/history1/2025.png"]
   // },
   2024: {
     events: [
       "글로벌 공급망 문제 사전감지와 대응을 위한 지능형 GVC 분석시스템 개발",
       "사회문제 R&D 분석 현황판 및 데이터 분석도구 개발",
     ],
-    images: ["/img/history/2024/img_0.png", "/img/history/2024/img_1.png"],
+    images: ["/img/history1/2024/img_0.png", "/img/history1/2024/img_1.png"],
   },
   2023: {
     events: [
@@ -167,10 +211,10 @@ const historyData = {
       "사회문제 R&D 현황 분석을 위한 메타데이터 구축 및 도구 개발",
     ],
     images: [
-      // "/img/history/2023/img_1.png",
-      "/img/history/2023/img_2.png",
-      "/img/history/2023/img_3.png",
-      // "/img/history/2023/img_4.png",
+      // "/img/history1/2023/img_1.png",
+      "/img/history1/2023/img_2.png",
+      "/img/history1/2023/img_3.png",
+      // "/img/history1/2023/img_4.png",
     ],
   },
   2022: {
@@ -182,10 +226,10 @@ const historyData = {
       "주요 원부자재 공급망 문제 이상징후 감지를 위한 테스트베드 개발",
     ],
     images: [
-      "/img/history/2022/img_1.png",
-      // "/img/history/2022/img_2.png",
-      "/img/history/2022/img_3.png",
-      // "/img/history/2022/img_4.png",
+      "/img/history1/2022/img_1.png",
+      // "/img/history1/2022/img_2.png",
+      "/img/history1/2022/img_3.png",
+      // "/img/history1/2022/img_4.png",
     ],
   },
   2021: {
@@ -199,11 +243,11 @@ const historyData = {
       "인공지능 기반 논문 연구분야 자동분류 시스템 개발",
     ],
     images: [
-      "/img/history/2021/img_1.png",
-      "/img/history/2021/img_2.png",
-      "/img/history/2021/img_3.png",
-      "/img/history/2021/img_4.png",
-      "/img/history/2021/img_5.png",
+      "/img/history1/2021/img_1.png",
+      "/img/history1/2021/img_2.png",
+      "/img/history1/2021/img_3.png",
+      "/img/history1/2021/img_4.png",
+      "/img/history1/2021/img_5.png",
     ],
   },
   2020: {
@@ -212,7 +256,7 @@ const historyData = {
       "치매 조기예측 및 자동분류 시스템을 위한 패스트데이터 처리 환경 고도화 용역",
       "NTIS 인공지능 기반 자동분류 기술 개발",
     ],
-    images: ["/img/history/2020/img_1.png", "/img/history/2020/img_2.png"],
+    images: ["/img/history1/2020/img_1.png", "/img/history1/2020/img_2.png"],
   },
   2019: {
     events: [
@@ -225,10 +269,10 @@ const historyData = {
       "NTIS 국가과학기술지식정보서비스 구축",
     ],
     images: [
-      "/img/history/2019/img_1.png",
-      // "/img/history/2019/img_2.png",
-      // "/img/history/2019/img_3.png",
-      "/img/history/2019/img_4.png",
+      "/img/history1/2019/img_1.png",
+      // "/img/history1/2019/img_2.png",
+      // "/img/history1/2019/img_3.png",
+      "/img/history1/2019/img_4.png",
     ],
   },
   2018: {
@@ -238,9 +282,9 @@ const historyData = {
       "NTIS 인공지능기반 국가과학기술표준 자동분류",
     ],
     images: [
-      "/img/history/2018/img_1.jpg",
-      // "/img/history/2018/img_2.png",
-      "/img/history/2018/img_3.jpg",
+      "/img/history1/2018/img_1.jpg",
+      // "/img/history1/2018/img_2.png",
+      "/img/history1/2018/img_3.jpg",
     ],
   },
   2017: {
@@ -251,11 +295,11 @@ const historyData = {
       "대용량 데이터관리 플랫폼(SODA)기반의 연구지원 시범서비스 개발",
     ],
     images: [
-      "/img/history/2017/img_1.jpg",
-      "/img/history/2017/img_2.png",
-      "/img/history/2017/img_3.png",
-      "/img/history/2017/img_4.png",
-      "/img/history/2017/img_5.png",
+      "/img/history1/2017/img_1.jpg",
+      "/img/history1/2017/img_2.png",
+      "/img/history1/2017/img_3.png",
+      "/img/history1/2017/img_4.png",
+      "/img/history1/2017/img_5.png",
     ],
   },
   2016: {
@@ -264,10 +308,10 @@ const historyData = {
       "치매 연구를 위한 빅데이터 분석 시스템 구축",
     ],
     images: [
-      "/img/history/2016/img_1.png",
-      "/img/history/2016/img_2.png",
-      "/img/history/2016/img_3.png",
-      "/img/history/2016/img_4.png",
+      "/img/history1/2016/img_1.png",
+      "/img/history1/2016/img_2.png",
+      "/img/history1/2016/img_3.png",
+      "/img/history1/2016/img_4.png",
     ],
   },
   2015: {
@@ -277,11 +321,11 @@ const historyData = {
       "사회경제 환경 트렌드 분석을 위한 데이터 구축",
     ],
     images: [
-      "/img/history/2015/img_1.png",
-      "/img/history/2015/img_3.png",
-      "/img/history/2015/img_3_.png",
-      "/img/history/2015/img_ppt_1.png",
-      "/img/history/2015/img_ppt_2.png",
+      "/img/history1/2015/img_1.png",
+      "/img/history1/2015/img_3.png",
+      "/img/history1/2015/img_3_.png",
+      "/img/history1/2015/img_ppt_1.png",
+      "/img/history1/2015/img_ppt_2.png",
     ],
   },
   2014: {
@@ -291,10 +335,10 @@ const historyData = {
       "소셜 빅데이터 기반 기술기회발굴",
     ],
     images: [
-      "/img/history/2014/img_1.png",
-      // "/img/history/2014/img_2.png",
-      "/img/history/2014/img_3.png",
-      "/img/history/2014/img_4.png",
+      "/img/history1/2014/img_1.png",
+      // "/img/history1/2014/img_2.png",
+      "/img/history1/2014/img_3.png",
+      "/img/history1/2014/img_4.png",
     ],
   },
 };
