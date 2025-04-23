@@ -36,7 +36,7 @@ export default function TimeLine() {
         setTransitionActive(true);
         setTimeout(() => {
           setTransitionActive(false);
-        }, 600); // 애니메이션 지속 시간보다 약간 길게
+        }, 600);
       }
     };
 
@@ -46,13 +46,44 @@ export default function TimeLine() {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      const totalSlides = Math.ceil(
-        historyData[selectedYear].images.length / 2
-      );
-      setImagePage((prev) => (prev + 1) % totalSlides);
+      const pages = prepareImagePages(historyData[selectedYear].images);
+      setImagePage((prev) => (prev + 1) % Math.max(pages.length, 1));
     }, 4000);
     return () => clearInterval(interval);
   }, [selectedYear]);
+
+  // 이미지 페이지 준비 함수
+  const prepareImagePages = (images) => {
+    const pages = [];
+    const patentImages = [];
+    const normalImages = [];
+
+    // 이미지를 특허와 일반으로 분류
+    images.forEach((img, index) => {
+      const isPatent = img.toLowerCase().includes("patent");
+      if (isPatent) {
+        patentImages.push({ src: img, isPatent: true, index });
+      } else {
+        normalImages.push({ src: img, isPatent: false, index });
+      }
+    });
+
+    // 특허 이미지는 각각 한 페이지로
+    patentImages.forEach((img) => {
+      pages.push([img]);
+    });
+
+    // 일반 이미지는 2개씩 그룹화
+    for (let i = 0; i < normalImages.length; i += 2) {
+      const page = [normalImages[i]];
+      if (i + 1 < normalImages.length) {
+        page.push(normalImages[i + 1]);
+      }
+      pages.push(page);
+    }
+
+    return pages;
+  };
 
   // 연도를 정렬하여 정수로 변환
   const sortedYears = Object.keys(historyData)
@@ -98,14 +129,10 @@ export default function TimeLine() {
           </button>
           <button
             className="absolute right-2 top-1/2 transform -translate-y-1/2 z-30 text-3xl font-bold text-gray-700 hover:text-black"
-            onClick={() =>
-              setImagePage((prev) =>
-                Math.min(
-                  Math.ceil(historyData[selectedYear].images.length / 2) - 1,
-                  prev + 1
-                )
-              )
-            }
+            onClick={() => {
+              const pages = prepareImagePages(historyData[selectedYear].images);
+              setImagePage((prev) => Math.min(pages.length - 1, prev + 1));
+            }}
           >
             〉
           </button>
@@ -125,6 +152,9 @@ export default function TimeLine() {
                 initialPosition =
                   parseInt(selectedYear) > year ? "200%" : "-200%";
               }
+
+              // 이미지 페이지 준비
+              const imagePages = prepareImagePages(historyData[yearStr].images);
 
               return (
                 <div
@@ -150,40 +180,56 @@ export default function TimeLine() {
                   <div
                     className="flex h-full"
                     style={{
-                      width: `${
-                        Math.ceil(historyData[yearStr].images.length / 2) * 500
-                      }px`,
+                      width: `${imagePages.length * 500}px`,
                       transform: `translateX(-${imagePage * 500}px)`,
                       transition: "transform 500ms ease-in-out",
                     }}
                   >
-                    {Array.from({
-                      length: Math.ceil(historyData[yearStr].images.length / 2),
-                    }).map((_, pageIndex) => (
-                      <div
-                        key={pageIndex}
-                        className="w-[500px] h-full flex-shrink-0 flex flex-col justify-between p-2 gap-4 box-border"
-                      >
-                        {[0, 1].map((offset) => {
-                          const img =
-                            historyData[yearStr].images[pageIndex * 2 + offset];
-                          return (
-                            img && (
-                              <div
-                                key={offset}
-                                className="h-[45%] rounded-lg overflow-hidden relative shadow-md"
-                              >
-                                <img
-                                  src={img}
-                                  alt={`Image ${pageIndex * 2 + offset}`}
-                                  className="w-full h-full object-cover transition-transform duration-300 hover:scale-105 z-10 relative"
-                                />
-                              </div>
-                            )
-                          );
-                        })}
-                      </div>
-                    ))}
+                    {imagePages.map((page, pageIndex) => {
+                      // 페이지에 특허 이미지가 있는지 확인
+                      const hasPatentImage = page.some((img) => img.isPatent);
+
+                      // 페이지에 특허 이미지가 있으면 하나의 큰 이미지로 표시
+                      if (hasPatentImage) {
+                        return (
+                          <div
+                            key={pageIndex}
+                            className="w-[500px] h-full flex-shrink-0 p-2 box-border"
+                          >
+                            <div className="h-full rounded-lg overflow-hidden relative shadow-md">
+                              <img
+                                src={page[0].src}
+                                alt={`Patent Image ${page[0].index}`}
+                                className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                              />
+                            </div>
+                          </div>
+                        );
+                      }
+
+                      // 일반 이미지는 기존처럼 2개씩 표시
+                      return (
+                        <div
+                          key={pageIndex}
+                          className="w-[500px] h-full flex-shrink-0 flex flex-col justify-between p-2 gap-4 box-border"
+                        >
+                          {page.map((imgObj) => (
+                            <div
+                              key={imgObj.index}
+                              className={`${
+                                page.length === 1 ? "h-full" : "h-[45%]"
+                              } rounded-lg overflow-hidden relative shadow-md`}
+                            >
+                              <img
+                                src={imgObj.src}
+                                alt={`Image ${imgObj.index}`}
+                                className="w-full h-full object-cover transition-transform duration-300 hover:scale-105 z-10 relative"
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               );
@@ -220,7 +266,6 @@ export default function TimeLine() {
     </div>
   );
 }
-
 const historyData = {
   // "2025": {
   //     events: [
@@ -292,7 +337,13 @@ const historyData = {
       "치매 조기예측 및 자동분류 시스템을 위한 패스트데이터 처리 환경 고도화 용역",
       "NTIS 인공지능 기반 자동분류 기술 개발",
     ],
-    images: ["/img/history1/2020/img_1.png", "/img/history1/2020/img_2.png"],
+    images: [
+      "/img/history1/2020/patent_img_1.png",
+      "/img/history1/2020/img_2.png",
+      "/img/history1/2020/img_3.png",
+      "/img/history1/2020/patent_img_4.png",
+      "/img/history1/2020/patent_img_5.png",
+    ],
   },
   2019: {
     events: [
