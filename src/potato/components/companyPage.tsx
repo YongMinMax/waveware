@@ -26,7 +26,7 @@ export default function CompanyPage() {
         <IntroSection_Mobile />
       </div>
       {/* 파도와 소개문구 섹션 - Desktop */}
-      <div className="hidden md:block ">
+      <div className="hidden md:block w-full overflow-hidden ">
         <WaveSection_Desktop />
         <IntroSection_Desktop />
       </div>
@@ -56,7 +56,10 @@ const WaveSection_Desktop = ({ isLong = 2 }) => {
   );
   return (
     // <section ref={waveRef} className="relative w-[1440px] h-[410px] overflow-hidden">
-    <section ref={waveRef} className={`relative ${isLong === 1 ? "w-full" : "w-[1440px]"} h-[410px] overflow-hidden`}>
+    <section
+      ref={waveRef}
+      className={`relative ${isLong === 1 ? "w-full" : "w-[1440px]"} h-[410px]  overflow-hidden mx-auto`}
+    >
       <motion.img src={`/img/beach.jpg`} className={`  absolute `} style={{ y: waveY }} />
       <div className="absolute inset-0 bg-black opacity-65"></div>
       <div className="relative container mx-auto w-[1400px] h-full flex flex-col justify-between text-white py-12">
@@ -103,7 +106,7 @@ const IntroSection_Desktop = () => {
 
   return (
     <section ref={introRef} className={`relative container h-[1020px] select-none   `}>
-      <div className="overflow-hidden absolute   ">
+      <div className="  absolute   ">
         <motion.div
           className="font-pistara text-[300px] text-[#F6F6F6] "
           style={{
@@ -115,7 +118,7 @@ const IntroSection_Desktop = () => {
           waveware
         </motion.div>
       </div>
-      <div className="overflow-hidden  absolute top-[300px] right-0  ">
+      <div className=" absolute top-[300px] right-0  ">
         <motion.div
           className="font-pistara text-[300px] text-[#F6F6F6]  "
           style={{
@@ -127,7 +130,7 @@ const IntroSection_Desktop = () => {
           waveware
         </motion.div>
       </div>
-      <div className="overflow-hidden absolute top-[600px]  ">
+      <div className="  absolute top-[600px]  ">
         <motion.div
           className="font-pistara text-[300px] text-[#F6F6F6]   "
           style={{

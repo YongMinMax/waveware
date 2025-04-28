@@ -1,9 +1,15 @@
-import {useRef, useState, useEffect} from "react";
+import { useRef, useState, useEffect } from "react";
 
 export default function TimeLine() {
   const [selectedYear, setSelectedYear] = useState("2024");
   const [prevSelectedYear, setPrevSelectedYear] = useState("2024");
   const yearRefs = useRef({});
+  const [imagePage, setImagePage] = useState(0);
+  const [transitionActive, setTransitionActive] = useState(false);
+
+  useEffect(() => {
+    setImagePage(0);
+  }, [selectedYear]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -24,121 +30,256 @@ export default function TimeLine() {
         }
       });
 
-      setPrevSelectedYear(selectedYear);
-      setSelectedYear(closestYear);
-
-      console.log(`prevSelectedYear: ${prevSelectedYear}, selectedYear: ${selectedYear}`);
+      if (closestYear !== selectedYear) {
+        setPrevSelectedYear(selectedYear);
+        setSelectedYear(closestYear);
+        setTransitionActive(true);
+        setTimeout(() => {
+          setTransitionActive(false);
+        }, 600);
+      }
     };
 
-    window.addEventListener('scroll', handleScroll);
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, [selectedYear]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const pages = prepareImagePages(historyData[selectedYear].images);
+      setImagePage((prev) => (prev + 1) % Math.max(pages.length, 1));
+    }, 4000);
+    return () => clearInterval(interval);
+  }, [selectedYear]);
+
+  // 이미지 페이지 준비 함수
+  const prepareImagePages = (images) => {
+    const pages = [];
+    const patentImages = [];
+    const normalImages = [];
+
+    // 이미지를 특허와 일반으로 분류
+    images.forEach((img, index) => {
+      const isPatent = img.toLowerCase().includes("patent");
+      if (isPatent) {
+        patentImages.push({ src: img, isPatent: true, index });
+      } else {
+        normalImages.push({ src: img, isPatent: false, index });
+      }
+    });
+
+    // 특허 이미지는 각각 한 페이지로
+    patentImages.forEach((img) => {
+      pages.push([img]);
+    });
+
+    // 일반 이미지는 2개씩 그룹화
+    for (let i = 0; i < normalImages.length; i += 2) {
+      const page = [normalImages[i]];
+      if (i + 1 < normalImages.length) {
+        page.push(normalImages[i + 1]);
+      }
+      pages.push(page);
+    }
+
+    return pages;
+  };
+
+  // 연도를 정렬하여 정수로 변환
+  const sortedYears = Object.keys(historyData)
+    .map((year) => parseInt(year))
+    .sort((a, b) => b - a);
 
   return (
     <div>
-
-      {/*상단 연도 인덱스*/}
       <div className="w-full sticky top-0 bg-white">
-        <div className={"container mx-auto flex justify-center items-start py-24"}>
-          {Object.keys(historyData).sort((a, b) => b - a).map((year) => (
-            <div className={"flex flex-col items-center"} key={year}>
+        <div className="container mx-auto flex justify-center items-start py-24">
+          {sortedYears.map((year) => (
+            <div className="flex flex-col items-center" key={year}>
               <button
-                className={`px-6 py-2 ${selectedYear === year ? 'font-bold text-black' : 'text-gray-500'}`}
+                className={`px-6 py-2 ${
+                  selectedYear === year.toString()
+                    ? "font-bold text-black"
+                    : "text-gray-500"
+                }`}
                 onClick={() => {
-                  yearRefs.current[year].scrollIntoView({behavior: "smooth", block: "start"});
+                  yearRefs.current[year].scrollIntoView({
+                    behavior: "smooth",
+                    block: "start",
+                  });
                 }}
               >
                 {year}
               </button>
-              {selectedYear === year && (<div className={"w-1 h-1 bg-black rounded-full"}></div>)}
+              {selectedYear === year.toString() && (
+                <div className="w-1 h-1 bg-black rounded-full"></div>
+              )}
             </div>
           ))}
         </div>
       </div>
 
-      {/*연도별 내용*/}
-      <div className={"flex w-[1400px]"}>
+      <div className="flex w-[1400px]">
+        <div className="sticky top-[25vh] w-[500px] h-[70vh] overflow-hidden relative bg-white rounded-xl shadow-lg">
+          <button
+            className="absolute left-2 top-1/2 transform -translate-y-1/2 z-30 text-3xl font-bold text-gray-700 hover:text-black"
+            onClick={() => setImagePage((prev) => Math.max(0, prev - 1))}
+          >
+            〈
+          </button>
+          <button
+            className="absolute right-2 top-1/2 transform -translate-y-1/2 z-30 text-3xl font-bold text-gray-700 hover:text-black"
+            onClick={() => {
+              const pages = prepareImagePages(historyData[selectedYear].images);
+              setImagePage((prev) => Math.min(pages.length - 1, prev + 1));
+            }}
+          >
+            〉
+          </button>
 
-        {/*이미지*/}
-        <div
-          className={"sticky top-[25vh] w-[500px] h-[70vh] overflow-hidden"}>
-          {Object.keys(historyData).map((year) => (
-            <div key={year}
-                 className={"w-full h-full overflow-x-scroll  flex flex-col gap-2 top-0 object-cover transition-transform duration-500 ease-in-out"}
-                 style={{
-                   transform:
-                     selectedYear > year
-                       ? 'translateY(200%)'
-                       : selectedYear < year
-                         ? 'translateY(-200%)'
-                         : 'translateY(0)',
-                   opacity: selectedYear === year || prevSelectedYear === year ? 1 : 0,
-                   zIndex: selectedYear === year ? 20 : prevSelectedYear === year ? 10 : 0,
-                   position: 'absolute',
-                   transition: 'transform 0.5s ease-in-out, opacity 0.5s ease-in-out',
-                   scrollbarWidth: 'none'
-                 }}>
-              {Object.keys(historyData[year].images).map((imgIndex) => (
-                // 이미지 컨테이너
+          {/* 연도별 이미지 컨테이너들 */}
+          <div className="w-full h-full relative">
+            {sortedYears.map((year) => {
+              const yearStr = year.toString();
+              // 연도의 순서를 기반으로 초기 위치 계산
+              const yearIndex = sortedYears.indexOf(parseInt(selectedYear));
+              const currentIndex = sortedYears.indexOf(year);
+
+              // 기본 위치 (선택되지 않은 경우 위나 아래에 위치)
+              let initialPosition = currentIndex < yearIndex ? "-200%" : "200%";
+              if (yearStr === prevSelectedYear && yearStr !== selectedYear) {
+                // 이전에 선택되었다가 지금은 선택되지 않은 경우
+                initialPosition =
+                  parseInt(selectedYear) > year ? "200%" : "-200%";
+              }
+
+              // 이미지 페이지 준비
+              const imagePages = prepareImagePages(historyData[yearStr].images);
+
+              return (
                 <div
-                  key={imgIndex}
-                  className={`w-full flex flex-col`}
+                  key={year}
+                  className="absolute inset-0 w-full h-full"
+                  style={{
+                    transform:
+                      yearStr === selectedYear
+                        ? "translateY(0)"
+                        : `translateY(${initialPosition})`,
+                    opacity: yearStr === selectedYear ? 1 : 0,
+                    visibility:
+                      yearStr === selectedYear ||
+                      (transitionActive && yearStr === prevSelectedYear)
+                        ? "visible"
+                        : "hidden",
+                    transition:
+                      "transform 500ms ease-in-out, opacity 500ms ease-in-out",
+                    zIndex: yearStr === selectedYear ? 20 : 10,
+                  }}
                 >
-                  {historyData[year].images[imgIndex].map((img, index) => (
-                    <img
-                      key={index}
-                      src={img}
-                      alt={`Image ${index} for ${year}`}
-                      className={"w-full h-auto"}
-                    />
-                  ))}
+                  {/* 이미지 페이지네이션 컨테이너 */}
+                  <div
+                    className="flex h-full"
+                    style={{
+                      width: `${imagePages.length * 500}px`,
+                      transform: `translateX(-${imagePage * 500}px)`,
+                      transition: "transform 500ms ease-in-out",
+                    }}
+                  >
+                    {imagePages.map((page, pageIndex) => {
+                      // 페이지에 특허 이미지가 있는지 확인
+                      const hasPatentImage = page.some((img) => img.isPatent);
+
+                      // 페이지에 특허 이미지가 있으면 하나의 큰 이미지로 표시
+                      if (hasPatentImage) {
+                        return (
+                          <div
+                            key={pageIndex}
+                            className="w-[500px] h-full flex-shrink-0 p-2 box-border"
+                          >
+                            <div className="h-full rounded-lg overflow-hidden relative shadow-md">
+                              <img
+                                src={page[0].src}
+                                alt={`Patent Image ${page[0].index}`}
+                                className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                              />
+                            </div>
+                          </div>
+                        );
+                      }
+
+                      // 일반 이미지는 기존처럼 2개씩 표시
+                      return (
+                        <div
+                          key={pageIndex}
+                          className="w-[500px] h-full flex-shrink-0 flex flex-col justify-between p-2 gap-4 box-border"
+                        >
+                          {page.map((imgObj) => (
+                            <div
+                              key={imgObj.index}
+                              className={`${
+                                page.length === 1 ? "h-full" : "h-[45%]"
+                              } rounded-lg overflow-hidden relative shadow-md`}
+                            >
+                              <img
+                                src={imgObj.src}
+                                alt={`Image ${imgObj.index}`}
+                                className="w-full h-full object-cover transition-transform duration-300 hover:scale-105 z-10 relative"
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
-              ))}
-            </div>
-          ))}
+              );
+            })}
+          </div>
         </div>
 
-        {/*내용*/}
-        <div className={"flex flex-col mx-12 border-t-2 border-black"}>
-          {Object.entries(historyData).sort(([a], [b]) => b - a).map(([year, data]) => (
-            <div key={year} ref={(el) => (yearRefs.current[year] = el)} data-year={year}
-                 style={{scrollMarginTop: '25vh'}} className={"flex justify-start border-b-[1px] px-12 py-12"}>
-              <h2 className={"text-[50px] font-semibold px-10"}>{year}</h2>
-              <ul>
-                {data.events.map((event, index) => (
-                  <li key={index} className="mt-2 mb-2 ml-12">{event}</li>
-                ))}
-              </ul>
-            </div>
-          ))}
+        <div className="flex flex-col mx-12 border-t-2 border-black">
+          {sortedYears.map((year) => {
+            const yearStr = year.toString();
+            const data = historyData[yearStr];
+            return (
+              <div
+                key={year}
+                ref={(el) => (yearRefs.current[year] = el)}
+                data-year={year}
+                style={{ scrollMarginTop: "25vh" }}
+                className="flex justify-start border-b-[1px] px-12 py-12"
+              >
+                <h2 className="text-[50px] font-semibold px-10">{year}</h2>
+                <ul>
+                  {data.events.map((event, index) => (
+                    <li key={index} className="mt-2 mb-2 ml-12">
+                      {event}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            );
+          })}
           <div className="h-[400px]"></div>
         </div>
-
       </div>
     </div>
   );
 }
-
 const historyData = {
   // "2025": {
   //     events: [
   //         "오윤 100일",
   //         "임직원 롯데마트 방문",
   //     ],
-  //     images: ["/img/history/2025.png"]
+  //     images: ["/img/history1/2025.png"]
   // },
   2024: {
     events: [
       "글로벌 공급망 문제 사전감지와 대응을 위한 지능형 GVC 분석시스템 개발",
       "사회문제 R&D 분석 현황판 및 데이터 분석도구 개발",
     ],
-    images: [
-      ["/img/history/2024/img_0.png",
-        "/img/history/2024/img_1.png",],
-    ]
+    images: ["/img/history1/2024/img_0.png", "/img/history1/2024/img_1.png"],
   },
   2023: {
     events: [
@@ -151,12 +292,11 @@ const historyData = {
       "사회문제 R&D 현황 분석을 위한 메타데이터 구축 및 도구 개발",
     ],
     images: [
-      ["/img/history/2023/2023 저작권.png",],
-      ["/img/history/2023/2023 저작권2.jpg",],
-      ["/img/history/2023/2023 저작권3.jpg",],
-      ["/img/history/2023/img_2.png",
-        "/img/history/2023/img_3.png",]
-    ]
+      // "/img/history1/2023/img_1.png",
+      "/img/history1/2023/img_2.png",
+      "/img/history1/2023/img_3.png",
+      // "/img/history1/2023/img_4.png",
+    ],
   },
   2022: {
     events: [
@@ -167,9 +307,11 @@ const historyData = {
       "주요 원부자재 공급망 문제 이상징후 감지를 위한 테스트베드 개발",
     ],
     images: [
-      ["/img/history/2022/img_1.png",
-        "/img/history/2022/img_3.png",]
-    ]
+      "/img/history1/2022/img_1.png",
+      // "/img/history1/2022/img_2.png",
+      "/img/history1/2022/img_3.png",
+      // "/img/history1/2022/img_4.png",
+    ],
   },
   2021: {
     events: [
@@ -182,23 +324,26 @@ const historyData = {
       "인공지능 기반 논문 연구분야 자동분류 시스템 개발",
     ],
     images: [
-      ["/img/history/2021/img_1.png",
-        "/img/history/2021/img_2.png",],
-      ["/img/history/2021/img_3.png",
-        "/img/history/2021/img_4.png"],
-      ["/img/history/2021/img_5.png",]
-    ]
+      "/img/history1/2021/img_1.png",
+      "/img/history1/2021/img_2.png",
+      "/img/history1/2021/img_3.png",
+      "/img/history1/2021/img_4.png",
+      "/img/history1/2021/img_5.png",
+    ],
   },
   2020: {
     events: [
       "인공지능 연구소 설립",
       "치매 조기예측 및 자동분류 시스템을 위한 패스트데이터 처리 환경 고도화 용역",
-      "NTIS 인공지능 기반 자동분류 기술 개발"
+      "NTIS 인공지능 기반 자동분류 기술 개발",
     ],
     images: [
-      ["/img/history/2020/img_1.png"],
-      ["/img/history/2020/img_2.png"],
-    ]
+      "/img/history1/2020/patent_img_1.png",
+      "/img/history1/2020/img_2.png",
+      "/img/history1/2020/img_3.png",
+      "/img/history1/2020/patent_img_4.png",
+      "/img/history1/2020/patent_img_5.png",
+    ],
   },
   2019: {
     events: [
@@ -211,11 +356,11 @@ const historyData = {
       "NTIS 국가과학기술지식정보서비스 구축",
     ],
     images: [
-      ["/img/history/2019/2019 저작권.png"],
-      ["/img/history/2019/2019 저작권 2.png"],
-      ["/img/history/2019/img_1.png",
-        "/img/history/2019/img_4.png",]
-    ]
+      "/img/history1/2019/img_1.png",
+      // "/img/history1/2019/img_2.png",
+      // "/img/history1/2019/img_3.png",
+      "/img/history1/2019/img_4.png",
+    ],
   },
   2018: {
     events: [
@@ -224,9 +369,10 @@ const historyData = {
       "NTIS 인공지능기반 국가과학기술표준 자동분류",
     ],
     images: [
-      ["/img/history/2018/img_1.jpg",
-        "/img/history/2018/img_3.jpg"],
-    ]
+      "/img/history1/2018/img_1.jpg",
+      // "/img/history1/2018/img_2.png",
+      "/img/history1/2018/img_3.jpg",
+    ],
   },
   2017: {
     events: [
@@ -236,12 +382,12 @@ const historyData = {
       "대용량 데이터관리 플랫폼(SODA)기반의 연구지원 시범서비스 개발",
     ],
     images: [
-      ["/img/history/2017/img_1.jpg",
-        "/img/history/2017/img_2.png"],
-      ["/img/history/2017/img_3.png",
-        "/img/history/2017/img_4.png"],
-      ["/img/history/2017/img_5.png"],
-    ]
+      "/img/history1/2017/img_1.jpg",
+      "/img/history1/2017/img_2.png",
+      "/img/history1/2017/img_3.png",
+      "/img/history1/2017/img_4.png",
+      "/img/history1/2017/img_5.png",
+    ],
   },
   2016: {
     events: [
@@ -249,11 +395,11 @@ const historyData = {
       "치매 연구를 위한 빅데이터 분석 시스템 구축",
     ],
     images: [
-      ["/img/history/2016/img_1.png",
-        "/img/history/2016/img_2.png"],
-      ["/img/history/2016/img_3.png",
-        "/img/history/2016/img_4.png"],
-    ]
+      "/img/history1/2016/img_1.png",
+      "/img/history1/2016/img_2.png",
+      "/img/history1/2016/img_3.png",
+      "/img/history1/2016/img_4.png",
+    ],
   },
   2015: {
     events: [
@@ -262,12 +408,12 @@ const historyData = {
       "사회경제 환경 트렌드 분석을 위한 데이터 구축",
     ],
     images: [
-      ["/img/history/2015/img_1.png",
-        "/img/history/2015/img_3.png"],
-      ["/img/history/2015/img_3_.png",
-        "/img/history/2015/img_ppt_1.png"],
-      ["/img/history/2015/img_ppt_2.png",]
-    ]
+      "/img/history1/2015/img_1.png",
+      "/img/history1/2015/img_3.png",
+      "/img/history1/2015/img_3_.png",
+      "/img/history1/2015/img_ppt_1.png",
+      "/img/history1/2015/img_ppt_2.png",
+    ],
   },
   2014: {
     events: [
@@ -276,9 +422,10 @@ const historyData = {
       "소셜 빅데이터 기반 기술기회발굴",
     ],
     images: [
-      ["/img/history/2014/img_1.png",
-        "/img/history/2014/img_3.png"],
-      ["/img/history/2014/img_4.png",]
-    ]
+      "/img/history1/2014/img_1.png",
+      // "/img/history1/2014/img_2.png",
+      "/img/history1/2014/img_3.png",
+      "/img/history1/2014/img_4.png",
+    ],
   },
 };

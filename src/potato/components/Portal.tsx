@@ -3,7 +3,9 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { CustomVideoPlayer } from "./skillPage";
+import { MdOutlineKeyboardArrowLeft, MdOutlineKeyboardArrowRight } from "react-icons/md";
 
+import { FaCircle } from "react-icons/fa";
 type Props = {
   children: React.ReactNode;
 };
@@ -25,11 +27,13 @@ export const Modal_with_Portal = ({
   onClose,
   selectedIndex,
   handleScrollLock,
+  setSelectedIndex,
 }: {
   isOpen: boolean;
   onClose: () => void;
   selectedIndex: number;
   handleScrollLock: React.Dispatch<React.SetStateAction<boolean>>;
+  setSelectedIndex: React.Dispatch<React.SetStateAction<number>>; // Added type for setSelectedIndex
 }) => {
   const video_link = [
     `/videos/skill_metadata.mp4`,
@@ -81,14 +85,10 @@ export const Modal_with_Portal = ({
       {isOpen && (
         <>
           <div className="hidden md:block">
-            <Modal_Desktop selectedIndex={selectedIndex} onClose={onClose} />
+            <Modal_Desktop selectedIndex={selectedIndex} onClose={onClose} setSelectedIndex={setSelectedIndex} />
           </div>
           <div className="block md:hidden">
-            <Modal_Mobile
-              selectedIndex={selectedIndex}
-              onClose={onClose}
-              videoInfo={{ video_title, video_link, video_description, video_subTitle }}
-            />
+            <Modal_Mobile selectedIndex={selectedIndex} onClose={onClose} />
           </div>
         </>
       )}
@@ -96,19 +96,42 @@ export const Modal_with_Portal = ({
     portalRoot
   );
 };
-const Modal_Desktop = ({ selectedIndex, onClose }) => {
+const Modal_Desktop = ({ selectedIndex, onClose, setSelectedIndex }) => {
   // const { video_title, video_link, video_description, video_subTitle } = videoInfo;
   const infos = video_info[selectedIndex];
   const [selectedVideoIndex, setSelectedVideoIndex] = useState(0);
+  const handleArrowClick = (direction: number) => {
+    if (direction === -1) {
+      if (selectedIndex !== 0) {
+        setSelectedIndex((prev: number) => prev - 1);
+        setSelectedVideoIndex(0);
+      }
+    } else if (direction === 1) {
+      if (selectedIndex !== video_info.length - 1) {
+        setSelectedIndex((prev: number) => prev + 1);
+        setSelectedVideoIndex(0);
+      }
+    }
+  };
   return (
     <motion.div
       id={"modal"}
-      className={`fixed top-0 left-0 z-[9999] w-full h-full  flex items-center justify-center bg-black bg-opacity-70  gap-[0px]  `}
+      className={`fixed top-0 left-0 z-[9999] w-full h-full  flex items-center justify-center bg-black bg-opacity-70  gap-[20px]  `}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       onClick={onClose}
     >
+      <motion.div whileHover={{ scale: selectedIndex === 0 ? 1 : 1.3, transition: { ease: "easeOut", duration: 0.2 } }}>
+        <MdOutlineKeyboardArrowLeft
+          onClick={(e) => {
+            e.stopPropagation();
+            handleArrowClick(-1);
+          }}
+          className={`text-[100px] ${selectedIndex === 0 ? "text-gray-500" : "text-white"} `}
+        />
+      </motion.div>
+
       <motion.div
         className="  rounded-lg shadow-lg  w-[1630px] h-[800px] max-w-full relative flex"
         initial={{ scale: 0.8, opacity: 0 }}
@@ -123,28 +146,16 @@ const Modal_Desktop = ({ selectedIndex, onClose }) => {
           ✕
         </button>
         <CustomVideoPlayer src={`${infos[selectedVideoIndex].link}`} isMobile={false} />
-        {/* 원본 코드 */}
-        {/* <div className={`whitespace-pre-line flex-1   px-[40px] pt-[100px]   bg-[#191919] text-white  `}>
-          <div className={` text-[18px] font-semibold  text-[#3A9100] `}>{video_subTitle[selectedIndex]}</div>
-          <div className={` w-fit text-[26px] font-bold mt-[15px]  `}>
-            {video_title[selectedIndex]}
-            <motion.div className={`w-full  h-[4px] bg-white mt-[8px]`}></motion.div>
-          </div>
-
-          <div className={` text-[16px] font-light mt-[20px]`}>{video_description[selectedIndex]}</div>
-        </div> */}
 
         <div
-          className={`whitespace-pre-line flex-1  pt-[60px]   bg-[#191919] text-white flex flex-col `}
+          className={`whitespace-pre-line flex-1  pt-[80px]   bg-[#191919] text-white flex flex-col `}
           onWheel={(e) => e.stopPropagation()}
         >
-          <div className={` text-[24px] font-semibold  text-[#3A9100] pb-[40px] px-[30px]`}>{infos[0].title}</div>
           <div className="flex flex-col  gap-[0px] select-none flex-1  overflow-y-auto scrollbar-hide ">
             {infos.map((info, idx) => {
               return (
-                <>
+                <div key={`${info.name}-${idx}`}>
                   <motion.div
-                    key={`${info.name}-${idx}`}
                     className={`relative    px-[30px]  pt-[30px] pb-[0px]   cursor-pointer  ${
                       selectedVideoIndex === idx ? "bg-[#3a3a3a]" : "hover:bg-[#2a2a2a]/60"
                     } `}
@@ -167,17 +178,17 @@ const Modal_Desktop = ({ selectedIndex, onClose }) => {
                       },
                     }}
                   ></motion.div> */}
-                    <motion.div className={` text-[18px] pb-[25px]`} variants={{ hover: { color: "" } }}>
+                    <motion.div className={` text-[18px] pb-[25px]`} variants={{ hover: {} }}>
                       {String(idx + 1).padStart(2, "0")}
                     </motion.div>
                     <motion.div
                       className={` text-[32px] pb-[20px] font-bold ${selectedVideoIndex === idx ? "text-[#fff]" : ""} `}
-                      variants={{ hover: { color: "" } }}
+                      variants={{ hover: {} }}
                     >
                       {info.name}
                     </motion.div>
                     <motion.div
-                      className={` text-[16px]  font-light pb-[60px]  ${
+                      className={` text-[16px] min-h-[150px]  font-light pb-[60px]  ${
                         idx !== infos.length - 1 && idx !== selectedVideoIndex && idx + 1 !== selectedVideoIndex
                           ? "border-b-[1px] border-b-white/30"
                           : ""
@@ -189,25 +200,48 @@ const Modal_Desktop = ({ selectedIndex, onClose }) => {
                     </motion.div>
                   </motion.div>
                   {/* {idx !== infos.length - 1 && <div className="border-b-[1px] mx-[30px] opacity-30" />} */}
-                </>
+                </div>
               );
             })}
           </div>
         </div>
       </motion.div>
+
+      <motion.div
+        whileHover={{
+          scale: selectedIndex === video_info.length - 1 ? 1 : 1.3,
+          transition: { ease: "easeOut", duration: 0.2 },
+        }}
+      >
+        <MdOutlineKeyboardArrowRight
+          onClick={(e) => {
+            e.stopPropagation();
+            handleArrowClick(1);
+          }}
+          className={`text-[100px] ${selectedIndex === video_info.length - 1 ? "text-gray-500" : "text-white"}`}
+        />
+      </motion.div>
     </motion.div>
   );
 };
-const Modal_Mobile = ({ selectedIndex, onClose, videoInfo }) => {
-  const { video_title, video_link, video_description, video_subTitle } = videoInfo;
-  console.log(window.innerWidth);
-  useEffect(() => {
-    const handleResize = () => {
-      console.log(window.innerWidth);
-    };
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
+
+const Modal_Mobile = ({ selectedIndex, onClose }) => {
+  // 일단 버튼 버전 개발 부터
+  const infos = video_info[selectedIndex];
+  const [selectedVideoIndex, setSelectedVideoIndex] = useState(0);
+
+  const handleClick = (dir) => {
+    if (dir === -1) {
+      if (selectedVideoIndex + dir >= 0) {
+        setSelectedVideoIndex((prev) => prev - 1);
+      }
+    } else if (dir === 1) {
+      if (selectedVideoIndex + dir < infos.length) {
+        setSelectedVideoIndex((prev) => prev + 1);
+      }
+    }
+  };
+
   // 터치 이벤트 막기
   useEffect(() => {
     const originalStyle = window.getComputedStyle(document.body).overflow;
@@ -216,7 +250,6 @@ const Modal_Mobile = ({ selectedIndex, onClose, videoInfo }) => {
       document.body.style.overflow = originalStyle;
     };
   }, []);
-  console.log("hihi");
   return (
     <motion.div
       className={`fixed top-0 left-0 z-[9999] w-full h-full  flex items-center justify-center bg-black bg-opacity-80  gap-[50px]  `}
@@ -238,16 +271,65 @@ const Modal_Mobile = ({ selectedIndex, onClose, videoInfo }) => {
           e.stopPropagation();
         }}
       >
-        <CustomVideoPlayer src={`${video_link[selectedIndex]}`} isMobile={true} />
-
-        <div className={`whitespace-pre-line  mx-[16px] px-4 py-4  bg-[#191919] text-white `}>
-          <div className={` text-[16px] font-semibold  text-[#3A9100] `}>{video_subTitle[selectedIndex]}</div>
-          <div className={` w-fit text-[22px] font-bold mt-[15px]  `}>
-            {video_title[selectedIndex]}
-            <motion.div className={`w-full  h-[4px] bg-white mt-[8px]`}></motion.div>
+        {/* video player */}
+        <CustomVideoPlayer src={`${infos[selectedVideoIndex].link}`} isMobile={true} />
+        {/* video description */}
+        <div className={`relative w-full h-full text-white bg-[#191919] flex items-stretch`}>
+          <div className={`leftside flex items-center text-[35px] ${selectedVideoIndex !== 0 ? "" : "text-gray-600"} `}>
+            <MdOutlineKeyboardArrowLeft
+              onClick={(e) => {
+                e.stopPropagation();
+                handleClick(-1);
+              }}
+            />
           </div>
-
-          <div className={` text-[14px] font-light mt-[20px]`}>{video_description[selectedIndex]}</div>
+          <div className={`whitespace-pre-line    mx-[0px] px-4 py-4  `}>
+            <div className={` text-[16px] font-semibold  text-[#3A9100] `}>{infos[selectedVideoIndex].title}</div>
+            <div className={` w-fit text-[22px] font-bold mt-[15px]  `}>
+              <span className={`border-b-[1px] pb-[8px]`}>{infos[selectedVideoIndex].name}</span>
+              <div className={` text-[14px] font-light mt-[20px] min-h-[100px] `}>
+                {infos[selectedVideoIndex].description}
+              </div>
+            </div>
+          </div>
+          <div
+            className={`rightside flex items-center text-[35px] ${
+              selectedVideoIndex !== infos.length - 1 ? "" : "text-gray-600"
+            } `}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleClick(1);
+            }}
+          >
+            <MdOutlineKeyboardArrowRight />
+          </div>
+          {/* <MdOutlineKeyboardArrowLeft
+            onClick={(e) => {
+              e.stopPropagation();
+              handleClick(-1);
+            }}
+            className={` absolute left-0 top-1/2 transfrom  -translate-y-1/2 text-[35px]`}
+          />
+          <MdOutlineKeyboardArrowRight
+            onClick={(e) => {
+              handleClick(1);
+            }}
+            className={` absolute right-0 top-1/2 transfrom  -translate-y-1/2 text-[35px]`}
+          /> */}
+        </div>
+        {/* slide indicator */}
+        <div className={`flex justify-center items-center gap-[15px] text-[8px] pt-[15px]`}>
+          {infos.map((info, idx) => {
+            if (idx === selectedVideoIndex) {
+              return (
+                <motion.div key={`${info.name}+${idx}`} className={`text-white`} animate={{ scale: 1 }}>
+                  <FaCircle />
+                </motion.div>
+              );
+            } else {
+              return <FaCircle key={`${info.name}+${idx}`} className={`text-gray-500`} />;
+            }
+          })}
         </div>
       </motion.div>
     </motion.div>
@@ -282,7 +364,7 @@ const video_info = [
         "수치표고모형(DEM) 데이터의 고도 및 침수심을 통해 피해영역을 가시화하고 재난이력 데이터로 재난 취약도를 계산해 재난운영 피해금액 예측 모델을 구축 및 시각화하였습니다.",
     },
     {
-      link: "/videos/skill_newsTrends.mp4",
+      link: "/videos/skill_visulation1.mp4",
       title: "시각화",
       name: "키워드 기반 실시간 추이 분석기",
       description:

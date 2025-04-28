@@ -1,8 +1,8 @@
 import React, { ReactNode, useRef } from "react";
 import { useEffect, useState } from "react";
 import { CiPause1, CiPlay1 } from "react-icons/ci";
-import { MdPlayCircle, MdPauseCircle } from "react-icons/md";
-import { MdPlayArrow, MdPause } from "react-icons/md";
+import { MdPlayCircle, MdPauseCircle, MdPlayArrow, MdPause } from "react-icons/md";
+import { HiArrowRight } from "react-icons/hi2";
 import {
   motion,
   AnimatePresence,
@@ -187,35 +187,36 @@ const SkillTogglePage_Mobile = () => {
   const scrollRef = useRef(null);
   const { scrollYProgress } = useScroll({ target: scrollRef, offset: ["start end", "end start"] });
   const [isModalOpen, setIsModalOpen] = useState(false);
-
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
 
   useMotionValueEvent(scrollYProgress, "change", (latest) => {
     // 스크롤에 따른 이벤트
-    if (latest > 0.18) {
+    if (latest > 0.1) {
       setIsIntroAnimate(true);
     } else {
       setIsIntroAnimate(false);
     }
-    if (latest > 0.2) {
-      setIsImageAnimate(true);
-    } else {
-      setIsImageAnimate(false);
-    }
+    // if (latest > 0.2) {
+    //   setIsImageAnimate(true);
+    // } else {
+    //   setIsImageAnimate(false);
+    // }
   });
   // 여기 추가해야 함
   const handleScrollLock = () => {};
   const [isIntroAnimate, setIsIntroAnimate] = useState(false);
-  const [isImageAnimate, setIsImageAnimate] = useState(false);
+  const [isImageAnimate, setIsImageAnimate] = useState(true);
   const [selectedIndex, setSelectedIndex] = useState(-1);
+
   return (
-    <div className={` min-w-[375px] flex flex-col items-center mt-[75px] `}>
+    <div ref={scrollRef} className={` min-w-[375px] flex flex-col items-center mt-[75px] `}>
       <Modal_with_Portal
         isOpen={isModalOpen}
         onClose={closeModal}
         selectedIndex={selectedIndex}
         handleScrollLock={handleScrollLock}
+        setSelectedIndex={setSelectedIndex}
       ></Modal_with_Portal>
       {/* 텍스트 구간 */}
       <motion.div
@@ -243,7 +244,7 @@ const SkillTogglePage_Mobile = () => {
             <SkillBox_Mobile
               key={`${idx}-${skill.title}`}
               skill={skill}
-              handleIndex={{ selectedIndex, setSelectedIndex }}
+              handleIndex={{ selectedIndex: idx, setSelectedIndex }}
               idx={idx}
               handleClick={openModal}
             />
@@ -295,6 +296,7 @@ const SkillContainer = ({ className, handleScrollLock }) => {
         onClose={closeModal}
         selectedIndex={seletedIndex}
         handleScrollLock={handleScrollLock}
+        setSelectedIndex={setSelectedIndex}
       ></Modal_with_Portal>
       <div className={` w-[1440px] h-[640px] flex gap-[4px] overflow-hidden`}>
         {skills.map((skill, index) => {
@@ -318,6 +320,7 @@ const SkillContainer = ({ className, handleScrollLock }) => {
 
 const SkillBox_Desktop = ({ idx, skillInfo, isHovered, handleMouseEnter, handleClick }) => {
   const { img_size, img_src, title, content, keywords } = skillInfo;
+
   const background_CSS = isHovered
     ? `linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.8))`
     : `linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6))`;
@@ -392,27 +395,36 @@ const SkillBox_Desktop = ({ idx, skillInfo, isHovered, handleMouseEnter, handleC
 const SkillBox_Mobile = ({ skill, handleIndex, idx, handleClick }) => {
   const { img_src, img_size, title, content, keywords } = skill;
   const { selectedIndex, setSelectedIndex } = handleIndex;
+  const scrollRef = useRef(null);
+  const [isAnimate, setIsAnimate] = useState(false);
+  const { scrollYProgress } = useScroll({ target: scrollRef, offset: ["start end", "end start"] });
+  useMotionValueEvent(scrollYProgress, "change", (latest) => {
+    if (latest > 0.1) {
+      setIsAnimate(true);
+    } else {
+      setIsAnimate(false);
+    }
+  });
   const variants = {
     small: { height: "115px", transition: { duration: 0.5, ease: "easeInOut" } },
-    large: { height: "240px", transition: { duration: 0.5, ease: "easeInOut" } },
+    large: { height: "145px", transition: { duration: 0.5, ease: "easeInOut" } },
   };
+
   const handleCompoClick = () => {
     // 선택된 상황에서 또 선택 => 모달 오픈
     if (selectedIndex === idx) {
-      handleClick();
-    } else {
-      // 미선택된 상황에서 선택 => 열리기
       setSelectedIndex(idx);
+      handleClick();
     }
   };
+
   return (
     <motion.div
-      className={` w-screen    relative overflow-hidden`}
+      className={` w-screen    relative overflow-hidden h-[145px]`}
       onClick={handleCompoClick}
-      variants={variants}
-      animate={selectedIndex === idx ? "large" : "small"}
-      initial={false}
-      transition={{ duration: 0.5, ease: "easeInOut" }}
+      ref={scrollRef}
+      animate={{ opacity: isAnimate ? 1 : 0, y: isAnimate ? 0 : "60%" }}
+      transition={{ duration: 0.8, ease: "easeOut" }}
       layout
     >
       <img
@@ -424,20 +436,22 @@ const SkillBox_Mobile = ({ skill, handleIndex, idx, handleClick }) => {
       {/* 텍스트 */}
       {selectedIndex === idx ? (
         // 선택시
-        <div className="text-white pb-[21px] px-[30px] flex flex-col justify-end h-full   backdrop-blur-[1px] bg-black/50  ">
+        <div className="text-white pb-[20px] px-[30px] flex flex-col justify-end h-full   backdrop-blur-[1px] bg-black/50  ">
           <motion.div
-            className=" font-bold text-[40px] "
+            className=" font-bold text-[25px] flex items-center gap-[15px]"
             initial={{ scale: 0.7 }}
             animate={{ scale: 1.0 }}
-            transition={{ duration: 0.5, ease: "easeOut" }}
+            transition={{ duration: 0.4, ease: "easeOut" }}
           >
             {title}
+            {/* <HiArrowRight className="" /> */}
           </motion.div>
           <MoveEnterText className="mt-[10px]" duration={0.3}>
-            <div className=" font-medium text-[16px]">{content}</div>
+            <div className=" font-normal text-[13px]">{content}</div>
           </MoveEnterText>
           {/* 키워드 */}
-          <MoveEnterText className="mt-[10px]" duration={0.3}>
+          {/* All-open */}
+          {/* <MoveEnterText className="mt-[15px]" duration={0.3}>
             <div className="flex gap-x-[15px] gap-y-[8px] flex-wrap">
               {keywords.map((keyword: string, idx: number) => {
                 return (
@@ -450,7 +464,7 @@ const SkillBox_Mobile = ({ skill, handleIndex, idx, handleClick }) => {
                 );
               })}
             </div>
-          </MoveEnterText>
+          </MoveEnterText> */}
         </div>
       ) : (
         // 미 선택 시
@@ -798,11 +812,15 @@ export const CustomVideoPlayer = ({ src, isMobile = false }: { src: string; isMo
     <>
       {isMobile ? (
         // 모바일 비디오
-        <div className={` ${width}  h-full    group rounded-l-lg flex items-center justify-center  `}>
+        <div className={` ${width}  h-full aspect-video    group rounded-l-lg flex items-center justify-center  `}>
           <video
             ref={videoRef}
             className={`  h-auto cursor-pointer`}
+            onCanPlay={() => {
+              videoRef.current?.play();
+            }}
             controls
+            muted
             playsInline
             src={src}
             controlsList="nofullscreen"
@@ -912,6 +930,36 @@ export const useIsMobile = (breakpoint = 768) => {
   }, [breakpoint]);
 
   return isMobile;
+};
+
+// 배열 두개를 인자로 받아, 각 refs[i] 가 뷰포트 중앙에 왔을때 onCenters[i] 를 실행
+const useScrollCenter = (refs, onCenters, throttleTime = 200) => {
+  useEffect(() => {
+    let isThrottled = false;
+
+    const handleScroll = () => {
+      if (isThrottled) return;
+
+      isThrottled = true;
+      setTimeout(() => {
+        isThrottled = false;
+      }, throttleTime);
+
+      const centerY = (window.innerHeight * 2) / 3;
+
+      refs.forEach((ref, index) => {
+        if (!ref.current) return;
+
+        const rect = ref.current.getBoundingClientRect();
+        if (rect.top < centerY && rect.bottom > centerY) {
+          onCenters[index](); // 각 ref에 해당하는 onCenter 호출
+        }
+      });
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [refs, onCenters, throttleTime]);
 };
 
 export default SkillPage;
