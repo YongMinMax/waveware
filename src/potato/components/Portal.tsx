@@ -357,6 +357,13 @@ const video_info = [
   // 시각화
   [
     {
+      link: "/videos/skill_gvc.mp4",
+      title: "시각화",
+      name: "공급망 문제 분석 시스템",
+      description:
+        "글로벌 뉴스 데이터, 국제 금융데이터와 무역정보를 수집하고 분석해, 글로벌 공급망 문제를 사전감지하고 관련 정보를 시각화한 시스템을 개발하였습니다.",
+    },
+    {
       link: "/videos/skill_visulation.mp4",
       title: "시각화",
       name: "재난재해 피해예측 시각화",
@@ -370,13 +377,7 @@ const video_info = [
       description:
         "95개의 언론사에서 하루 약 30,000 건의 기사를 통해 실시간으로 키워드를 감지,분류하여 사용자에게 실시간으로 키워드의 추이를 시각화하여 제공합니다.",
     },
-    {
-      link: "/videos/skill_gvc.mp4",
-      title: "시각화",
-      name: "공급망 문제 분석 시스템",
-      description:
-        "글로벌 뉴스 데이터, 국제 금융데이터와 무역정보를 수집하고 분석해, 글로벌 공급망 문제를 사전감지하고 관련 정보를 시각화한 시스템을 개발하였습니다.",
-    },
+
     {
       link: "/videos/skill_disaster.mp4",
       title: "시각화",
@@ -405,18 +406,18 @@ const video_info = [
   // NLP
   [
     {
-      link: "/videos/skill_nlp.mp4",
-      title: "NLP",
-      name: "국가 과학기술 표준분류체계",
-      description:
-        "과제 및 논문 데이터를 NLP Parser를 통해 문장을 구조화 하고 Word2Vec 알고리즘으로 임베딩하여 Z-score 및 knn 알고리즘을 통해 분류하는 모델을 개발하였습니다.",
-    },
-    {
       link: "/videos/skill_rnd.mp4",
       title: "NLP",
       name: "사회문제 R&D 분석 도구",
       description:
         "특허와 논문 데이터를 Clustering으로 분류 후 LDA,LSA로 데이터의 토픽을 추출하고,  RAG 기반 LLM을 활용해 사회 문제와 해결 방안에 대해 편향 없는 답변을 제공하는 시스템을 개발하였습니다.",
+    },
+    {
+      link: "/videos/skill_nlp.mp4",
+      title: "NLP",
+      name: "국가 과학기술 표준분류체계",
+      description:
+        "과제 및 논문 데이터를 NLP Parser를 통해 문장을 구조화 하고 Word2Vec 알고리즘으로 임베딩하여 Z-score 및 knn 알고리즘을 통해 분류하는 모델을 개발하였습니다.",
     },
   ],
 ];

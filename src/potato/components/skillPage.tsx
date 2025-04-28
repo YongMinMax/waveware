@@ -821,6 +821,7 @@ export const CustomVideoPlayer = ({ src, isMobile = false }: { src: string; isMo
             }}
             controls
             muted
+            loop
             playsInline
             src={src}
             controlsList="nofullscreen"
@@ -839,6 +840,7 @@ export const CustomVideoPlayer = ({ src, isMobile = false }: { src: string; isMo
             controls
             muted
             playsInline
+            loop
             src={src}
             controlsList="nofullscreen"
             onClick={handleVideoClick}
