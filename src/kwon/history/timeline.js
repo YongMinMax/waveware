@@ -296,6 +296,9 @@ const historyData = {
       "/img/history1/2023/img_2.png",
       "/img/history1/2023/img_3.png",
       // "/img/history1/2023/img_4.png",
+      "/img/history1/2023/patent_1.png",
+      "/img/history1/2023/patent_2.jpg",
+      "/img/history1/2023/patent_3.jpg",
     ],
   },
   2022: {
@@ -340,9 +343,6 @@ const historyData = {
     images: [
       "/img/history1/2020/patent_img_1.png",
       "/img/history1/2020/img_2.png",
-      "/img/history1/2020/img_3.png",
-      "/img/history1/2020/patent_img_4.png",
-      "/img/history1/2020/patent_img_5.png",
     ],
   },
   2019: {
@@ -360,6 +360,8 @@ const historyData = {
       // "/img/history1/2019/img_2.png",
       // "/img/history1/2019/img_3.png",
       "/img/history1/2019/img_4.png",
+      "/img/history1/2019/patent_1.png",
+      "/img/history1/2019/patent_2.png",
     ],
   },
   2018: {
