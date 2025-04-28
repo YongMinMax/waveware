@@ -67,7 +67,7 @@ export default function TimeLine() {
           className={"sticky top-[25vh] w-[500px] h-[70vh] overflow-hidden"}>
           {Object.keys(historyData).map((year) => (
             <div key={year}
-                 className={"w-full h-full overflow-y-scroll  flex flex-col gap-2 top-0 object-cover transition-transform duration-500 ease-in-out"}
+                 className={"w-full h-full overflow-x-scroll  flex flex-col gap-2 top-0 object-cover transition-transform duration-500 ease-in-out"}
                  style={{
                    transform:
                      selectedYear > year
@@ -82,13 +82,21 @@ export default function TimeLine() {
                    scrollbarWidth: 'none'
                  }}>
               {Object.keys(historyData[year].images).map((imgIndex) => (
-                  <img
-                    key={imgIndex}
-                    className={`w-full`}
-                    src={historyData[year].images[imgIndex]}
-                    alt={`Image for ${year}`}
-                  />
-                ))}
+                // 이미지 컨테이너
+                <div
+                  key={imgIndex}
+                  className={`w-full flex flex-col`}
+                >
+                  {historyData[year].images[imgIndex].map((img, index) => (
+                    <img
+                      key={index}
+                      src={img}
+                      alt={`Image ${index} for ${year}`}
+                      className={"w-full h-auto"}
+                    />
+                  ))}
+                </div>
+              ))}
             </div>
           ))}
         </div>
@@ -128,8 +136,8 @@ const historyData = {
       "사회문제 R&D 분석 현황판 및 데이터 분석도구 개발",
     ],
     images: [
-      "/img/history/2024/img_0.png",
-      "/img/history/2024/img_1.png",
+      ["/img/history/2024/img_0.png",
+        "/img/history/2024/img_1.png",],
     ]
   },
   2023: {
@@ -143,10 +151,11 @@ const historyData = {
       "사회문제 R&D 현황 분석을 위한 메타데이터 구축 및 도구 개발",
     ],
     images: [
-      // "/img/history/2023/img_1.png",
-      "/img/history/2023/img_2.png",
-      "/img/history/2023/img_3.png",
-      // "/img/history/2023/img_4.png",
+      ["/img/history/2023/2023 저작권.png",],
+      ["/img/history/2023/2023 저작권2.jpg",],
+      ["/img/history/2023/2023 저작권3.jpg",],
+      ["/img/history/2023/img_2.png",
+        "/img/history/2023/img_3.png",]
     ]
   },
   2022: {
@@ -158,10 +167,8 @@ const historyData = {
       "주요 원부자재 공급망 문제 이상징후 감지를 위한 테스트베드 개발",
     ],
     images: [
-      "/img/history/2022/img_1.png",
-      // "/img/history/2022/img_2.png",
-      "/img/history/2022/img_3.png",
-      // "/img/history/2022/img_4.png",
+      ["/img/history/2022/img_1.png",
+        "/img/history/2022/img_3.png",]
     ]
   },
   2021: {
@@ -175,11 +182,11 @@ const historyData = {
       "인공지능 기반 논문 연구분야 자동분류 시스템 개발",
     ],
     images: [
-      "/img/history/2021/img_1.png",
-      "/img/history/2021/img_2.png",
-      "/img/history/2021/img_3.png",
-      "/img/history/2021/img_4.png",
-      "/img/history/2021/img_5.png",
+      ["/img/history/2021/img_1.png",
+        "/img/history/2021/img_2.png",],
+      ["/img/history/2021/img_3.png",
+        "/img/history/2021/img_4.png"],
+      ["/img/history/2021/img_5.png",]
     ]
   },
   2020: {
@@ -189,8 +196,8 @@ const historyData = {
       "NTIS 인공지능 기반 자동분류 기술 개발"
     ],
     images: [
-      "/img/history/2020/img_1.png",
-      "/img/history/2020/img_2.png",
+      ["/img/history/2020/img_1.png"],
+      ["/img/history/2020/img_2.png"],
     ]
   },
   2019: {
@@ -204,10 +211,10 @@ const historyData = {
       "NTIS 국가과학기술지식정보서비스 구축",
     ],
     images: [
-      "/img/history/2019/img_1.png",
-      // "/img/history/2019/img_2.png",
-      // "/img/history/2019/img_3.png",
-      "/img/history/2019/img_4.png",
+      ["/img/history/2019/2019 저작권.png"],
+      ["/img/history/2019/2019 저작권 2.png"],
+      ["/img/history/2019/img_1.png",
+        "/img/history/2019/img_4.png",]
     ]
   },
   2018: {
@@ -217,9 +224,8 @@ const historyData = {
       "NTIS 인공지능기반 국가과학기술표준 자동분류",
     ],
     images: [
-      "/img/history/2018/img_1.jpg",
-      // "/img/history/2018/img_2.png",
-      "/img/history/2018/img_3.jpg",
+      ["/img/history/2018/img_1.jpg",
+        "/img/history/2018/img_3.jpg"],
     ]
   },
   2017: {
@@ -230,11 +236,11 @@ const historyData = {
       "대용량 데이터관리 플랫폼(SODA)기반의 연구지원 시범서비스 개발",
     ],
     images: [
-      "/img/history/2017/img_1.jpg",
-      "/img/history/2017/img_2.png",
-      "/img/history/2017/img_3.png",
-      "/img/history/2017/img_4.png",
-      "/img/history/2017/img_5.png",
+      ["/img/history/2017/img_1.jpg",
+        "/img/history/2017/img_2.png"],
+      ["/img/history/2017/img_3.png",
+        "/img/history/2017/img_4.png"],
+      ["/img/history/2017/img_5.png"],
     ]
   },
   2016: {
@@ -243,10 +249,10 @@ const historyData = {
       "치매 연구를 위한 빅데이터 분석 시스템 구축",
     ],
     images: [
-      "/img/history/2016/img_1.png",
-      "/img/history/2016/img_2.png",
-      "/img/history/2016/img_3.png",
-      "/img/history/2016/img_4.png",
+      ["/img/history/2016/img_1.png",
+        "/img/history/2016/img_2.png"],
+      ["/img/history/2016/img_3.png",
+        "/img/history/2016/img_4.png"],
     ]
   },
   2015: {
@@ -256,11 +262,11 @@ const historyData = {
       "사회경제 환경 트렌드 분석을 위한 데이터 구축",
     ],
     images: [
-      "/img/history/2015/img_1.png",
-      "/img/history/2015/img_3.png",
-      "/img/history/2015/img_3_.png",
-      "/img/history/2015/img_ppt_1.png",
-      "/img/history/2015/img_ppt_2.png",
+      ["/img/history/2015/img_1.png",
+        "/img/history/2015/img_3.png"],
+      ["/img/history/2015/img_3_.png",
+        "/img/history/2015/img_ppt_1.png"],
+      ["/img/history/2015/img_ppt_2.png",]
     ]
   },
   2014: {
@@ -270,10 +276,9 @@ const historyData = {
       "소셜 빅데이터 기반 기술기회발굴",
     ],
     images: [
-      "/img/history/2014/img_1.png",
-      // "/img/history/2014/img_2.png",
-      "/img/history/2014/img_3.png",
-      "/img/history/2014/img_4.png",
+      ["/img/history/2014/img_1.png",
+        "/img/history/2014/img_3.png"],
+      ["/img/history/2014/img_4.png",]
     ]
   },
 };
