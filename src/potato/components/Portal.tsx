@@ -105,10 +105,16 @@ const Modal_Desktop = ({ selectedIndex, onClose, setSelectedIndex }) => {
       if (selectedIndex !== 0) {
         setSelectedIndex((prev: number) => prev - 1);
         setSelectedVideoIndex(0);
+      } else {
+        setSelectedIndex(video_info.length - 1);
+        setSelectedVideoIndex(0);
       }
     } else if (direction === 1) {
       if (selectedIndex !== video_info.length - 1) {
         setSelectedIndex((prev: number) => prev + 1);
+        setSelectedVideoIndex(0);
+      } else {
+        setSelectedIndex(0);
         setSelectedVideoIndex(0);
       }
     }
@@ -128,7 +134,7 @@ const Modal_Desktop = ({ selectedIndex, onClose, setSelectedIndex }) => {
             e.stopPropagation();
             handleArrowClick(-1);
           }}
-          className={`text-[100px] ${selectedIndex === 0 ? "text-gray-500" : "text-white"} `}
+          className={`text-[100px] ${"text-white"} `}
         />
       </motion.div>
 
@@ -218,7 +224,7 @@ const Modal_Desktop = ({ selectedIndex, onClose, setSelectedIndex }) => {
             e.stopPropagation();
             handleArrowClick(1);
           }}
-          className={`text-[100px] ${selectedIndex === video_info.length - 1 ? "text-gray-500" : "text-white"}`}
+          className={`text-[100px] ${"text-white"}`}
         />
       </motion.div>
     </motion.div>
