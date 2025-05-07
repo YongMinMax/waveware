@@ -5,7 +5,8 @@ export const historyData = {
       "사회문제 R&D 분석 현황판 및 데이터 분석도구 개발",
     ],
     images: [
-      ["/img/history1/2024/img_0.png", "/img/history1/2024/img_1.png"]
+      ["/img/history1/2024/img_0.png", "/img/history1/2024/img_1.png"],
+      ["/img/history1/2024/img_2.png", "/img/history1/2024/img_3.png"],
     ],
   },
   2023: {
@@ -38,9 +39,9 @@ export const historyData = {
     ],
     images: [
       ["/img/history1/2022/img_1.png",
-      // "/img/history/2022/img_2.png",
-      "/img/history1/2022/img_3.png",
-      // "/img/history/2022/img_4.png",
+      "/img/history/2022/img_2.png"],
+      ["/img/history1/2022/img_3.png",
+      "/img/history/2022/img_4.png",
         ]
     ],
   },
@@ -100,8 +101,8 @@ export const historyData = {
     ],
     images: [
       ["/img/history1/2018/img_1.jpg",
-      // "/img/history/2018/img_2.png",
-      "/img/history1/2018/img_3.jpg"],
+      "/img/history/2018/img_2.png"],
+      ["/img/history1/2018/img_3.jpg"],
     ],
   },
   2017: {
@@ -140,8 +141,8 @@ export const historyData = {
     images: [
       ["/img/history1/2015/img_1.png",
       "/img/history1/2015/img_3.png"],
-      ["/img/history1/2015/img_3_.png"],
-      ["/img/history1/2015/img_ppt_1.png"],
+      ["/img/history1/2015/img_3_.png",
+      "/img/history1/2015/img_ppt_1.png"],
       ["/img/history1/2015/img_ppt_2.png"],
     ],
   },
