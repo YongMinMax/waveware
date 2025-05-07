@@ -114,7 +114,7 @@ export default function TimeLine() {
                     ? "translateY(-200%)"
                     : "translateY(0)",
                 opacity:
-                  selectedYear === year || prevSelectedYear === year ? 1 : 0,
+                  selectedYear === year ? 1 : 0,
                 zIndex:
                   selectedYear === year
                     ? 20
