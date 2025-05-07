@@ -1,5 +1,5 @@
 import MenuHeader from "../kwon/components/menuheader";
-import TimeLine from "../kwon/history/timeline";
+import Timeline from "../kwon/history/timeline";
 import Layout from "../layouts/Layout";
 
 export default function History() {
@@ -11,7 +11,7 @@ export default function History() {
               "기술로 써 내려온 성장의 기록/ 미래를 향한 우리의 발자취입니다."
             }
           />
-          <TimeLine />
+          <Timeline />
       </Layout>
   );
 }
