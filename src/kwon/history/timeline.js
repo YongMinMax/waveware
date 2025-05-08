@@ -9,7 +9,6 @@ export default function TimeLine() {
   const [prevSelectedYear, setPrevSelectedYear] = useState("2024");
   const yearRefs = useRef({});
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [prevImageIndex, setPrevImageIndex] = useState(0);
 
   // 이미지 인덱스 초기화
   useEffect(() => {
@@ -45,11 +44,6 @@ export default function TimeLine() {
       window.removeEventListener("scroll", handleScroll);
     };
   }, [selectedYear]);
-
-  function modImageIndex( num ) {
-
-  }
-
 
   return (
     <div>
@@ -93,7 +87,6 @@ export default function TimeLine() {
           <FaChevronCircleLeft
             className={"absolute left-0 top-1/2 transform -translate-y-1/2 text-gray-500 text-2xl cursor-pointer"}
             onClick={() => {
-              setPrevImageIndex(currentImageIndex);
               setCurrentImageIndex((prevIndex) => (prevIndex - 1 + historyData[selectedYear].images.length) % historyData[selectedYear].images.length);
             }}
             style={{zIndex: 100}}
@@ -166,7 +159,6 @@ export default function TimeLine() {
           <FaChevronCircleRight
             className={"absolute right-0 top-1/2 transform -translate-y-1/2 text-gray-500 text-2xl cursor-pointer"}
             onClick={() => {
-              setPrevImageIndex(currentImageIndex);
               setCurrentImageIndex((prevIndex) => (prevIndex + 1) % historyData[selectedYear].images.length);
             }}
             style={{zIndex: 100}}
