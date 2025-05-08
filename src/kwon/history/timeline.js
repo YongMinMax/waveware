@@ -93,10 +93,8 @@ export default function TimeLine() {
           <FaChevronCircleLeft
             className={"absolute left-0 top-1/2 transform -translate-y-1/2 text-gray-500 text-2xl cursor-pointer"}
             onClick={() => {
-              console.log(`before: prevIndex: ${prevImageIndex}, currentIndex: ${currentImageIndex}`);
               setPrevImageIndex(currentImageIndex);
               setCurrentImageIndex((prevIndex) => (prevIndex - 1 + historyData[selectedYear].images.length) % historyData[selectedYear].images.length);
-              console.log(`after: prevIndex: ${prevImageIndex}, currentIndex: ${currentImageIndex}`);
             }}
             style={{zIndex: 100}}
           />
@@ -133,12 +131,17 @@ export default function TimeLine() {
                   key={index}
                   style={{
                     transform:
-                      currentImageIndex > index
+                      currentImageIndex === Number(index)
+                        ? "translateX(0)"
+                    :Number(index) === 0 && currentImageIndex === 1
+                      ? "translateX(-200%)"
+                      : Number(index) === 0
                         ? "translateX(200%)"
-                        : currentImageIndex < index
-                        ? "translateX(-200%)"
-                        : "translateX(0)",
-                    transition: "transform 0.5s ease-in-out",
+                        : currentImageIndex > Number(index) || (currentImageIndex === 0 && Number(index) === historyData[year].images.length - 1)
+                          ? "translateX(-200%)"
+                          : "translateX(200%)",
+                    opacity: currentImageIndex === Number(index) ? 1 : 0,
+                    transition: "transform 0.5s ease-in-out, opacity 0.5s ease-in-out",
                   }}
                 >
                     <img

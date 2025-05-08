@@ -7,6 +7,7 @@ export const historyData = {
     images: [
       ["/img/history1/2024/img_0.png", "/img/history1/2024/img_1.png"],
       ["/img/history1/2024/img_2.png", "/img/history1/2024/img_3.png"],
+      ["/img/history1/2024/img_4.png"],
     ],
   },
   2023: {
@@ -25,7 +26,6 @@ export const historyData = {
       "/img/history1/2023/img_3.png"],
       // "/img/history/2023/img_4.png",
       ["/img/history1/2023/patent_1.png"],
-      ["/img/history1/2023/patent_2.jpg"],
       ["/img/history1/2023/patent_3.jpg"],
     ],
   },
@@ -38,11 +38,11 @@ export const historyData = {
       "주요 원부자재 공급망 문제 이상징후 감지를 위한 테스트베드 개발",
     ],
     images: [
+      ["/img/history1/2023/patent_2.jpg"],
       ["/img/history1/2022/img_1.png",
       "/img/history/2022/img_2.png"],
       ["/img/history1/2022/img_3.png",
-      "/img/history/2022/img_4.png",
-        ]
+      "/img/history/2022/img_4.png",]
     ],
   },
   2021: {
@@ -71,7 +71,8 @@ export const historyData = {
     ],
     images: [
       ["/img/history1/2020/patent_img_1.png"],
-      ["/img/history1/2020/img_2.png"]
+      ["/img/history1/2020/img_0.png","/img/history1/2020/img_1.png"],
+      ["/img/history1/2020/img_2.png"],
     ],
   },
   2019: {
@@ -100,9 +101,11 @@ export const historyData = {
       "NTIS 인공지능기반 국가과학기술표준 자동분류",
     ],
     images: [
-      ["/img/history1/2018/img_1.jpg",
-      "/img/history/2018/img_2.png"],
-      ["/img/history1/2018/img_3.jpg"],
+      ["/img/history1/2018/img_0.jpg",
+      "/img/history/2018/img_1.jpg"],
+      ["/img/history1/2018/img_2.png",
+      "/img/history/2018/img_3.jpg"],
+      ["/img/history1/2018/img_4.png"],
     ],
   },
   2017: {
@@ -130,6 +133,7 @@ export const historyData = {
       "/img/history1/2016/img_2.png"],
       ["/img/history1/2016/img_3.png",
       "/img/history1/2016/img_4.png"],
+      ["/img/history1/2016/img_5.png",],
     ],
   },
   2015: {
@@ -153,8 +157,9 @@ export const historyData = {
       "소셜 빅데이터 기반 기술기회발굴",
     ],
     images: [
-      ["/img/history1/2014/img_1.png",
-      // "/img/history1/2014/img_2.png",
+      ["/img/history1/2014/img_0.png",
+      "/img/history1/2014/img_1.png"],
+      ["/img/history1/2014/img_2.png",
       "/img/history1/2014/img_3.png"],
       ["/img/history1/2014/img_4.png"],
     ],
