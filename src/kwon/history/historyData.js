@@ -21,10 +21,8 @@ export const historyData = {
       "사회문제 R&D 현황 분석을 위한 메타데이터 구축 및 도구 개발",
     ],
     images: [
-      // "/img/history/2023/img_1.png",
       ["/img/history1/2023/img_2.png",
       "/img/history1/2023/img_3.png"],
-      // "/img/history/2023/img_4.png",
       ["/img/history1/2023/patent_1.png"],
       ["/img/history1/2023/patent_3.jpg"],
     ],
@@ -40,9 +38,9 @@ export const historyData = {
     images: [
       ["/img/history1/2023/patent_2.jpg"],
       ["/img/history1/2022/img_1.png",
-      "/img/history/2022/img_2.png"],
+      "/img/history1/2022/img_2.png"],
       ["/img/history1/2022/img_3.png",
-      "/img/history/2022/img_4.png",]
+      "/img/history1/2022/img_4.png",]
     ],
   },
   2021: {
@@ -87,8 +85,6 @@ export const historyData = {
     ],
     images: [
       ["/img/history1/2019/img_1.png",
-      // "/img/history/2019/img_2.png",
-      // "/img/history/2019/img_3.png",
       "/img/history1/2019/img_4.png"],
       ["/img/history1/2019/patent_1.png"],
       ["/img/history1/2019/patent_2.png"],
@@ -102,9 +98,9 @@ export const historyData = {
     ],
     images: [
       ["/img/history1/2018/img_0.jpg",
-      "/img/history/2018/img_1.jpg"],
+      "/img/history1/2018/img_1.jpg"],
       ["/img/history1/2018/img_2.png",
-      "/img/history/2018/img_3.jpg"],
+      "/img/history1/2018/img_3.jpg"],
       ["/img/history1/2018/img_4.png"],
     ],
   },
